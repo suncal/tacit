@@ -42,7 +42,7 @@ export interface Playbook {
 export interface EventRef { id: string; actor: string; text: string; target?: string; ts: number; system?: string }
 export interface Draft {
   id: string; playbook_id: string; status: 'pending' | 'scored' | 'expired' | 'proposed' | 'executed' | 'rejected'; mode: 'live' | 'backtest'
-  content: { text: string; target: string; tool: string; args: Record<string, unknown> }
+  content: { text: string; target: string; tool: string; args: Record<string, unknown>; confidence?: number }
   score: number | null; score_detail: { hit?: boolean; similarity?: number; human?: boolean }; human_grade: number | null; run_id: string | null
   created_at: number; resolved_at: number | null; trigger: EventRef | null; actual: EventRef | null
   playbook?: { id: string; name: string; stage: Stage; actor: string }
@@ -55,12 +55,12 @@ export interface Run {
   steps: Step[]; tx_status: 'open' | 'committed' | 'undone' | 'partial'; playbook_id: string | null; draft_id: string | null; replay_of: string | null
   usage: { input_tokens?: number; output_tokens?: number; usd?: number; model?: string }; created_at: number; finished_at: number | null; actions: Action[]
 }
-export interface Approval { id: string; run_id: string; tool: string; args: Record<string, unknown>; preview: Preview; principal: string; reason: string; status: string; created_at: number; decided_at: number | null; decided_by: string | null; playbook: { id: string; name: string; stage: Stage; trust: number } | null }
+export interface Approval { id: string; run_id: string; tool: string; args: Record<string, unknown>; preview: Preview; principal: string; reason: string; escalated?: boolean; confidence?: number | null; status: string; created_at: number; decided_at: number | null; decided_by: string | null; playbook: { id: string; name: string; stage: Stage; trust: number } | null }
 export interface Overview {
   org: string; handle: string; brain: { provider: string; model: string; llm: boolean }
   counts: { events: number; events_24h: number; playbooks: Record<Stage, number>; drafts_pending: number; approvals: number; runs_24h: number; actions_reversible: number; memories: number; tasks_open: number; automations: number }
   shadow: { scored: number; hits: number; hit_rate: number; series: { day: string; score: number; n: number }[] }
-  hours_returned: number
+  hours_returned: number; return_method: string; lessons_open: number
   recommendations: (Recommendation & { playbook_id: string; name: string; stage: Stage; trust: number })[]
   top_playbooks: { id: string; name: string; stage: Stage; actor: string; system: string; trust: number; scored: number; evidence: number }[]
   integrations: Integration[]
@@ -76,3 +76,5 @@ export interface Budget { id: string; scope: string; max_writes_per_hour: number
 export interface Tool { name: string; description: string; risk: 'read' | 'write' | 'exec'; source: string; system: string; params: string[]; reversible: boolean }
 export interface User { id: string; email: string; name: string; role: string }
 export interface Backtest { total: { n: number; hits: number; hit_rate: number }; seconds: number; playbooks: { id: string; name: string; stage: Stage; n: number; hits: number; hit_rate: number; mean_score: number; rows: { trigger: string; draft: string; actual: string; score: number; hit: boolean }[] }[] }
+export interface Lesson { id: string; playbook: { id: string; name: string; actor: string; stage: Stage } | null; draft_id: string | null; trigger_text: string; draft_text: string; actual_text: string; question: string; answer: string | null; status: string; created_at: number; answered_at: number | null; answered_by: string | null }
+export interface Person { actor: string; events: number; jobs: number; playbooks: { id: string; name: string; stage: Stage; trust: number; evidence: number; minutes_each: number }[]; coverable: number; bus_factor_risk: number; weekly_minutes: number; cover: { id: string; backup: string; until: number } | null }

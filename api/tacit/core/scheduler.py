@@ -132,3 +132,6 @@ class Scheduler(threading.Thread):
         for aid in due:
             run_automation(self.app, aid)
         self.app.shadow.expire_stale()
+        from .people import expire_covers
+        with session() as db:
+            expire_covers(db, self.app)

@@ -22,6 +22,8 @@ from .trust import HIT_THRESHOLD, recommendation, trust
 
 log = logging.getLogger("tacit.shadow")
 ACTIVE = ("shadow", "propose", "auto")
+ESCALATE_BELOW = 0.45        # auto-stage drafts with confidence under this still go to a human
+LESSON_BELOW = 0.35          # a scored draft this far from the real reply asks the owner for the rule
 
 
 def matches(pb: M.Playbook, e: M.Event) -> bool:
@@ -87,13 +89,38 @@ class Shadow:
         if score >= HIT_THRESHOLD:
             pb.drafts_hit += 1
         audit(db, "shadow", "draft.scored", pb.name, {"draft": d.id, "score": score, "hit": score >= HIT_THRESHOLD, "mode": d.mode})
+        if d.mode == "live" and score < LESSON_BELOW:
+            db.add(M.Lesson(id=new_id("les"), playbook_id=pb.id, draft_id=d.id, trigger_text=(db.get(M.Event, d.trigger_event_id) or actual).text,
+                            draft_text=d.content.get("text", ""), actual_text=actual.text,
+                            question=f"You answered this differently from what I drafted. What's the rule I'm missing?"))
+            audit(db, "shadow", "lesson.asked", pb.name, {"draft": d.id})
         return {"draft_id": d.id, "playbook_id": pb.id, "score": score, "hit": score >= HIT_THRESHOLD}
 
+    def confidence(self, pb: M.Playbook, trigger: M.Event) -> float:
+        """How much does this trigger look like the ones the job was learned from? Outliers get escalated."""
+        if (pb.trigger or {}).get("mode") != "reply":
+            return 1.0
+        ts = T.shingles(trigger.text)
+        sims = [T.jaccard(ts, T.shingles(e.get("trigger", ""))) for e in (pb.examples or []) if e.get("trigger")]
+        best = max(sims) if sims else 0.0
+        kws = (pb.trigger or {}).get("keywords") or []
+        toks = set(T.tokens(trigger.text))
+        kw_cov = (sum(1 for k in kws if k in toks) / len(kws)) if kws else 1.0
+        return round(min(1.0, 0.3 * kw_cov + 0.7 * min(1.0, best / 0.4)), 3)
+
+    def lessons_for(self, db, pb: M.Playbook) -> list[dict]:
+        rows = db.scalars(select(M.Lesson).where(M.Lesson.playbook_id == pb.id, M.Lesson.status == "answered").order_by(M.Lesson.answered_at.desc()).limit(12)).all()
+        return [{"trigger": l.trigger_text, "response": l.actual_text, "rule": l.answer} for l in rows]
+
     def _draft(self, db, pb: M.Playbook, trigger: M.Event, mode: str = "live") -> dict:
-        pbd = {"name": pb.name, "actor": pb.actor, "org": self.app.settings.org_name, "response": pb.response}
+        lessons = self.lessons_for(db, pb)
+        pbd = {"name": pb.name, "actor": pb.actor, "org": self.app.settings.org_name, "response": pb.response,
+               "rules": [l["rule"] for l in lessons if l.get("rule")]}
         context = self._thread_context(db, trigger)
+        conf = self.confidence(pb, trigger)
+        examples = (pb.examples or []) + [{"trigger": l["trigger"], "response": l["response"], "ts": 0} for l in lessons]
         try:
-            text = self.app.brain.draft(pbd, trigger.text, pb.examples or [], context)
+            text = self.app.brain.draft(pbd, trigger.text, examples, context)
         except Exception as ex:
             log.warning("draft failed for %s: %s", pb.id, ex)
             text = pb.response.get("template", "")
@@ -101,11 +128,11 @@ class Shadow:
         target = trigger.target or pb.response.get("target", "")
         args = self._args_for(tool, target, text, trigger)
         d = M.Draft(id=new_id("drf"), playbook_id=pb.id, trigger_event_id=trigger.id, mode=mode,
-                    content={"text": text, "target": target, "tool": tool, "args": args}, status="pending")
+                    content={"text": text, "target": target, "tool": tool, "args": args, "confidence": conf}, status="pending")
         db.add(d); db.flush()
         pb.drafts_total += 1
-        audit(db, "shadow", "draft.created", pb.name, {"draft": d.id, "trigger": trigger.id, "stage": pb.stage, "mode": mode})
-        return {"draft_id": d.id, "playbook_id": pb.id, "stage": pb.stage, "text": text}
+        audit(db, "shadow", "draft.created", pb.name, {"draft": d.id, "trigger": trigger.id, "stage": pb.stage, "mode": mode, "confidence": conf})
+        return {"draft_id": d.id, "playbook_id": pb.id, "stage": pb.stage, "text": text, "confidence": conf}
 
     def _thread_context(self, db, trigger: M.Event, limit: int = 6) -> str:
         rows = db.scalars(select(M.Event).where(M.Event.thread_key == trigger.thread_key, M.Event.ts < trigger.ts)
@@ -135,7 +162,12 @@ class Shadow:
                 tool = self.app.registry.get("note")
                 d.content = {**d.content, "tool": "note", "args": {"text": d.content.get("text", ""), "target": d.content.get("target", "")}}
             call = {"type": "tool_use", "id": new_id("call"), "name": tool.name, "input": d.content.get("args") or {}}
-            principal = f"playbook:{pb.id}"
+            conf = float(d.content.get("confidence", 1.0))
+            escalated = pb.stage == "auto" and conf < ESCALATE_BELOW
+            # an escalated auto draft runs as a *proposal*: a different principal so the auto allow-rule doesn't apply
+            principal = f"playbook:{pb.id}" if not escalated else f"playbook-escalated:{pb.id}"
+            if escalated:
+                audit(db, "shadow", "draft.escalated", pb.name, {"draft": d.id, "confidence": conf, "threshold": ESCALATE_BELOW})
             r = M.Run(id=new_id("run"), channel=f"{trig.system}:{trig.target}", principal=principal, playbook_id=pb.id, draft_id=d.id,
                       input=f"[{pb.name}] triggered by {trig.actor}: {trig.text[:300]}",
                       messages=[{"role": "user", "content": f"Playbook '{pb.name}' triggered by {trig.actor}: {trig.text}"},
@@ -143,7 +175,7 @@ class Shadow:
                       steps=[{"type": "say", "text": d.content.get("text", ""), "ts": time.time()}])
             db.add(r)
             d.status, d.run_id = "proposed", r.id
-            audit(db, principal, "run.start", r.id, {"playbook": pb.name, "stage": pb.stage, "draft": d.id})
+            audit(db, principal, "run.start", r.id, {"playbook": pb.name, "stage": pb.stage, "draft": d.id, "escalated": escalated})
             rid = r.id
         res = self._resume_fresh(rid)
         with session() as db:

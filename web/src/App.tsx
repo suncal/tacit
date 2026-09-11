@@ -8,6 +8,7 @@ import { OverviewPage } from './pages/Overview'
 import { PlaybooksPage } from './pages/Playbooks'
 import { PlaybookDetailPage } from './pages/PlaybookDetail'
 import { ShadowPage } from './pages/Shadow'
+import { PeoplePage } from './pages/People'
 import { InboxPage } from './pages/Inbox'
 import { RunDetailPage, RunsPage } from './pages/Runs'
 import { ChatPage } from './pages/Chat'
@@ -28,6 +29,7 @@ function Gate() {
         <Route path="playbooks" element={<PlaybooksPage />} />
         <Route path="playbooks/:id" element={<PlaybookDetailPage />} />
         <Route path="shadow" element={<ShadowPage />} />
+        <Route path="people" element={<PeoplePage />} />
         <Route path="inbox" element={<InboxPage />} />
         <Route path="runs" element={<RunsPage />} />
         <Route path="runs/:id" element={<RunDetailPage />} />

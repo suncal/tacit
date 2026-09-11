@@ -26,7 +26,7 @@ export function ShadowPage() {
             <div key={d.id} className="surface p-4">
               <div className="flex items-center gap-2 mb-3 text-[12.5px]">
                 {d.playbook && <><Link to={`/playbooks/${d.playbook.id}`} className="font-medium hover:text-accent">{d.playbook.name}</Link><StagePill stage={d.playbook.stage} /></>}
-                <Badge>{d.status}</Badge>{d.mode === 'backtest' && <Badge>backtest</Badge>}
+                <Badge>{d.status}</Badge>{d.mode === 'backtest' && <Badge>backtest</Badge>}{d.content.confidence !== undefined && d.mode === 'live' && <Badge tone={d.content.confidence >= 0.7 ? 'ok' : d.content.confidence >= 0.45 ? 'warn' : 'bad'}>confidence {Math.round(d.content.confidence * 100)}%</Badge>}
                 <span className="muted ml-auto">{ago(d.created_at)}</span>
                 <ScoreDot score={d.score} hit={!!d.score_detail?.hit} />
                 <div className="flex gap-0.5 ml-1"><button className={clsx('p-1 rounded hover:bg-[var(--surface-2)]', d.human_grade === 1 && 'text-ok')} onClick={() => grade.mutate({ d: d.id, g: 1 })} title="Good draft"><ThumbsUp size={14} /></button><button className={clsx('p-1 rounded hover:bg-[var(--surface-2)]', d.human_grade === -1 && 'text-bad')} onClick={() => grade.mutate({ d: d.id, g: -1 })} title="Bad draft"><ThumbsDown size={14} /></button></div>

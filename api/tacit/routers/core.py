@@ -36,7 +36,8 @@ def overview(db: Session = Depends(get_db), app=Depends(get_app), _: Principal =
         s = app.shadow.summary(p)
         if s["recommendation"]:
             recs.append({"playbook_id": p.id, "name": p.name, "stage": p.stage, **s["recommendation"], "trust": s["trust"]["trust"]})
-    hours_saved = sum(p.executions * max(p.median_latency_s, 120) for p in pbs) / 3600
+    from ..core.people import returned_minutes, CONTEXT_SWITCH_MIN, WORDS_PER_MIN
+    hours_saved = returned_minutes(db) / 60
     recent_scores = db.scalars(select(M.Draft).where(M.Draft.status == "scored").order_by(M.Draft.resolved_at.desc()).limit(600)).all()
     series = _series(recent_scores)
     return {
@@ -54,6 +55,8 @@ def overview(db: Session = Depends(get_db), app=Depends(get_app), _: Principal =
         },
         "shadow": {"scored": scored, "hits": hits, "hit_rate": round(hits / scored, 3) if scored else 0.0, "series": series},
         "hours_returned": round(hours_saved, 1),
+        "return_method": f"per executed action: words ÷ {WORDS_PER_MIN:.0f} wpm + {CONTEXT_SWITCH_MIN:.0f} min interruption cost",
+        "lessons_open": db.scalar(select(func.count(M.Lesson.id)).where(M.Lesson.status == "open")) or 0,
         "recommendations": sorted(recs, key=lambda r: -r["trust"])[:6],
         "top_playbooks": [{"id": p.id, "name": p.name, "stage": p.stage, "actor": p.actor, "system": p.system, "trust": trust(p)["trust"], "scored": p.drafts_scored, "evidence": p.evidence_count}
                           for p in sorted(pbs, key=lambda p: (-trust(p)["trust"], -p.evidence_count))[:6]],
@@ -136,7 +139,10 @@ def approvals(status: str = "pending", db: Session = Depends(get_db), _: Princip
     out = []
     for a in db.scalars(q):
         pb = db.get(M.Playbook, a.playbook_id) if a.playbook_id else None
+        run = db.get(M.Run, a.run_id)
+        d = db.get(M.Draft, run.draft_id) if run and run.draft_id else None
         out.append({"id": a.id, "run_id": a.run_id, "tool": a.tool, "args": a.args, "preview": a.preview, "principal": a.principal, "reason": a.reason,
+                    "escalated": a.principal.startswith("playbook-escalated:"), "confidence": (d.content or {}).get("confidence") if d else None,
                     "status": a.status, "created_at": a.created_at, "decided_at": a.decided_at, "decided_by": a.decided_by,
                     "playbook": {"id": pb.id, "name": pb.name, "stage": pb.stage, "trust": trust(pb)["trust"]} if pb else None})
     return {"approvals": out}

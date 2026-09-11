@@ -36,7 +36,9 @@ don't use. Output only the text of the {kind}, nothing else."""
 
 def draft_prompt(playbook: dict, trigger_text: str, examples: list[dict], context: str = "") -> str:
     ex = "\n\n".join(f"<example>\n<trigger>{e.get('trigger','')}</trigger>\n<response>{e.get('response','')}</response>\n</example>"
-                     for e in examples[:5])
-    return (f"Pattern: {playbook.get('name')}\n\nHow {playbook.get('actor')} has handled this before:\n{ex}\n\n"
+                     for e in examples[:8])
+    rules = "\n".join(f"- {r}" for r in (playbook.get("rules") or []))
+    rules = f"Rules {playbook.get('actor')} has taught you (these override the examples):\n{rules}\n\n" if rules else ""
+    return (f"Pattern: {playbook.get('name')}\n\n{rules}How {playbook.get('actor')} has handled this before:\n{ex}\n\n"
             f"{('Context:' + chr(10) + context + chr(10) + chr(10)) if context else ''}"
             f"New trigger:\n<trigger>{trigger_text}</trigger>\n\nWrite the response now.")

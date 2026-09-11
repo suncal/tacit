@@ -24,7 +24,7 @@ class LocalBrain(Brain):
             return playbook.get("response", {}).get("template", "")
         ts = T.shingles(trigger_text)
         best = max(examples, key=lambda e: T.jaccard(ts, T.shingles(e.get("trigger", ""))))
-        close = T.jaccard(ts, T.shingles(best.get("trigger", ""))) >= 0.5
+        close = T.jaccard(ts, T.shingles(best.get("trigger", ""))) >= 0.4
         template = playbook.get("response", {}).get("template", "")
         resp = (best.get("response") if close and best.get("response") else template) or best.get("response", "")
         # carry over @mentions / numbers from the new trigger when the example used them

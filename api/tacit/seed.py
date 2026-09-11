@@ -200,6 +200,18 @@ def seed(app, force: bool = False) -> dict:
         e = _fresh_trigger(shadow_pb)
         if e:
             ingest(app, **e)
+    # an outlier for the auto playbook → escalated to a human despite auto
+    if auto_pb and auto_pb.system == "slack":
+        ingest(app, system="slack", kind="message", actor="tomas", target=auto_pb.trigger.get("target", "#support"), thread_key="slack:C_SUPPORT:live-outlier",
+               text="2fa question from compliance: they want a report of every reset we did last quarter with timestamps and who approved. how do we pull that?",
+               ts=time.time() - 240, meta={"channel": auto_pb.trigger.get("target", "#support")}, external_id="seed:live:outlier")
+    # a miss in shadow → Tacit asks the owner for the rule
+    with session() as db:
+        gh_pb = db.scalar(select(M.Playbook).where(M.Playbook.system == "github", M.Playbook.stage == "shadow"))
+    if gh_pb:
+        tp = time.time() - 5400
+        ingest(app, system="github", kind="pr.opened", actor="jonas", text="Bump lodash to 4.17.22\n\nDependabot-style bump. Ready for review.", target="northwind/api", thread_key="github:northwind/api#432", ts=tp, meta={"repo": "northwind/api", "number": 432}, external_id="seed:live:pr-miss")
+        ingest(app, system="github", kind="comment", actor="maya", text="Dependency bumps skip first-pass review — merging once CI is green. Thanks!", target="northwind/api", thread_key="github:northwind/api#432", ts=tp + 900, meta={"repo": "northwind/api", "number": 432}, external_id="seed:live:pr-miss-reply")
     with session() as db:
         db.add(M.Setting(key="demo.seeded", value=True))
         audit(db, "seed", "seed.done", "", {"events": len(events), "seconds": round(time.time() - t0, 1), **mined})

@@ -27,8 +27,8 @@ export function OverviewPage() {
       <div className="grid grid-cols-4 gap-4 mb-5">
         <Stat label="Shadow accuracy" value={pct(o.shadow.hit_rate)} hint={`${o.shadow.hits} of ${o.shadow.scored} drafts matched the human`} tone="accent" />
         <Stat label="Running on auto" value={stages.auto} hint={`${stages.propose} proposing · ${stages.shadow} shadowing · ${stages.candidate} candidates`} />
-        <Stat label="Awaiting a tap" value={o.counts.approvals} hint={o.counts.approvals ? <Link to="/inbox" className="text-accent">Open the Inbox →</Link> : 'Nothing waiting'} tone={o.counts.approvals ? 'warn' : undefined} />
-        <Stat label="Hours returned" value={o.hours_returned.toFixed(1)} hint={`${o.counts.actions_reversible} reversible actions on record`} tone="ok" />
+        <Stat label="Awaiting a tap" value={o.counts.approvals + o.lessons_open} hint={o.counts.approvals + o.lessons_open ? <Link to="/inbox" className="text-accent">{o.counts.approvals} to approve · {o.lessons_open} to teach →</Link> : 'Nothing waiting'} tone={o.counts.approvals + o.lessons_open ? 'warn' : undefined} />
+        <Stat label="Hours returned" value={o.hours_returned.toFixed(1)} hint={<span title={o.return_method}>{o.counts.actions_reversible} reversible actions · <span className="underline decoration-dotted cursor-help">how it's counted</span></span>} tone="ok" />
       </div>
 
       <div className="grid grid-cols-[1.4fr_1fr] gap-4 mb-5">

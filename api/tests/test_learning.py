@@ -132,3 +132,68 @@ def test_seed_is_deterministic_and_fast(tacit):
     with session() as db:
         stages = {p.stage for p in db.scalars(select(M.Playbook))}
         assert {"auto", "propose", "shadow"} <= stages
+
+
+def test_confidence_escalates_outliers_even_on_auto(tacit):
+    for e in _events():
+        ingest(tacit, shadow=False, **e)
+    remine()
+    with session() as db:
+        inv = db.scalar(select(M.Playbook).where(M.Playbook.name.like("%invoice%")))
+        inv.approvals = 5
+        tacit.shadow.set_stage(db, inv, "auto", by="test")
+        inv_id = inv.id
+    # a normal trigger → acts on its own
+    ingest(tacit, system="slack", kind="message", actor="jonas", text="where's the invoice for Acme? finance is chasing", target="#billing", thread_key="slack:C_BILLING:a1", meta={"channel": "#billing"})
+    # an outlier that only shares the keyword → escalated to a human
+    ingest(tacit, system="slack", kind="message", actor="jonas", text="invoice dispute escalation: legal wants the whole contract history and a call with their CFO", target="#billing", thread_key="slack:C_BILLING:a2", meta={"channel": "#billing"})
+    with session() as db:
+        runs = db.scalars(select(M.Run).where(M.Run.playbook_id == inv_id).order_by(M.Run.created_at)).all()
+        assert [r.status for r in runs] == ["done", "waiting"]
+        assert runs[1].principal.startswith("playbook-escalated:")
+        a = db.scalar(select(M.Approval).where(M.Approval.status == "pending"))
+        d = db.get(M.Draft, runs[1].draft_id)
+        assert a and d.content["confidence"] < 0.45 < db.get(M.Draft, runs[0].draft_id).content["confidence"]
+
+
+def test_miss_creates_lesson_and_rule_feeds_drafts(tacit):
+    for e in _events():
+        ingest(tacit, shadow=False, **e)
+    remine()
+    with session() as db:
+        inv = db.scalar(select(M.Playbook).where(M.Playbook.name.like("%invoice%")))
+        tacit.shadow.set_stage(db, inv, "shadow", by="test")
+    now = time.time()
+    ingest(tacit, system="slack", kind="message", actor="jonas", text="where's the invoice for Acme?", target="#billing", thread_key="slack:C_BILLING:m1", ts=now, meta={"channel": "#billing"})
+    ingest(tacit, system="slack", kind="message", actor="priya", text="Acme is on a payment hold — no invoices go out until finance clears them. Ask Sam.", target="#billing", thread_key="slack:C_BILLING:m1", ts=now + 60)
+    with session() as db:
+        l = db.scalar(select(M.Lesson).where(M.Lesson.status == "open"))
+        assert l and "hold" in l.actual_text
+        l.answer, l.status, l.answered_at = "Customers on payment hold get no invoice — tell them to ask Sam.", "answered", time.time()
+        db.flush()
+        pb = db.get(M.Playbook, l.playbook_id)
+        assert tacit.shadow.lessons_for(db, pb)[0]["rule"].startswith("Customers on payment hold")
+    # a similar trigger now draws on the lesson (local brain: nearest example includes the lesson's real reply)
+    ingest(tacit, system="slack", kind="message", actor="leila", text="where's the invoice for Acme? they're asking again", target="#billing", thread_key="slack:C_BILLING:m2", ts=now + 120, meta={"channel": "#billing"})
+    with session() as db:
+        d = db.scalars(select(M.Draft).order_by(M.Draft.created_at.desc())).first()
+        assert "hold" in d.content["text"]
+
+
+def test_cover_promotes_and_restores(tacit):
+    from tacit.core.people import people, start_cover, end_cover
+    for e in _events():
+        ingest(tacit, shadow=False, **e)
+    remine()
+    with session() as db:
+        for pb in db.scalars(select(M.Playbook).where(M.Playbook.actor == "priya")):
+            tacit.shadow.set_stage(db, pb, "shadow", by="test")
+    backtest(tacit)
+    with session() as db:
+        ppl = {p["actor"]: p for p in people(db, tacit)}
+        assert ppl["priya"]["jobs"] >= 2 and ppl["priya"]["coverable"] >= 1
+        c = start_cover(db, tacit, "priya", backup="maya", until=time.time() + 86400, by="test")
+        assert len(c.promoted) >= 1
+        assert all(db.get(M.Playbook, x["playbook_id"]).stage == "propose" for x in c.promoted)
+        end_cover(db, tacit, c, by="test")
+        assert all(db.get(M.Playbook, x["playbook_id"]).stage == "shadow" for x in c.promoted)

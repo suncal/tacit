@@ -177,3 +177,75 @@ def grade(draft_id: str, body: GradeIn, db: Session = Depends(get_db), p: Princi
     audit(db, p.label, "draft.graded", pb.name, {"draft": d.id, "grade": body.grade})
     db.commit()
     return _draft(db, d)
+
+
+# ------------------------------------------------------------------ lessons (teach on misses)
+def _lesson(db, l: M.Lesson) -> dict:
+    pb = db.get(M.Playbook, l.playbook_id)
+    return {"id": l.id, "playbook": {"id": pb.id, "name": pb.name, "actor": pb.actor, "stage": pb.stage} if pb else None, "draft_id": l.draft_id,
+            "trigger_text": l.trigger_text, "draft_text": l.draft_text, "actual_text": l.actual_text, "question": l.question,
+            "answer": l.answer, "status": l.status, "created_at": l.created_at, "answered_at": l.answered_at, "answered_by": l.answered_by}
+
+
+@router.get("/lessons")
+def lessons(status: str = "open", db: Session = Depends(get_db), _: Principal = Depends(current_principal)):
+    q = select(M.Lesson).order_by(M.Lesson.created_at.desc()).limit(200)
+    if status != "all":
+        q = q.where(M.Lesson.status == status)
+    return {"lessons": [_lesson(db, l) for l in db.scalars(q)]}
+
+
+class AnswerIn(BaseModel):
+    answer: str = Field(min_length=1, max_length=2000)
+
+
+@router.post("/lessons/{lesson_id}/answer")
+def answer_lesson(lesson_id: str, body: AnswerIn, db: Session = Depends(get_db), p: Principal = Depends(current_principal)):
+    l = db.get(M.Lesson, lesson_id)
+    if not l:
+        raise HTTPException(404, "no such lesson")
+    l.answer, l.status, l.answered_at, l.answered_by = body.answer.strip(), "answered", time.time(), p.label
+    pb = db.get(M.Playbook, l.playbook_id)
+    audit(db, p.label, "lesson.answered", pb.name if pb else l.playbook_id, {"lesson": l.id, "rule": body.answer[:200]})
+    db.commit()
+    return _lesson(db, l)
+
+
+@router.post("/lessons/{lesson_id}/dismiss")
+def dismiss_lesson(lesson_id: str, db: Session = Depends(get_db), p: Principal = Depends(current_principal)):
+    l = db.get(M.Lesson, lesson_id)
+    if l:
+        l.status = "dismissed"; audit(db, p.label, "lesson.dismissed", l.playbook_id, {"lesson": l.id}); db.commit()
+    return {"ok": True}
+
+
+# ------------------------------------------------------------------ people & cover
+@router.get("/people")
+def people_list(db: Session = Depends(get_db), app=Depends(get_app), _: Principal = Depends(current_principal)):
+    from ..core.people import people, COVER_MIN_TRUST
+    return {"people": people(db, app), "cover_min_trust": COVER_MIN_TRUST}
+
+
+class CoverIn(BaseModel):
+    backup: str = ""
+    days: int = Field(7, ge=1, le=90)
+
+
+@router.post("/people/{actor}/cover")
+def cover(actor: str, body: CoverIn, db: Session = Depends(get_db), app=Depends(get_app), p: Principal = Depends(require_admin)):
+    from ..core.people import start_cover
+    if db.scalar(select(M.Cover.id).where(M.Cover.actor == actor, M.Cover.status == "active")):
+        raise HTTPException(409, f"{actor} is already covered")
+    c = start_cover(db, app, actor, body.backup, time.time() + body.days * 86400, by=p.label)
+    db.commit()
+    return {"id": c.id, "actor": c.actor, "backup": c.backup, "until": c.until, "promoted": c.promoted}
+
+
+@router.delete("/people/{actor}/cover")
+def uncover(actor: str, db: Session = Depends(get_db), app=Depends(get_app), p: Principal = Depends(require_admin)):
+    from ..core.people import end_cover
+    c = db.scalar(select(M.Cover).where(M.Cover.actor == actor, M.Cover.status == "active"))
+    if not c:
+        raise HTTPException(404, "no active cover")
+    end_cover(db, app, c, by=p.label); db.commit()
+    return {"ok": True}

@@ -100,6 +100,36 @@ class Draft(Base):
     trigger_event: Mapped[Event] = relationship(foreign_keys=[trigger_event_id])
 
 
+class Lesson(Base):
+    """Tacit missed; the owner explains the rule. Lessons condition every future draft of the playbook."""
+    __tablename__ = "lessons"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    playbook_id: Mapped[str] = mapped_column(String(40), ForeignKey("playbooks.id", ondelete="CASCADE"), index=True)
+    draft_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    trigger_text: Mapped[str] = mapped_column(Text, default="")
+    draft_text: Mapped[str] = mapped_column(Text, default="")
+    actual_text: Mapped[str] = mapped_column(Text, default="")
+    question: Mapped[str] = mapped_column(Text, default="")
+    answer: Mapped[Optional[str]] = mapped_column(Text, nullable=True)     # the rule, in the owner's words
+    status: Mapped[str] = mapped_column(String(20), default="open", index=True)  # open | answered | dismissed
+    created_at: Mapped[float] = mapped_column(Float, default=now)
+    answered_at: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    answered_by: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
+
+
+class Cover(Base):
+    """Someone is out. Their proven jobs are temporarily promoted so the team isn't stuck."""
+    __tablename__ = "covers"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    actor: Mapped[str] = mapped_column(String(120), index=True)
+    backup: Mapped[str] = mapped_column(String(120), default="")
+    until: Mapped[float] = mapped_column(Float)
+    promoted: Mapped[list[Any]] = mapped_column(JSON, default=list)       # [{playbook_id, from}] to restore
+    status: Mapped[str] = mapped_column(String(20), default="active")      # active | ended
+    created_at: Mapped[float] = mapped_column(Float, default=now)
+    created_by: Mapped[str] = mapped_column(String(120), default="")
+
+
 class Run(Base):
     """One invocation of the agent. Its writes form a transaction that can be undone as a unit."""
     __tablename__ = "runs"
