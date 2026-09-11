@@ -1,0 +1,13 @@
+services:
+  tacit:
+    build: .
+    ports: ["4800:4800"]
+    env_file: .env
+    environment:
+      TACIT_HOST: 0.0.0.0
+      TACIT_DATABASE_URL: sqlite:////data/tacit.db
+    volumes:
+      - tacit-data:/data
+    restart: unless-stopped
+volumes:
+  tacit-data:

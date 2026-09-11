@@ -1,0 +1,15 @@
+# python
+api/.venv/
+__pycache__/
+*.pyc
+*.db
+*.db-wal
+*.db-shm
+.pytest_cache/
+# node
+web/node_modules/
+web/dist/
+# local
+.env
+.claude/
+.DS_Store
