@@ -1,236 +1,251 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tacit</title>
+<meta name="description" content="Tacit learns your team's recurring jobs by watching, proves it can do them in shadow, and earns autonomy one job at a time. Self-hosted. Reversible.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-:root{--bg:#F7F7F5;--surface:#FFFFFF;--surface2:#EFEFEB;--line:#E3E3DD;--ink:#16181D;--ink2:#3F434B;--muted:#6E7380;--accent:#0E7C86;--accent2:#0A5F67;--soft:#E3F3F4;--gold:#C7961C;--violet:#7C5CBF;--ok:#1F8A4C;--bad:#C0392B;--slate:#16191D;--slate2:#1D2126;--slate-text:#EDEEF0;--slate-muted:#8B919C;
- --sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;--serif:"Instrument Serif",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#101214;--surface:#16191D;--surface2:#1D2126;--line:#262B31;--ink:#EDEEF0;--ink2:#C3C7CE;--muted:#8B919C;--soft:#123338;--accent:#2BA4AF}}
-:root[data-theme="dark"]{--bg:#101214;--surface:#16191D;--surface2:#1D2126;--line:#262B31;--ink:#EDEEF0;--ink2:#C3C7CE;--muted:#8B919C;--soft:#123338;--accent:#2BA4AF}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
-a{color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
-h1,h2,h3{margin:0;letter-spacing:-.015em;text-wrap:balance}
-h1{font-size:clamp(40px,5.6vw,66px);line-height:1.04;font-weight:600}
-h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
-h2{font-size:clamp(28px,3.4vw,40px);line-height:1.15;font-weight:600}
-h3{font-size:18px;font-weight:600;line-height:1.3}
-p{margin:0}.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-.mono{font-family:var(--mono);font-size:13px}.muted{color:var(--muted)}.ink2{color:var(--ink2)}
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:20px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}
-.logo svg{width:26px;height:26px}
-nav ul{display:flex;gap:24px;list-style:none;margin:0;padding:0;font-size:14px;font-weight:500}nav ul a{text-decoration:none;color:var(--ink2)}nav ul a:hover{color:var(--accent)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:9px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:600;font-size:14.5px;border:0;cursor:pointer;font-family:var(--sans)}
-.btn.accent{background:var(--accent);color:#fff}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-@media(max-width:800px){nav ul{display:none}}
-.hero{padding:56px 0 30px;display:grid;grid-template-columns:1fr;gap:34px}
-.hero .lede{font-size:19px;line-height:1.55;color:var(--ink2);max-width:36em;margin:22px 0 26px}
-.hero .cmd{display:inline-flex;align-items:center;gap:12px;background:var(--slate);color:var(--slate-text);font:13.5px var(--mono);padding:11px 14px;border-radius:9px;margin-left:10px}
-.hero .cmd .p{color:var(--gold)}
-/* shadow triptych */
-.shadow{background:var(--slate);color:var(--slate-text);border-radius:16px;padding:18px 18px 14px;box-shadow:0 40px 80px -40px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden}
-.shadow .top{display:flex;align-items:center;gap:10px;font:12.5px var(--mono);color:var(--slate-muted);margin-bottom:14px}
-.pill{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:2px 8px;font:600 11px var(--mono);letter-spacing:.04em}
-.pill.shadow{background:rgba(124,92,191,.2);color:#B9A3E8}.pill.propose{background:rgba(199,150,28,.18);color:#E5B94A}.pill.auto{background:rgba(14,124,134,.25);color:#5FD1DA}.pill.hit{background:rgba(31,138,76,.2);color:#6FD39A}.pill.miss{background:rgba(192,57,43,.2);color:#F08A7C}
-.tri{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.col .lab{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--slate-muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.box{background:var(--slate2);border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.5;min-height:118px;white-space:pre-wrap}
-.box.draft{border:1px solid rgba(43,164,175,.45);background:rgba(14,124,134,.08)}
-.box.wait{border:1px dashed rgba(255,255,255,.2);background:transparent;color:var(--slate-muted)}
-.av{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:600 9px var(--sans);color:#fff}
-.score{margin-top:12px;display:flex;align-items:center;gap:12px;font:12.5px var(--mono);color:var(--slate-muted)}
-.bar{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0E7C86,#5FD1DA);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
-.trust{margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;display:flex;justify-content:space-between;align-items:center;font:12.5px var(--mono);color:var(--slate-muted)}
-.trust b{color:var(--slate-text)}
-.cursor{display:inline-block;width:2px;height:1em;background:#5FD1DA;vertical-align:-2px;animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:0}}
+:root{--bg:#FFFFFF;--bg2:#F7F7F6;--ink:#0B0C0E;--ink2:#3A3D44;--muted:#70747D;--line:#E7E7E4;--line2:#D9D9D5;--accent:#0E7C86;--accent2:#0A5F67;--soft:#E6F3F4;--gold:#C7961C;--violet:#7C5CBF;--ok:#1F8A4C;--bad:#C0392B;
+ --frame:#0F1115;--frame2:#171A20;--frame3:#1F232B;--ftext:#E9EAEE;--fmuted:#8C919C;--fline:rgba(255,255,255,.08);
+ --sans:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0B0C0E;--bg2:#101215;--ink:#EEEFF1;--ink2:#C3C7CE;--muted:#8B919C;--line:#22262C;--line2:#2E333B;--soft:#0F2D31;--accent:#2BA4AF;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B0C0E;--bg2:#101215;--ink:#EEEFF1;--ink2:#C3C7CE;--muted:#8B919C;--line:#22262C;--line2:#2E333B;--soft:#0F2D31;--accent:#2BA4AF;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit}.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+h1{font-size:clamp(44px,6vw,76px);line-height:1.02;font-weight:600;letter-spacing:-.035em}
+h2{font-size:clamp(32px,3.8vw,48px);line-height:1.08;font-weight:600;letter-spacing:-.03em}
+h3{font-size:20px;line-height:1.3;font-weight:600;letter-spacing:-.01em}
+p{margin:0}.lede{font-size:19px;line-height:1.5;color:var(--ink2)}.muted{color:var(--muted)}.ink2{color:var(--ink2)}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.mono{font-family:var(--mono);font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:10px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:600;font-size:14.5px;border:0;cursor:pointer;font-family:var(--sans);transition:transform .15s,opacity .15s}
+.btn:hover{opacity:.92;transform:translateY(-1px)}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line2)}.btn.accent{background:var(--accent);color:#fff}.btn.sm{height:36px;padding:0 14px;font-size:13.5px}
+/* nav */
+.nav{position:sticky;top:0;z-index:20;backdrop-filter:saturate(180%) blur(12px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;text-decoration:none;letter-spacing:-.01em}.logo svg{width:26px;height:26px}
+.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:14px;font-weight:500}.nav ul a{text-decoration:none;color:var(--ink2)}.nav ul a:hover{color:var(--ink)}
+.nav .right{display:flex;gap:10px;align-items:center}.nav .right a.link{font-size:14px;font-weight:500;text-decoration:none;color:var(--ink2);margin-right:6px}
+@media(max-width:900px){.nav ul,.nav .right a.link{display:none}}
+/* hero */
+.hero{position:relative;padding:84px 0 40px;text-align:center;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:120%;background:radial-gradient(60% 50% at 50% 0%,rgba(14,124,134,.16),transparent 70%);pointer-events:none}
+.hero .wrap{position:relative}
+.pillnote{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:6px 12px 6px 6px;font-size:13px;color:var(--ink2);margin-bottom:26px;text-decoration:none}
+.pillnote b{background:var(--soft);color:var(--accent);border-radius:99px;padding:2px 8px;font-size:11.5px;font-weight:600;letter-spacing:.04em}
+.hero h1{max-width:14em;margin:0 auto}.hero .lede{max-width:40em;margin:24px auto 30px}
+.cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.trust{margin-top:18px;font-size:13px;color:var(--muted)}
+/* product frame */
+.frame{margin:56px auto 0;max-width:1120px;background:var(--frame);color:var(--ftext);border-radius:18px;border:1px solid rgba(255,255,255,.08);box-shadow:0 60px 120px -50px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.04);overflow:hidden;text-align:left;font-size:13px}
+.frame .bar{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-bottom:1px solid var(--fline);background:var(--frame2)}
+.frame .bar i{width:10px;height:10px;border-radius:50%;background:#3A3F49;display:inline-block}.frame .bar .url{margin-left:12px;font:12px var(--mono);color:var(--fmuted);background:var(--frame);border-radius:6px;padding:3px 10px}
+.app{display:grid;grid-template-columns:200px 1fr;min-height:560px}
+.side{border-right:1px solid var(--fline);padding:14px 10px;display:flex;flex-direction:column;gap:2px;background:var(--frame2)}
+.side .brand{display:flex;align-items:center;gap:8px;padding:4px 8px 14px;font-weight:600}.side .brand small{display:block;font-weight:400;color:var(--fmuted);font-size:11px}
+.side a{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:8px;color:var(--fmuted);font-size:13px;font-weight:500;text-decoration:none}
+.side a.on{background:rgba(14,124,134,.18);color:#7FD6DE}.side .sep{height:1px;background:var(--fline);margin:8px 0}
+.side b{background:var(--gold);color:#1b1500;border-radius:99px;font-size:10.5px;padding:0 6px;font-weight:700}
+.main{padding:22px 24px}
+.main h4{font-size:18px;font-weight:600;letter-spacing:-.01em}.main .sub{color:var(--fmuted);font-size:12.5px;margin-top:3px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+.stat{background:var(--frame2);border:1px solid var(--fline);border-radius:10px;padding:12px 14px}.stat .l{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fmuted)}.stat .v{font-size:24px;font-weight:600;margin-top:4px;letter-spacing:-.02em}.stat .h{font-size:11.5px;color:var(--fmuted);margin-top:2px}
+.stat .v.a{color:#5FD1DA}.stat .v.g{color:#E5B94A}.stat .v.ok{color:#6FD39A}
+.cols{display:grid;grid-template-columns:1.4fr 1fr;gap:10px}
+.panel{background:var(--frame2);border:1px solid var(--fline);border-radius:10px;padding:14px}.panel .t{font-weight:600;font-size:13.5px}.panel .s{color:var(--fmuted);font-size:11.5px;margin-bottom:10px}
+.rec{display:flex;align-items:center;gap:10px;border:1px solid var(--fline);border-radius:8px;padding:9px 10px;margin-bottom:6px}.rec .n{flex:1;min-width:0}.rec .n div{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rec .n small{color:var(--fmuted);font-size:11px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:5px;padding:1px 7px;font:600 10.5px var(--mono);letter-spacing:.04em;white-space:nowrap}
+.pill.sh{background:rgba(124,92,191,.22);color:#B9A3E8}.pill.pr{background:rgba(199,150,28,.2);color:#E5B94A}.pill.au{background:rgba(14,124,134,.25);color:#5FD1DA}.pill.ca{background:rgba(255,255,255,.08);color:#B4B8C1}.pill.hit{background:rgba(31,138,76,.22);color:#6FD39A}.pill.miss{background:rgba(192,57,43,.22);color:#F08A7C}
+.rec .b{background:#0E7C86;color:#fff;border-radius:6px;padding:5px 9px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.tl{display:flex;flex-direction:column;gap:8px}.tl .row{display:grid;grid-template-columns:1fr 70px 110px;gap:8px;align-items:center;font-size:12.5px}.tl .row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}.tl .row small{display:block;color:var(--fmuted);font-size:11px;font-weight:400}
+.bar2{height:5px;border-radius:99px;background:rgba(255,255,255,.08);position:relative}.bar2 i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:#6FD39A}.bar2 i.w{background:#E5B94A}.bar2 i.d{background:#8C919C}
+.chart{height:110px;position:relative}.chart svg{width:100%;height:100%}
 /* sections */
-section{padding:76px 0}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
-@media(max-width:900px){.grid3{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.tri{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
-.card h3{margin:10px 0 8px}.card p{color:var(--ink2);font-size:15px}
-.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);margin-top:34px}
-.ladder>div{padding:22px;border-right:1px solid var(--line)}.ladder>div:last-child{border-right:0}
-.ladder .n{font:600 12px var(--mono);color:var(--muted);margin-bottom:8px}
-.ladder .n b{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--soft);color:var(--accent);align-items:center;justify-content:center;margin-right:8px;font-size:11px}
-.ladder h3{margin-bottom:6px}.ladder p{color:var(--ink2);font-size:14px}.ladder .gate{margin-top:12px;font:12.5px var(--mono);color:var(--accent);border-top:1px dashed var(--line);padding-top:10px}
-@media(max-width:900px){.ladder{grid-template-columns:1fr 1fr}.ladder>div{border-bottom:1px solid var(--line)}}
-.big{font-size:clamp(48px,8vw,96px);font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--accent)}
-.big small{display:block;font-size:15px;letter-spacing:0;color:var(--muted);font-weight:500;margin-top:8px}
-table{width:100%;border-collapse:collapse;font-size:15px;margin-top:28px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}td:first-child{color:var(--ink2);width:30%}
-td.y::before{content:"● ";color:var(--ok)}td.n{color:var(--muted)}td.n::before{content:"○ ";color:var(--muted)}
-.tscroll{overflow-x:auto}
-.logos{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.logos span{border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;color:var(--ink2);background:var(--surface)}
-.price{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}@media(max-width:900px){.price{grid-template-columns:1fr}}
-.plan{border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--surface)}.plan.lead{border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
-.plan .amt{font-size:42px;font-weight:600;letter-spacing:-.02em;margin:12px 0 4px}.plan .amt small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0}
-.plan ul{padding-left:18px;margin:16px 0 0;color:var(--ink2);font-size:14.5px}.plan li{margin:5px 0}
-.faq details{border-top:1px solid var(--line);padding:16px 0}.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between}.faq summary::after{content:"+";color:var(--accent);font-family:var(--mono)}.faq details[open] summary::after{content:"–"}.faq p{color:var(--ink2);margin-top:10px;max-width:64em}
-footer{border-top:1px solid var(--line);padding:36px 0 48px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.quote{font-family:var(--serif);font-size:clamp(24px,3vw,34px);line-height:1.3;max-width:26em;font-style:italic}
+section{padding:96px 0}section.tight{padding-top:0}section.alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.center{text-align:center}.center .lede{margin:18px auto 0;max-width:42em}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:960px){.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr;gap:28px}.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
+@media(max-width:620px){.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:26px}.card h3{margin:14px 0 8px}.card p{color:var(--ink2);font-size:15px}
+.ic{width:38px;height:38px;border-radius:10px;background:var(--soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font:600 13px var(--mono)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
+.metrics div{padding:26px 24px;border-right:1px solid var(--line)}.metrics div:last-child{border-right:0}.metrics .v{font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1}.metrics .k{color:var(--muted);font-size:13.5px;margin-top:8px}
+@media(max-width:720px){.metrics{grid-template-columns:1fr 1fr}.metrics div{border-bottom:1px solid var(--line)}}
+.story{counter-reset:s}.step{display:grid;grid-template-columns:64px 1fr;gap:18px;padding:26px 0;border-top:1px solid var(--line)}.step:last-child{border-bottom:1px solid var(--line)}
+.step .num{font:500 12px var(--mono);color:var(--accent);padding-top:6px}.step h3{margin-bottom:6px}.step p{color:var(--ink2);max-width:60em}
+.step .ui{margin-top:14px;background:var(--frame);color:var(--ftext);border-radius:12px;padding:14px 16px;font-size:13px;border:1px solid rgba(255,255,255,.06);max-width:760px}
+.msg{display:flex;gap:10px;align-items:flex-start;margin:6px 0}.msg .av{width:22px;height:22px;border-radius:50%;background:#5C6B99;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:none;color:#fff}.msg .av.t{background:#0E7C86}.msg .av.p{background:#9A5C8A}.msg .who{font:500 11px var(--mono);color:var(--fmuted)}.msg .tx{margin-top:1px}
+.ghost-draft{border:1px dashed rgba(255,255,255,.25);border-radius:8px;padding:8px 10px;color:var(--fmuted);font-style:italic;margin:6px 0 6px 32px}
+.sec{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media(max-width:800px){.sec{grid-template-columns:1fr}}
+.sec div{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--bg)}.sec h4{font-size:15px;margin-bottom:6px}.sec p{color:var(--ink2);font-size:14px}
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media(max-width:900px){.price{grid-template-columns:1fr}}
+.plan{border:1px solid var(--line);border-radius:18px;padding:28px;background:var(--bg);display:flex;flex-direction:column}.plan.lead{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}
+.plan .amt{font-size:44px;font-weight:600;letter-spacing:-.03em;margin:14px 0 2px;line-height:1}.plan .amt small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:4px}
+.plan ul{padding-left:0;list-style:none;margin:18px 0 22px;color:var(--ink2);font-size:14.5px;flex:1}.plan li{margin:8px 0;padding-left:22px;position:relative}.plan li::before{content:"";position:absolute;left:0;top:7px;width:12px;height:12px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 3px var(--accent)}
+.faq details{border-top:1px solid var(--line);padding:18px 0}.faq details:last-child{border-bottom:1px solid var(--line)}.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;font-size:16px}.faq summary::after{content:"+";color:var(--muted);font-family:var(--mono)}.faq details[open] summary::after{content:"–"}.faq p{color:var(--ink2);margin-top:10px;max-width:66em}
+.band{background:var(--frame);color:var(--ftext);border-radius:24px;padding:64px 48px;text-align:center;position:relative;overflow:hidden}
+.band::before{content:"";position:absolute;inset:auto -20% -60% -20%;height:120%;background:radial-gradient(50% 50% at 50% 100%,rgba(14,124,134,.35),transparent 70%)}
+.band>*{position:relative}.band h2{color:#fff}.band p{color:#B4B8C1;max-width:36em;margin:14px auto 26px}
+footer{padding:56px 0 40px;border-top:1px solid var(--line);font-size:14px}
+.fcols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}@media(max-width:800px){.fcols{grid-template-columns:1fr 1fr}}
+footer h5{margin:0 0 12px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}footer ul{list-style:none;padding:0;margin:0}footer li{margin:7px 0}footer a{text-decoration:none;color:var(--ink2)}footer a:hover{color:var(--ink)}
+.legal{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.cursor{display:inline-block;width:2px;height:1em;background:#5FD1DA;vertical-align:-2px;animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:0}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="wrap">
-<nav>
+<div class="nav"><div class="wrap">
   <a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg>Tacit</a>
-  <ul><li><a href="#how">How it works</a></li><li><a href="#trust">Trust ladder</a></li><li><a href="#safety">Reversible</a></li><li><a href="#compare">Compare</a></li><li><a href="#pricing">Pricing</a></li></ul>
-  <a class="btn" href="#install">Run the demo</a>
-</nav>
+  <ul><li><a href="#product">Product</a></li><li><a href="#story">How it works</a></li><li><a href="#security">Security</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://github.com/suncal/tacit">Docs</a></li></ul>
+  <div class="right"><a class="link" href="#install">Sign in</a><a class="btn sm" href="#install">Get started</a></div>
+</div></div>
 
-<header class="hero">
-  <div>
-    <div class="eyebrow">Self-hosted · Open source · Works with your own Claude</div>
-    <h1 style="margin-top:16px">The AI teammate that <em>learns your job by watching</em> — and has to earn the right to do it.</h1>
-    <p class="lede">Tacit watches what your team actually does in GitHub, Slack and Linear, finds the recurring jobs, and shadows each one: it drafts what it would have done and grades itself against what the human really did. When a job's trust score clears the bar, it asks to take over. Every action it takes is reversible.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><a class="btn accent" href="#how">See how it works</a><span class="cmd"><span class="p">$</span> git clone github.com/suncal/tacit && make demo</span></div>
-  </div>
+<header class="hero"><div class="wrap">
+  <a class="pillnote" href="#story"><b>NEW</b> Shadow mode, backtests and one-click undo <span aria-hidden="true">→</span></a>
+  <h1>Hire AI for one job at a time.</h1>
+  <p class="lede">Tacit watches how your team actually works, learns the recurring jobs, and proves it can do each one in shadow before it's allowed to act. Autonomy is earned per job, every action is reversible, and it runs on your infrastructure.</p>
+  <div class="cta"><a class="btn accent" href="#install">Start free — self-hosted</a><a class="btn ghost" href="#story">See a job get hired</a></div>
+  <div class="trust">Open source · Works in GitHub, Slack and Linear · Bring your own Claude</div>
 
-  <div class="shadow" id="demo" aria-label="Live shadow scoring demo">
-    <div class="top"><span>shadow</span><span>·</span><span id="d-name">Answer “invoice” threads in #billing</span><span class="pill shadow" id="d-stage">SHADOW</span><span style="margin-left:auto" id="d-when">just now</span></div>
-    <div class="tri">
-      <div class="col"><div class="lab">Trigger <span class="av" style="background:#6b7fb0">J</span> jonas</div><div class="box" id="d-trig"></div></div>
-      <div class="col"><div class="lab">Tacit drafted</div><div class="box draft" id="d-draft"></div></div>
-      <div class="col"><div class="lab">priya actually did</div><div class="box wait" id="d-actual">waiting…</div></div>
-    </div>
-    <div class="score"><span>similarity</span><div class="bar"><i id="d-bar"></i></div><span id="d-score">—</span><span class="pill" id="d-hit" hidden></span></div>
-    <div class="trust"><span>trust · Wilson lower bound over <b id="d-n">0</b> graded drafts</span><span><b id="d-trust">0%</b> <span id="d-next" class="muted"></span></span></div>
-  </div>
-</header>
-
-<section id="how">
-  <div class="eyebrow">How it works</div>
-  <h2 style="margin-top:14px;max-width:20em">No labelling. No prompt-writing. The ground truth is what your people already do.</h2>
-  <div class="grid3" style="margin-top:34px">
-    <div class="card"><span class="eyebrow">1 · watch</span><h3>Mine the recurring jobs</h3><p>Tacit ingests the actions your team takes — every comment, reply, triage, weekly post — and clusters them into playbooks: <i>who</i> does <i>what</i> in response to <i>which</i> trigger, how consistently, how fast.</p></div>
-    <div class="card"><span class="eyebrow">2 · shadow</span><h3>Draft in the dark, grade against reality</h3><p>Each time a playbook's trigger fires, Tacit drafts what it would do and files it. When the human replies for real, the draft is scored against their reply. Trust is a Wilson lower bound — small samples are punished, not flattered.</p></div>
-    <div class="card"><span class="eyebrow">3 · earn</span><h3>Graduate one job at a time</h3><p>Shadow → propose → auto. Recommendations are computed, never applied. A job that starts getting rejected or undone is demoted just as visibly. You always know exactly what it's allowed to do.</p></div>
-  </div>
-</section>
-
-<section id="backtest" style="padding-top:0">
-  <div class="grid2">
-    <div><div class="big" id="bt-num">79%<small>of last quarter's triggers, handled correctly — before a single live draft</small></div></div>
-    <div><div class="eyebrow">Backtest</div><h2 style="margin-top:12px">Know what it would have done before it does anything.</h2><p class="ink2" style="margin-top:14px;font-size:17px">Point Tacit at 90 days of history and it replays the shadow engine over all of it: drafts blind, scores against the replies that already happened. You see a per-job accuracy number, the misses, and the reason — before it is allowed to act. Nobody else can give you that number, because nobody else has the ground truth.</p></div>
-  </div>
-</section>
-
-<section id="trust" style="padding-top:20px">
-  <div class="eyebrow">The trust ladder</div>
-  <h2 style="margin-top:12px">Autonomy is a per-job property, not a global switch.</h2>
-  <div class="ladder">
-    <div><div class="n"><b>1</b>CANDIDATE</div><h3>Mined</h3><p>A pattern with enough evidence: ≥3 occurrences, consistent replies, a recognisable trigger or a regular cadence.</p><div class="gate">→ you tap “shadow”. It costs nothing.</div></div>
-    <div><div class="n"><b>2</b>SHADOW</div><h3>Drafts silently</h3><p>Every trigger becomes a draft nobody sees. The owner's real reply grades it within hours.</p><div class="gate">→ propose when trust ≥ 60% over ≥ 10 drafts</div></div>
-    <div><div class="n"><b>3</b>PROPOSE</div><h3>Asks first</h3><p>Drafts land in the Inbox with a preview of exactly what will change — a diff for files, the text for posts. One tap approves.</p><div class="gate">→ auto when ≥ 10 approved, ≤ 10% rejected, 0 undos</div></div>
-    <div><div class="n"><b>4</b>AUTO</div><h3>Acts, reversibly</h3><p>Runs on its own under a budget: writes per hour, dollars per day. Every action carries its undo. Three undos and it drops back to propose.</p><div class="gate">→ audited, replayable, exportable</div></div>
-  </div>
-</section>
-
-<section id="safety">
-  <div class="grid2">
-    <div>
-      <div class="eyebrow">Reversible by construction</div>
-      <h2 style="margin-top:12px">Every write records its inverse. Undo a whole run in one click.</h2>
-      <p class="ink2" style="margin-top:14px;font-size:17px">A comment on GitHub knows how to delete itself. A file write keeps the previous content. A Linear issue can be archived. Tacit's runs are transactions: commit, or roll back across systems, newest action first — and the rollback is on the audit log too. Anything genuinely irreversible (a shell command) is labelled that way before you approve it.</p>
-    </div>
-    <div class="shadow" style="padding:16px">
-      <div class="top"><span>run</span><span class="pill auto">DONE</span><span class="pill hit">COMMITTED</span><span style="margin-left:auto">playbook:answer-2fa</span></div>
-      <div class="box" style="min-height:0;margin-bottom:10px"><span style="color:var(--slate-muted);font:500 11px var(--mono);letter-spacing:.08em">ACTIONS (1)</span>
-<span style="color:#6FD39A">done</span>  slack_post  #support  ·  undo: <span class="mono">slack_delete</span>
-Process: verify identity via the billing email on file, then Admin → Users → Reset 2FA…</div>
-      <div style="display:flex;gap:8px"><span class="btn ghost" style="color:var(--slate-text);border-color:rgba(255,255,255,.2);padding:8px 14px;font-size:13px">↺ Replay</span><span class="btn" style="background:#C0392B;color:#fff;padding:8px 14px;font-size:13px">⌫ Undo (1)</span></div>
-      <div class="trust"><span>budget playbook:* · <b>3/10</b> writes this hour · <b>$0.14</b>/$3.00 today</span></div>
+  <div class="frame" id="product" aria-label="Tacit console">
+    <div class="bar"><i></i><i></i><i></i><span class="url">tacit.northwind.internal / overview</span></div>
+    <div class="app">
+      <div class="side">
+        <div class="brand"><svg width="22" height="22" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg><span>Tacit<small>Northwind Labs</small></span></div>
+        <a class="on">Overview</a><a>Playbooks</a><a>Shadow</a><a>People</a><a>Inbox <b>2</b></a><a>Runs</a><a>Chat</a><div class="sep"></div><a>Memory</a><a>Tasks</a><a>Automations</a><a>Meetings</a><div class="sep"></div><a>Audit log</a><a>Settings</a>
+      </div>
+      <div class="main">
+        <h4>Good morning. @tacit is watching 4 jobs.</h4>
+        <div class="sub">455 observed actions across your tools · 66 shadow drafts graded against what your team actually did.</div>
+        <div class="stats">
+          <div class="stat"><div class="l">Shadow accuracy</div><div class="v a" id="f-acc">79%</div><div class="h">52 of 66 drafts matched the human</div></div>
+          <div class="stat"><div class="l">Running on auto</div><div class="v">1</div><div class="h">1 proposing · 2 shadowing · 1 candidate</div></div>
+          <div class="stat"><div class="l">Awaiting a tap</div><div class="v g">2</div><div class="h">1 to approve · 1 to teach</div></div>
+          <div class="stat"><div class="l">Hours returned</div><div class="v ok">38.4</div><div class="h">312 reversible actions on record</div></div>
+        </div>
+        <div class="cols">
+          <div class="panel"><div class="t">Ready to graduate</div><div class="s">Recommendations are computed, never applied. You decide.</div>
+            <div class="rec"><span class="pill ca">CANDIDATE</span><div class="n"><div>First reply on new issues</div><small>9 past occurrences · consistency 69% · shadowing costs nothing</small></div><span class="b">Move to Shadow</span></div>
+            <div class="rec"><span class="pill sh">SHADOW</span><div class="n"><div>First reply on new pull requests in northwind/api</div><small>12/14 drafts matched what maya actually did · trust 60%</small></div><span class="b">Move to Propose</span></div>
+            <div class="rec"><span class="pill pr">PROPOSE</span><div class="n"><div>Answer “2fa” threads in #support</div><small>11 approved · 1 rejected · 0 undos</small></div><span class="b">Move to Auto</span></div>
+          </div>
+          <div class="panel"><div class="t">Shadow accuracy over time</div><div class="s">Mean draft score, graded against real replies</div>
+            <div class="chart"><svg viewBox="0 0 320 110" preserveAspectRatio="none"><defs><linearGradient id="fg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0E7C86" stop-opacity=".5"/><stop offset="1" stop-color="#0E7C86" stop-opacity="0"/></linearGradient></defs><path d="M0,70 C30,66 40,58 60,52 S100,44 130,46 S170,30 200,28 S250,24 280,20 L320,18 L320,110 L0,110Z" fill="url(#fg)"/><path d="M0,70 C30,66 40,58 60,52 S100,44 130,46 S170,30 200,28 S250,24 280,20 L320,18" fill="none" stroke="#5FD1DA" stroke-width="2"/></svg></div>
+            <div class="tl" style="margin-top:8px">
+              <div class="row"><span class="nm">Answer “2fa” threads<small>priya · Slack</small></span><span class="pill au">AUTO</span><span class="bar2"><i style="width:70%"></i></span></div>
+              <div class="row"><span class="nm">Answer “invoice” threads<small>priya · Slack</small></span><span class="pill pr">PROPOSE</span><span class="bar2"><i style="width:62%"></i></span></div>
+              <div class="row"><span class="nm">First reply on new PRs<small>maya · GitHub</small></span><span class="pill sh">SHADOW</span><span class="bar2"><i class="w" style="width:60%"></i></span></div>
+              <div class="row"><span class="nm">Monday on-call summary<small>sam · Slack</small></span><span class="pill sh">SHADOW</span><span class="bar2"><i class="d" style="width:27%"></i></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</section>
+</div></header>
 
-<section id="compare" style="padding-top:20px">
-  <div class="eyebrow">Compare</div>
-  <h2 style="margin-top:12px;max-width:20em">Other AI teammates ask for trust on day one. Tacit earns it, in public.</h2>
-  <div class="tscroll"><table>
-    <tr><th></th><th>Tacit</th><th>Hosted “AI teammate”</th></tr>
-    <tr><td>How it learns your job</td><td class="y">Mines what your people actually do; drafts in shadow</td><td class="n">You write instructions and hope</td></tr>
-    <tr><td>Proof before it acts</td><td class="y">Backtest over your own history with a real accuracy number</td><td class="n">A demo</td></tr>
-    <tr><td>Autonomy</td><td class="y">Per job, earned: shadow → propose → auto, with demotion</td><td class="n">Global “ask before acting” toggle at best</td></tr>
-    <tr><td>Undo</td><td class="y">Every write carries its inverse; roll back a run across systems</td><td class="n">Manual cleanup</td></tr>
-    <tr><td>Budgets</td><td class="y">Hard caps on writes/hour and $/day per principal</td><td class="n">Credit balance</td></tr>
-    <tr><td>Regression testing</td><td class="y">Replay any recorded run against a new model, no side effects</td><td class="n">—</td></tr>
-    <tr><td>Where your context lives</td><td class="y">Your box, one database, one-click export</td><td class="n">Their cloud, transferable on acquisition</td></tr>
-    <tr><td>Model</td><td class="y">Claude via API, your Claude subscription, any endpoint, or none</td><td class="n">Theirs, billed as credits</td></tr>
-    <tr><td>Works in Slack · GitHub · Linear · MCP</td><td class="y">Yes — polling, no public URL required</td><td class="y">Yes</td></tr>
-  </table></div>
-  <div class="logos"><span>GitHub</span><span>Slack</span><span>Linear</span><span>Any MCP server</span><span>Webhooks</span><span>Event API — feed anything</span><span>Claude Opus 5</span><span>Postgres / SQLite</span></div>
-</section>
-
-<section id="install" style="padding-top:20px">
-  <div class="eyebrow">Install</div>
-  <h2 style="margin-top:12px">One process. One database. Ten minutes.</h2>
-  <div class="grid3" style="margin-top:30px">
-    <div class="card"><span class="eyebrow">1</span><h3>Run it</h3><pre class="mono" style="background:var(--slate);color:var(--slate-text);padding:12px;border-radius:9px;overflow-x:auto;margin:0 0 10px">git clone github.com/suncal/tacit
-cd tacit && make setup && make demo</pre><p>A seeded demo org opens at <span class="mono">localhost:4800</span> with 90 days of history, mined playbooks and a backtest already run. <span class="mono">docker compose up</span> also works.</p></div>
-    <div class="card"><span class="eyebrow">2</span><h3>Point it at your team</h3><pre class="mono" style="background:var(--slate);color:var(--slate-text);padding:12px;border-radius:9px;overflow-x:auto;margin:0 0 10px">TACIT_GITHUB_REPOS=acme/api
-TACIT_SLACK_CHANNELS=C0BILLING
-TACIT_ANTHROPIC_API_KEY=sk-…</pre><p>Polling, so no tunnels or app-store review. Or POST events from anything to <span class="mono">/api/v1/events</span>.</p></div>
-    <div class="card"><span class="eyebrow">3</span><h3>Mine, backtest, decide</h3><p>Tacit shows you the jobs it found and what it would have done with last quarter's triggers. Put one in shadow. Come back in a week and read the trust score. Nothing acts until you say so.</p></div>
+<section class="tight" style="padding-top:64px"><div class="wrap">
+  <div class="metrics">
+    <div><div class="v">79%</div><div class="k">of last quarter's triggers handled correctly in backtest, on the sample org that ships with every install</div></div>
+    <div><div class="v">0</div><div class="k">prompts to write. The ground truth is what your people already do</div></div>
+    <div><div class="v">100%</div><div class="k">of writes carry an undo recipe. Roll back a whole run across systems</div></div>
+    <div><div class="v">1</div><div class="k">process, one database, on your infrastructure. Export everything in one call</div></div>
   </div>
-</section>
+</div></section>
 
-<section id="pricing" style="padding-top:20px">
-  <div class="eyebrow">Pricing</div>
-  <h2 style="margin-top:12px">Free to run. Paid to not run it yourself.</h2>
-  <div class="price">
-    <div class="plan lead"><div class="eyebrow">Self-hosted</div><div class="amt">$0<small> · MIT</small></div><p class="ink2">Everything. Unlimited members, playbooks and events.</p><ul><li>Mining, shadow, backtest, trust ladder</li><li>Undo, budgets, audit, replay</li><li>GitHub · Slack · Linear · MCP · Event API</li><li>Bring your own model — or none</li></ul></div>
-    <div class="plan"><div class="eyebrow">Cloud</div><div class="amt">$49<small> / org / month</small></div><p class="ink2">We run your instance. It's still your instance — export the database and leave any time.</p><ul><li>Managed updates, backups, public webhooks</li><li>SSO, audit forwarding</li><li>Cancel = we hand you the file</li></ul></div>
-    <div class="plan"><div class="eyebrow">Enterprise</div><div class="amt">Ask<small></small></div><p class="ink2">In your VPC or air-gapped. Custom connectors. A named engineer.</p><ul><li>Custom event sources and MCP tools</li><li>Priority fixes</li><li>Trust-ladder policy tuned to your risk appetite</li></ul></div>
+<section id="story"><div class="wrap">
+  <div class="center"><div class="eyebrow">How a job gets hired</div><h2 style="margin-top:14px">A Tuesday with Tacit.</h2><p class="lede">Priya works in support. Twelve times a month someone asks “where's the invoice for Acme?” and she answers the same way. Nobody wrote that job down. Here is how Tacit takes it over — and only that job.</p></div>
+  <div class="story" style="margin-top:44px">
+    <div class="step"><div class="num">01 · WATCH</div><div><h3>It notices the job exists</h3><p>You connect Slack. Tacit reads what happens and spots that this question → this reply recurs, from Priya, quickly, consistently. It writes it up as a playbook with the evidence attached.</p>
+      <div class="ui"><span class="pill ca">CANDIDATE</span> &nbsp;<b>Answer “invoice” threads in #billing</b> · priya · seen 14× · usually answered within 1.0h · consistency 78%</div></div></div>
+    <div class="step"><div class="num">02 · SHADOW</div><div><h3>It practises in secret</h3><p>You click “shadow”. From now on, every time someone asks for an invoice, Tacit writes the reply Priya would write — and files it where nobody sees it. Two hours later Priya replies for real. Tacit compares the two and scores itself.</p>
+      <div class="ui"><div class="msg"><span class="av">J</span><div><div class="who">jonas · #billing</div><div class="tx">hey, where's the invoice for Globex? finance is chasing</div></div></div><div class="ghost-draft">Tacit (unsent): Sent Globex their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.</div><div class="msg"><span class="av p">P</span><div><div class="who">priya · 47 min later</div><div class="tx">Sent Globex their invoice — net 30, copy in Finance/Invoices.</div></div></div><div style="margin-top:8px;font:12px var(--mono);color:var(--fmuted)">similarity 0.81 · <span class="pill hit">HIT</span> · trust 13/15 → 62%</div></div></div></div>
+    <div class="step"><div class="num">03 · BACKTEST</div><div><h3>You get the number on day one</h3><p>You don't have to wait weeks. Tacit replays the same shadow process over the last 90 days of history — drafting blind, scoring against the replies that already happened — and shows you every hit and every miss.</p>
+      <div class="ui"><b>Backtest · Answer “invoice” threads</b> &nbsp; 13 of 15 historical triggers matched · mean score 89 · 0.2s &nbsp; <span class="pill hit">WOULD HAVE HANDLED 87%</span></div></div></div>
+    <div class="step"><div class="num">04 · PROPOSE</div><div><h3>It asks for permission — each time</h3><p>When the score clears the bar, Tacit recommends promotion. Now invoice questions land in your Inbox as a finished reply with a preview of exactly what will be posted. One tap approves. Anything that looks unlike the pattern is flagged as an outlier and escalated even later, on auto.</p>
+      <div class="ui"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill pr">PROPOSE</span><b>Answer “invoice” threads</b><span class="pill au">TRUST 62%</span><span class="pill hit">CONFIDENCE 91%</span><span style="margin-left:auto" class="pill hit">APPROVE</span><span class="pill ca">DENY</span></div><div style="margin-top:10px;border:1px solid var(--fline);border-radius:8px;padding:10px">Slack · reply in #billing · reversible<br><span style="color:var(--fmuted)">Sent Tyrell their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.</span></div></div></div></div>
+    <div class="step"><div class="num">05 · AUTO</div><div><h3>It takes over — with an undo button</h3><p>After enough approvals and no rejections, it asks to go fully automatic for this one job. It runs under a budget, every action is logged with its inverse, and three undos demote it back to asking. When Priya misses a draft, Tacit asks her one question and the answer becomes a rule.</p>
+      <div class="ui"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill au">AUTO</span><b>run · slack_post · #billing</b><span class="pill hit">COMMITTED</span><span style="margin-left:auto;font:12px var(--mono);color:var(--fmuted)">undo: slack_delete · budget 3/10 writes this hour</span></div></div></div></div>
   </div>
-</section>
+</div></section>
 
-<section class="faq" id="faq" style="padding-top:20px">
-  <div class="eyebrow">FAQ</div>
-  <h2 style="margin:12px 0 22px">Questions worth asking</h2>
-  <details open><summary>Isn't “similarity to what the human wrote” a crude score?</summary><p>It's an explainable one — and it's calibrated against the only thing that matters: would the team have accepted this? Every score is visible next to the draft and the real reply, and a human can override any grade with a tap. With a Claude brain the drafts are genuinely good; the score tells you <i>where</i> they're good.</p></details>
-  <details><summary>What does it do with jobs it can't learn?</summary><p>It tells you. A weekly on-call summary full of live numbers scores badly in shadow, so Tacit recommends retiring the playbook — or connecting the data source it would need. Honest failure is a feature.</p></details>
-  <details><summary>Does it need a model?</summary><p>No. The local brain drafts from your team's own past replies and runs a deterministic planner, so the entire harness — mining, shadow scoring, trust, approvals, undo, audit — works with no key at all. Add Claude when you want drafts that adapt.</p></details>
-  <details><summary>Where does the data live?</summary><p>On your machine, in one SQLite file (or your Postgres). Secrets are environment variables, never rows. <span class="mono">GET /api/v1/export</span> returns everything as JSON.</p></details>
-  <details><summary>How is this different from process mining or RPA?</summary><p>Process mining tells you a pattern exists. RPA replays clicks. Tacit does the knowledge-work version — replies, triage, reviews, summaries — and proves each job in shadow against the human before it's allowed to act.</p></details>
-</section>
+<section class="alt"><div class="wrap">
+  <div class="center"><div class="eyebrow">Why it's different</div><h2 style="margin-top:14px">Other AI teammates ask for trust on day one.<br>Tacit earns it, in public.</h2></div>
+  <div class="g3" style="margin-top:44px">
+    <div class="card"><span class="ic">01</span><h3>Self-supervised trust</h3><p>No labelling, no eval sets. Every draft is graded against the human's real action. Trust is a Wilson lower bound, so ten lucky hits don't count as proof.</p></div>
+    <div class="card"><span class="ic">02</span><h3>Autonomy per job, not per bot</h3><p>Shadow → propose → auto, each job on its own ladder, with demotion when undos or rejections pile up. You always know exactly what it may do unattended.</p></div>
+    <div class="card"><span class="ic">03</span><h3>Outliers get escalated</h3><p>A trigger that doesn't resemble anything the job was learned from is routed to a human — even on auto. Confidence is shown on every draft.</p></div>
+    <div class="card"><span class="ic">04</span><h3>Reversible by construction</h3><p>Comments know how to delete themselves; file writes keep the previous content. Undo a run across GitHub, Slack and files in one click, and the undo is audited too.</p></div>
+    <div class="card"><span class="ic">05</span><h3>It learns from corrections</h3><p>When a draft misses, Tacit asks the owner one question. The answer becomes a rule that conditions every future draft of that job.</p></div>
+    <div class="card"><span class="ic">06</span><h3>Cover when someone's out</h3><p>See which jobs live only in one person's head. When they're on leave, promote their proven jobs to propose for a week — with approvals routed to a backup.</p></div>
+  </div>
+</div></section>
 
-<footer>
-  <div>Tacit · MIT · <a href="https://github.com/suncal/tacit">github.com/suncal/tacit</a></div>
-  <div>Comparison reflects hosted AI-teammate products' public pages on Sept 11, 2026. Not affiliated with any of them.</div>
-</footer>
-</div>
+<section><div class="wrap">
+  <div class="g2">
+    <div><div class="eyebrow">Replay</div><h2 style="margin-top:14px">A regression suite you never had to write.</h2><p class="lede" style="margin-top:16px">Every run is a recording: the input, the decisions, the tool results. Replay any of them against a new model or prompt with recorded results substituted in — nothing touches the outside world — and diff the decisions. Upgrading the model becomes a measurement, not a leap of faith.</p></div>
+    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">runs / run_01m28…</span></div><div class="main">
+      <div style="display:flex;gap:8px;align-items:center"><b>Replay result</b><span class="pill hit">IDENTICAL</span><span class="muted" style="font-size:12px;color:var(--fmuted)">claude-opus-5 vs recorded · 0 side effects</span></div>
+      <div class="cols" style="margin-top:12px"><div class="panel"><div class="s">ORIGINAL</div><div class="mono" style="font-size:12px">memory_search({"query":"invoices"})<br>slack_post({"channel":"#billing", …})</div></div><div class="panel"><div class="s">REPLAYED</div><div class="mono" style="font-size:12px">memory_search({"query":"invoices"})<br>slack_post({"channel":"#billing", …})</div></div></div>
+    </div></div>
+  </div>
+</div></section>
 
-<script>
-(function(){
-const $=id=>document.getElementById(id);
-const S=[
- {trig:"hey, where's the invoice for Globex? finance is chasing", draft:"Sent Globex their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", actual:"Sent Globex their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", score:1.0},
- {trig:"can someone send the Initech invoice for last month?", draft:"Sent Initech their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", actual:"Done — Initech invoice sent, net 30. PDF is in Finance/Invoices.", score:0.52},
- {trig:"Stark is asking for their invoice again", draft:"Sent Stark their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", actual:"Stark invoice went out this morning, net 30 terms. Copy in Finance/Invoices if you need it.", score:0.61},
- {trig:"need the Wonka invoice pdf for the auditors", draft:"Sent Wonka their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", actual:"Sent Wonka their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", score:1.0},
- {trig:"invoice for Umbrella — did it go out?", draft:"Sent Umbrella their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.", actual:"Sent to Umbrella — net 30, copy filed under Finance/Invoices.", score:0.58},
-];
-let hits=9,n=12,i=0;
-const wilson=(h,n)=>{if(!n)return 0;const z=1.96,p=h/n,d=1+z*z/n,c=p+z*z/(2*n),m=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n));return Math.max(0,(c-m)/d)};
-const type=(el,text,ms)=>new Promise(r=>{el.textContent='';let k=0;const c=document.createElement('span');c.className='cursor';el.appendChild(c);const t=setInterval(()=>{el.insertBefore(document.createTextNode(text[k++]),c);if(k>=text.length){clearInterval(t);c.remove();r()}},ms)});
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function step(){
-  const s=S[i%S.length];i++;
-  $('d-actual').className='box wait';$('d-actual').textContent='waiting…';$('d-bar').style.width='0';$('d-score').textContent='—';$('d-hit').hidden=true;
-  await type($('d-trig'),s.trig,18);await sleep(500);
-  await type($('d-draft'),s.draft,10);await sleep(1400);
-  $('d-actual').className='box';$('d-actual').textContent=s.actual;await sleep(400);
-  $('d-bar').style.width=(s.score*100)+'%';$('d-score').textContent=(s.score*100).toFixed(0);
-  const hit=s.score>=0.5;$('d-hit').hidden=false;$('d-hit').className='pill '+(hit?'hit':'miss');$('d-hit').textContent=hit?'HIT':'MISS';
-  n++;if(hit)hits++;const t=wilson(hits,n);$('d-n').textContent=n;$('d-trust').textContent=(t*100).toFixed(0)+'%';
-  if(t>=0.6&&n>=10){$('d-stage').className='pill propose';$('d-stage').textContent='PROPOSE';$('d-next').textContent='· graduated';}
-  else $('d-next').textContent='· propose at 60%';
-  await sleep(3800);step();
-}
-$('d-n').textContent=n;$('d-trust').textContent=(wilson(hits,n)*100).toFixed(0)+'%';$('d-next').textContent='· propose at 60%';
-setTimeout(step,600);
-})();
-</script>
+<section class="alt" id="security"><div class="wrap">
+  <div class="center"><div class="eyebrow">Security & control</div><h2 style="margin-top:14px">Built for the people who say no.</h2><p class="lede">Everything a security review asks about is a first-class object with an API, not a slide.</p></div>
+  <div class="sec" style="margin-top:40px">
+    <div><h4>Self-hosted</h4><p>One process, one SQLite or Postgres database, on your machine or in your VPC. Your context never leaves unless you connect a cloud model.</p></div>
+    <div><h4>Permissions as rules</h4><p>Every tool carries a risk class. Rules map (principal, tool) → allow, ask or deny. Denied tools aren't even offered to the model.</p></div>
+    <div><h4>Hard budgets</h4><p>Writes per hour and dollars per day per principal pattern. Enforced before execution; no model can talk its way past them.</p></div>
+    <div><h4>Append-only audit</h4><p>Who asked, what ran, what changed, whether it worked — including undos and stage changes. Export as JSONL to your SIEM.</p></div>
+    <div><h4>Secrets stay secrets</h4><p>Tokens live in the environment, never in the database. API keys are hashed; sessions are signed cookies; passwords use scrypt.</p></div>
+    <div><h4>Leave in one call</h4><p><span class="mono">GET /api/v1/export</span> returns every table as JSON. No export request, no retention window, no lock-in.</p></div>
+  </div>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <div class="g2">
+    <div><div class="eyebrow">Install</div><h2 style="margin-top:14px">Ten minutes to your first backtest.</h2><p class="lede" style="margin-top:16px">Clone, run, connect a tool, mine. Tacit shows you the jobs it found and what it would have done with last quarter's triggers. Nothing acts until you say so.</p>
+      <div style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn accent" href="https://github.com/suncal/tacit">Get the code</a><a class="btn ghost" href="#pricing">Or let us host it</a></div></div>
+    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">terminal</span></div><pre class="mono" style="margin:0;padding:18px 20px;font-size:13px;line-height:1.7;color:#C9CDD6"><span style="color:#5FD1DA">$</span> git clone https://github.com/suncal/tacit && cd tacit
+<span style="color:#5FD1DA">$</span> make setup && make demo
+<span style="color:#8C919C">Tacit is up → http://127.0.0.1:4800   docs → /api/docs</span>
+<span style="color:#5FD1DA">$</span> export TACIT_SLACK_CHANNELS=C0BILLING TACIT_ANTHROPIC_API_KEY=sk-…
+<span style="color:#5FD1DA">$</span> curl -X POST localhost:4800/api/v1/playbooks/mine
+<span style="color:#8C919C">{"events": 452, "found": 5, "created": 5}</span>
+<span style="color:#5FD1DA">$</span> curl -X POST localhost:4800/api/v1/playbooks/backtest
+<span style="color:#8C919C">{"total": {"n": 66, "hits": 52, "hit_rate": 0.788}}</span></pre></div>
+  </div>
+</div></section>
+
+<section class="alt" id="pricing"><div class="wrap">
+  <div class="center"><div class="eyebrow">Pricing</div><h2 style="margin-top:14px">Free to run. Paid to not run it yourself.</h2></div>
+  <div class="price" style="margin-top:40px">
+    <div class="plan"><div class="eyebrow">Self-hosted</div><div class="amt">$0<small>MIT license</small></div><p class="ink2">Everything. Unlimited members, jobs and events.</p><ul><li>Mining, shadow, backtest, trust ladder</li><li>Undo, budgets, audit, replay, teach, cover</li><li>GitHub · Slack · Linear · MCP · Event API</li><li>Any model — or none</li></ul><a class="btn ghost" href="https://github.com/suncal/tacit">Get the code</a></div>
+    <div class="plan lead"><div class="eyebrow">Cloud</div><div class="amt">$49<small>per org / month</small></div><p class="ink2">We run your instance. It's still your instance: export the database and leave any time.</p><ul><li>Managed updates and backups</li><li>Public webhooks, SSO, audit forwarding</li><li>Cancel = we hand you the file</li></ul><a class="btn accent" href="#install">Start free trial</a></div>
+    <div class="plan"><div class="eyebrow">Enterprise</div><div class="amt">Custom<small></small></div><p class="ink2">In your VPC or air-gapped. Custom connectors. A named engineer.</p><ul><li>Custom event sources and MCP tools</li><li>Trust-ladder policy tuned to your risk appetite</li><li>Priority fixes and roadmap input</li></ul><a class="btn ghost" href="#install">Talk to us</a></div>
+  </div>
+</div></section>
+
+<section class="faq"><div class="wrap">
+  <div class="eyebrow">FAQ</div><h2 style="margin:14px 0 26px">Questions worth asking</h2>
+  <details open><summary>Isn't “similarity to what the human wrote” a crude score?</summary><p>It's an explainable one, and it's calibrated against the only thing that matters: would the team have accepted this? Every score sits next to the draft and the real reply. A human can override any grade with one tap, and misses turn into questions the owner answers in a sentence.</p></details>
+  <details><summary>What about jobs that need judgement?</summary><p>They score badly in shadow, which is the point: Tacit recommends leaving them alone, or retiring the playbook. And on the jobs it does take, triggers that don't resemble the pattern are escalated to a person — even on auto.</p></details>
+  <details><summary>Does it need a model?</summary><p>No. The local brain drafts from your team's own past replies and runs a deterministic planner, so the entire harness works without a key. Add Claude when you want drafts that adapt to context.</p></details>
+  <details><summary>How is this different from process mining or RPA?</summary><p>Process mining tells you a pattern exists. RPA replays clicks. Tacit does the knowledge-work version — replies, triage, reviews, summaries — and proves each job in shadow against the human before it is allowed to act.</p></details>
+  <details><summary>Where does the data live?</summary><p>On your infrastructure, in one database. Secrets are environment variables, never rows. One API call exports everything.</p></details>
+</div></section>
+
+<section class="tight"><div class="wrap"><div class="band"><h2>Stop asking your team to trust an AI.<br>Let the AI earn it.</h2><p>Run the demo org in ten minutes. Point it at one channel. Read the backtest. Decide.</p><a class="btn" style="background:#fff;color:#0B0C0E" href="#install">Get started</a></div></div></section>
+
+<footer><div class="wrap">
+  <div class="fcols">
+    <div><a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg>Tacit</a><p class="muted" style="margin-top:12px;max-width:26em">The AI teammate that learns your job by watching, proves it can do it, and earns autonomy one job at a time.</p></div>
+    <div><h5>Product</h5><ul><li><a href="#story">How it works</a></li><li><a href="#security">Security</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#install">Install</a></li></ul></div>
+    <div><h5>Developers</h5><ul><li><a href="https://github.com/suncal/tacit">GitHub</a></li><li><a href="https://github.com/suncal/tacit">API reference</a></li><li><a href="https://github.com/suncal/tacit">Event API</a></li><li><a href="https://github.com/suncal/tacit">Changelog</a></li></ul></div>
+    <div><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div>
+  </div>
+  <div class="legal"><span>© 2026 Tacit. MIT licensed.</span><span>Not affiliated with GitHub, Slack, Linear or Anthropic. Metrics shown are from the sample organisation included with every install.</span></div>
+</div></footer>
