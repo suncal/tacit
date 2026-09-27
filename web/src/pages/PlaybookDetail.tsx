@@ -51,7 +51,7 @@ export function PlaybookDetailPage() {
         {p.stage !== 'retired' && <div className="mt-2 text-right"><button className="muted text-[12px] hover:text-bad" onClick={() => stage.mutate('retired')}>Retire this playbook</button></div>}
       </div>
 
-      <div className="grid grid-cols-5 gap-3 mb-4">
+      <div className="grid grid-cols-5 gap-3.5 mb-5">
         <Stat label="Trust" value={pct(t.trust)} hint="Wilson lower bound of hit rate" tone="accent" />
         <Stat label="Shadow hits" value={`${t.hits}/${t.scored}`} hint={`mean score ${(t.mean_score * 100).toFixed(0)}`} />
         <Stat label="Approvals" value={t.approvals + t.rejections ? `${t.approvals}/${t.approvals + t.rejections}` : '—'} hint={t.approval_rate !== null ? `${pct(t.approval_rate)} approved` : 'none proposed yet'} />

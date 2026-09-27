@@ -24,12 +24,12 @@ export function DayOnePage() {
             <div className="grid grid-cols-[1.2fr_1fr_1fr_1fr] gap-6 items-center">
               <div>
                 <div className="muted text-[12px] uppercase tracking-wide font-medium">Recoverable, per year</div>
-                <div className="text-[46px] font-semibold leading-none tnum text-accent mt-1">{t.hours_recoverable}h</div>
+                <div className="text-[46px] font-semibold leading-none tnum tracking-[-0.04em] text-accent mt-1">{t.hours_recoverable}h</div>
                 <div className="muted text-[13px] mt-1.5">≈ ${t.value_usd.toLocaleString()} of your team's time, from {t.jobs} repeating jobs</div>
               </div>
-              <div><div className="muted text-[12px] uppercase tracking-wide font-medium">Would have handled</div><div className="text-[30px] font-semibold tnum mt-1">{pct(t.coverage)}</div><div className="muted text-[12.5px]">{t.backtest.hits} of {t.backtest.n} past cases, drafted without seeing the answer</div></div>
-              <div><div className="muted text-[12px] uppercase tracking-wide font-medium">Total repetitive load</div><div className="text-[30px] font-semibold tnum mt-1">{t.hours_per_year}h</div><div className="muted text-[12.5px]">per year across these jobs</div></div>
-              <div><div className="muted text-[12px] uppercase tracking-wide font-medium">What it would cost</div><div className="text-[30px] font-semibold tnum mt-1">${t.verified_cost_usd.toLocaleString()}</div><div className="muted text-[12.5px]">per year at verified-work pricing</div></div>
+              <div><div className="muted text-[12px] uppercase tracking-wide font-medium">Would have handled</div><div className="text-[30px] font-semibold tnum tracking-[-0.035em] mt-1">{pct(t.coverage)}</div><div className="muted text-[12.5px]">{t.backtest.hits} of {t.backtest.n} past cases, drafted without seeing the answer</div></div>
+              <div><div className="muted text-[12px] uppercase tracking-wide font-medium">Total repetitive load</div><div className="text-[30px] font-semibold tnum tracking-[-0.035em] mt-1">{t.hours_per_year}h</div><div className="muted text-[12.5px]">per year across these jobs</div></div>
+              <div><div className="muted text-[12px] uppercase tracking-wide font-medium">What it would cost</div><div className="text-[30px] font-semibold tnum tracking-[-0.035em] mt-1">${t.verified_cost_usd.toLocaleString()}</div><div className="muted text-[12.5px]">per year at verified-work pricing</div></div>
             </div>
           </div>
 

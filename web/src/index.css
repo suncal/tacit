@@ -1,64 +1,127 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Tacit design system
+   Display: Schibsted Grotesk · UI: Geist · Data: Geist Mono
+   One accent — a deep verified green — and warm neutrals. Semantic colour is
+   reserved for state, never for decoration.
+   --------------------------------------------------------------------------- */
+
 @theme {
-  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --color-accent: #0E7C86;
-  --color-accent-strong: #0A5F67;
-  --color-accent-soft: #E3F3F4;
-  --color-gold: #C7961C;
-  --color-stage-candidate: #6B7280;
-  --color-stage-shadow: #7C5CBF;
-  --color-stage-propose: #C7961C;
-  --color-stage-auto: #0E7C86;
-  --color-stage-retired: #9CA3AF;
-  --color-ok: #1F8A4C;
-  --color-warn: #B7791F;
-  --color-bad: #C0392B;
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Schibsted Grotesk", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-accent: #0B5C50;
+  --color-accent-strong: #094B42;
+  --color-accent-soft: #E3F0EC;
+  --color-gold: #9A6407;
+
+  --color-stage-candidate: #6E6E6B;
+  --color-stage-shadow: #5B4FC4;
+  --color-stage-propose: #9A6407;
+  --color-stage-auto: #0B5C50;
+  --color-stage-retired: #A3A39E;
+
+  --color-ok: #16794C;
+  --color-warn: #9A6407;
+  --color-bad: #A8281F;
+
   --radius-md: 10px;
 }
 
 :root {
-  --bg: #F7F7F5;
+  --bg: #FAFAF9;
   --surface: #FFFFFF;
-  --surface-2: #F1F1EE;
-  --line: #E4E4DF;
-  --line-strong: #CFCFC8;
-  --ink: #16181D;
-  --ink-2: #3F434B;
-  --muted: #6E7380;
-  --shadow: 0 1px 2px rgba(20, 22, 26, .05), 0 8px 24px -12px rgba(20, 22, 26, .18);
+  --surface-2: #F4F4F2;
+  --surface-3: #EDEDEA;
+  --line: #E8E8E4;
+  --line-strong: #D6D6D1;
+  --ink: #0A0A0A;
+  --ink-2: #3D3D3B;
+  --muted: #757571;
+  --ring: rgba(11, 92, 80, .28);
+  --shadow-sm: 0 1px 2px rgba(10, 10, 10, .04);
+  --shadow: 0 1px 2px rgba(10, 10, 10, .05), 0 10px 28px -18px rgba(10, 10, 10, .22);
+  --shadow-lg: 0 1px 2px rgba(10, 10, 10, .05), 0 32px 64px -32px rgba(10, 10, 10, .32);
   color-scheme: light;
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #101214; --surface: #16191D; --surface-2: #1D2126; --line: #262B31; --line-strong: #363C44;
-    --ink: #EDEEF0; --ink-2: #C3C7CE; --muted: #8B919C; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
-    --color-accent-soft: #123338; color-scheme: dark;
+    --bg: #0A0B0B; --surface: #121414; --surface-2: #1A1D1D; --surface-3: #212524;
+    --line: #242827; --line-strong: #343837;
+    --ink: #EDEDEA; --ink-2: #BFBFBA; --muted: #86867F;
+    --ring: rgba(63, 191, 164, .3);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .5);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 28px -18px rgba(0, 0, 0, .8);
+    --shadow-lg: 0 1px 2px rgba(0, 0, 0, .5), 0 32px 64px -32px rgba(0, 0, 0, .9);
+    --color-accent: #3FBFA4; --color-accent-strong: #52CDB3; --color-accent-soft: #0E2E28;
+    --color-ok: #4FBE86; --color-warn: #D9A441; --color-bad: #E0776C;
+    --color-stage-shadow: #8B7DEB; --color-stage-propose: #D9A441; --color-stage-auto: #3FBFA4;
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #101214; --surface: #16191D; --surface-2: #1D2126; --line: #262B31; --line-strong: #363C44;
-  --ink: #EDEEF0; --ink-2: #C3C7CE; --muted: #8B919C; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
-  --color-accent-soft: #123338; color-scheme: dark;
+  --bg: #0A0B0B; --surface: #121414; --surface-2: #1A1D1D; --surface-3: #212524;
+  --line: #242827; --line-strong: #343837;
+  --ink: #EDEDEA; --ink-2: #BFBFBA; --muted: #86867F;
+  --ring: rgba(63, 191, 164, .3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .5);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 28px -18px rgba(0, 0, 0, .8);
+  --shadow-lg: 0 1px 2px rgba(0, 0, 0, .5), 0 32px 64px -32px rgba(0, 0, 0, .9);
+  --color-accent: #3FBFA4; --color-accent-strong: #52CDB3; --color-accent-soft: #0E2E28;
+  --color-ok: #4FBE86; --color-warn: #D9A441; --color-bad: #E0776C;
+  --color-stage-shadow: #8B7DEB; --color-stage-propose: #D9A441; --color-stage-auto: #3FBFA4;
+  color-scheme: dark;
 }
 
 html, body, #root { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-sans); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.5;
+  font-feature-settings: "cv11", "ss01"; letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
 * { box-sizing: border-box; }
 a { color: inherit; }
-button { font: inherit; }
-:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-.tnum { font-variant-numeric: tabular-nums; }
-.surface { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
-.surface-2 { background: var(--surface-2); }
+button, input, select, textarea { font: inherit; letter-spacing: inherit; }
+::selection { background: var(--color-accent-soft); color: var(--color-accent-strong); }
+
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 4px; }
+
+/* scrollbars that don't shout */
+* { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 99px; border: 3px solid var(--bg); }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ---- type ---------------------------------------------------------------- */
+.display { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.028em; }
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: -0.01em; }
+.eyebrow { font: 500 11px/1 var(--font-mono); letter-spacing: .11em; text-transform: uppercase; color: var(--muted); }
 .ink-2 { color: var(--ink-2); }
 .muted { color: var(--muted); }
 .line { border-color: var(--line); }
-.mono { font-family: var(--font-mono); font-size: 12.5px; }
+
+/* ---- surfaces ------------------------------------------------------------ */
+.surface { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.surface-2 { background: var(--surface-2); }
+.surface-3 { background: var(--surface-3); }
+.raised { box-shadow: var(--shadow-sm); }
 .scroll-x { overflow-x: auto; }
-.diff pre { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; }
-.diff .add { background: rgba(31,138,76,.12); color: var(--color-ok); }
-.diff .del { background: rgba(192,57,43,.10); color: var(--color-bad); }
+
+/* ---- diffs --------------------------------------------------------------- */
+.diff pre { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; }
+.diff .add { background: color-mix(in srgb, var(--color-ok) 12%, transparent); color: var(--color-ok); }
+.diff .del { background: color-mix(in srgb, var(--color-bad) 10%, transparent); color: var(--color-bad); }
 .diff .hunk { color: var(--muted); }
+
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+@media print {
+  aside, .no-print { display: none !important; }
+  body { background: #fff; }
+  .surface { box-shadow: none; break-inside: avoid; }
+}

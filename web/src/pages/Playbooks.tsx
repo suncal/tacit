@@ -32,7 +32,7 @@ export function PlaybooksPage() {
                 <p className="muted text-[12px] px-1 mb-3 leading-snug">{STAGE_HELP[stage]}</p>
                 <div className="flex flex-col gap-3">
                   {items.map(p => <PlaybookCard key={p.id} p={p} />)}
-                  {items.length === 0 && <div className="rounded-xl border border-dashed line h-16" />}
+                  {items.length === 0 && <div className="rounded-xl border border-dashed line h-20" />}
                 </div>
               </div>
             )
@@ -64,9 +64,9 @@ export function PlaybooksPage() {
 function PlaybookCard({ p }: { p: Playbook }) {
   const rec = p.recommendation
   return (
-    <Link to={`/playbooks/${p.id}`} className="surface block p-3.5 hover:border-[var(--line-strong)] transition-colors">
+    <Link to={`/playbooks/${p.id}`} className="surface raised block p-4 hover:border-[var(--line-strong)] hover:shadow-[var(--shadow)] transition-[box-shadow,border-color]">
       <div className="flex items-center gap-2 mb-1.5"><Avatar name={p.actor} size={20} /><span className="text-[12.5px] muted truncate">{p.actor} · {SYSTEM_LABEL[p.system] || p.system}</span></div>
-      <div className="font-medium leading-snug mb-2">{p.name}</div>
+      <div className="font-semibold tracking-[-0.015em] leading-snug mb-2.5">{p.name}</div>
       <div className="flex flex-wrap gap-1 mb-2.5">
         <Badge>{p.evidence_count}× seen</Badge>
         {p.trigger.mode === 'schedule' ? <Badge tone="neutral">{p.trigger.cadence?.human}</Badge> : (p.trigger.keywords || []).slice(0, 2).map(k => <Badge key={k} tone="accent">“{k}”</Badge>)}

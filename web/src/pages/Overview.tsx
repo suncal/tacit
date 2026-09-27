@@ -25,7 +25,7 @@ export function OverviewPage() {
       <PageHeader title={`Good ${greeting()}. @${o.handle} is watching ${watching} job${watching === 1 ? '' : 's'}.`}
         subtitle={`${o.counts.events.toLocaleString()} observed actions across your tools · ${o.counts.events_24h} in the last 24h · ${o.shadow.scored} shadow drafts graded against what your team actually did.`} />
 
-      <div className="grid grid-cols-4 gap-4 mb-5">
+      <div className="grid grid-cols-4 gap-3.5 mb-5">
         <Stat label="Shadow accuracy" value={pct(o.shadow.hit_rate)} hint={`${o.shadow.hits} of ${o.shadow.scored} drafts matched the human`} tone="accent" />
         <Stat label="Running on auto" value={stages.auto} hint={`${stages.propose} proposing · ${stages.shadow} shadowing · ${stages.candidate} candidates`} />
         <Stat label="Awaiting a tap" value={o.counts.approvals + o.lessons_open} hint={o.counts.approvals + o.lessons_open ? <Link to="/inbox" className="text-accent">{o.counts.approvals} to approve · {o.lessons_open} to teach →</Link> : 'Nothing waiting'} tone={o.counts.approvals + o.lessons_open ? 'warn' : undefined} />
