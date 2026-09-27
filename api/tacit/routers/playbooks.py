@@ -100,6 +100,58 @@ def playbook(playbook_id: str, db: Session = Depends(get_db), app=Depends(get_ap
     return {**public(pb, app.shadow), "drafts": [_draft(db, d) for d in drafts]}
 
 
+class PlaybookEdit(BaseModel):
+    name: Optional[str] = Field(None, max_length=160)
+    summary: Optional[str] = Field(None, max_length=400)
+    keywords: Optional[list[str]] = None
+    target: Optional[str] = Field(None, max_length=120)
+    match: Optional[str] = Field(None, pattern="^(any|all)$")
+    template: Optional[str] = Field(None, max_length=8000)
+    tool: Optional[str] = Field(None, max_length=80)
+
+
+@router.patch("/playbooks/{playbook_id}")
+def edit_playbook(playbook_id: str, body: PlaybookEdit, db: Session = Depends(get_db), app=Depends(get_app), p: Principal = Depends(current_principal)):
+    """Correct what was mined. Changing how the job is recognised or answered resets its evidence, because
+    the trust score belonged to the old definition and would be a lie about the new one."""
+    pb = db.get(M.Playbook, playbook_id)
+    if not pb:
+        raise HTTPException(404, "no such playbook")
+    changed, behavioural = {}, False
+    if body.name is not None and body.name.strip() and body.name != pb.name:
+        changed["name"] = body.name.strip(); pb.name = changed["name"]
+    if body.summary is not None and body.summary != pb.summary:
+        changed["summary"] = body.summary.strip(); pb.summary = changed["summary"]
+    trig = dict(pb.trigger or {})
+    if body.keywords is not None and sorted(body.keywords) != sorted(trig.get("keywords") or []):
+        trig["keywords"] = [k.strip().lower() for k in body.keywords if k.strip()]
+        changed["keywords"] = trig["keywords"]; behavioural = True
+    if body.target is not None and body.target != trig.get("target"):
+        trig["target"] = body.target.strip(); changed["target"] = trig["target"]; behavioural = True
+    if body.match is not None and body.match != trig.get("match"):
+        trig["match"] = body.match; changed["match"] = body.match; behavioural = True
+    pb.trigger = trig
+    resp = dict(pb.response or {})
+    if body.template is not None and body.template != resp.get("template"):
+        resp["template"] = body.template; changed["template"] = True; behavioural = True
+    if body.tool is not None and body.tool != resp.get("tool"):
+        if not app.registry.get(body.tool):
+            raise HTTPException(422, f"no tool named {body.tool}")
+        resp["tool"] = body.tool; changed["tool"] = body.tool; behavioural = True
+    pb.response = resp
+    reset = False
+    if behavioural and pb.drafts_scored:
+        pb.drafts_scored = pb.drafts_hit = 0
+        pb.score_sum = 0.0
+        pb.approvals = pb.rejections = 0
+        reset = True
+        if pb.stage in ("propose", "auto"):
+            app.shadow.set_stage(db, pb, "shadow", by=p.label, why="definition edited — trust must be re-earned")
+    audit(db, p.label, "playbook.edited", pb.name, {"changed": list(changed), "trust_reset": reset})
+    db.commit()
+    return {**public(pb, app.shadow), "trust_reset": reset}
+
+
 class StageIn(BaseModel):
     stage: str = Field(pattern="^(candidate|shadow|propose|auto|retired)$")
     why: str = ""

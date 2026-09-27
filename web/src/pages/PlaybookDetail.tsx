@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowRight, Check, FlaskConical, ThumbsDown, ThumbsUp, Trash2 } from 'lucide-react'
+import { ArrowRight, Check, FlaskConical, Pencil, ThumbsDown, ThumbsUp, Trash2 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { api, type Backtest, type Draft, type Playbook, type Stage } from '../lib/api'
-import { Avatar, Badge, Button, Card, Empty, PageHeader, ScoreDot, Spinner, StagePill, Stat, Table, Td, useToast } from '../components/ui'
+import { useState } from 'react'
+import { Avatar, Badge, Button, Card, Empty, Input, Label, Modal, PageHeader, ScoreDot, Spinner, StagePill, Stat, Table, Td, Textarea, useToast } from '../components/ui'
 import { STAGE_HELP, STAGE_LABEL, SYSTEM_LABEL, ago, dur, pct, when } from '../lib/format'
 
 const LADDER: Stage[] = ['candidate', 'shadow', 'propose', 'auto']
@@ -17,6 +18,17 @@ export function PlaybookDetailPage() {
   const backtest = useMutation({ mutationFn: () => api.post<Backtest>('/playbooks/backtest', { playbook_ids: [id] }), onSuccess: r => { toast(`Backtest: ${r.total.hits}/${r.total.n} would have matched`, 'ok'); qc.invalidateQueries() } })
   const grade = useMutation({ mutationFn: ({ d, g }: { d: string; g: number }) => api.post(`/drafts/${d}/grade`, { grade: g }), onSuccess: () => qc.invalidateQueries() })
   const del = useMutation({ mutationFn: () => api.del(`/playbooks/${id}`), onSuccess: () => { toast('Deleted'); location.assign('/playbooks') } })
+  const [editing, setEditing] = useState(false)
+  const [form, setForm] = useState({ name: '', summary: '', keywords: '', target: '', template: '' })
+  const save = useMutation({
+    mutationFn: () => api.patch<Playbook & { trust_reset: boolean }>(`/playbooks/${id}`, {
+      name: form.name, summary: form.summary, template: form.template,
+      ...(p.trigger.mode === 'reply' ? { keywords: form.keywords.split(',').map(k => k.trim()).filter(Boolean), target: form.target } : {}),
+    }),
+    onSuccess: r => { toast(r.trust_reset ? 'Saved — it has to earn its trust again' : 'Saved', 'ok'); setEditing(false); qc.invalidateQueries() },
+    onError: (e: Error) => toast(e.message, 'bad'),
+  })
+  const openEdit = () => { setForm({ name: p.name, summary: p.summary || '', keywords: (p.trigger.keywords || []).join(', '), target: p.trigger.target || '', template: p.response.template }); setEditing(true) }
   if (!q.data) return <Spinner />
   const p = q.data
   const t = p.trust
@@ -27,7 +39,7 @@ export function PlaybookDetailPage() {
       <div className="text-[12.5px] muted mb-2"><Link to="/playbooks" className="hover:text-accent">Playbooks</Link> / {p.actor}</div>
       <PageHeader title={<span className="flex items-center gap-3">{p.name}<StagePill stage={p.stage} /></span>}
         subtitle={<span className="flex items-center gap-2 flex-wrap">{p.summary && <span className="w-full mb-1 text-[14px] ink-2">{p.summary}</span>}<Avatar name={p.actor} size={18} /> {p.actor}'s job in {SYSTEM_LABEL[p.system] || p.system}{p.trigger.target ? ` · ${p.trigger.target}` : ''} · seen {p.evidence_count}× · usually answered within {dur(p.median_latency_s || 0)}</span>}
-        action={<><Button onClick={() => backtest.mutate()} loading={backtest.isPending}><FlaskConical size={15} />Backtest</Button><Button variant="ghost" onClick={() => confirm('Delete this playbook and its drafts?') && del.mutate()} title="Delete"><Trash2 size={15} /></Button></>} />
+        action={<><Button onClick={openEdit}><Pencil size={15} />Edit</Button><Button onClick={() => backtest.mutate()} loading={backtest.isPending}><FlaskConical size={15} />Backtest</Button><Button variant="ghost" onClick={() => confirm('Delete this playbook and its drafts?') && del.mutate()} title="Delete"><Trash2 size={15} /></Button></>} />
 
       {/* ladder */}
       <div className="surface p-4 mb-4">
@@ -97,6 +109,22 @@ export function PlaybookDetailPage() {
           </Table>
         )}
       </Card>
+
+      <Modal open={editing} onClose={() => setEditing(false)} title="Correct this job" wide>
+        <p className="ink2 text-[13.5px] mb-4">A mined job is a hypothesis. Fix what Tacit got wrong — but note that changing <b>how the job is recognised or answered</b> resets the evidence, because the trust score belonged to the old definition.</p>
+        <div className="flex flex-col gap-3.5">
+          <div><Label>Name</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+          <div><Label>Summary</Label><Input value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} placeholder="One line: who does it and what triggers it" /></div>
+          {p.trigger.mode === 'reply' && (
+            <div className="grid grid-cols-[2fr_1fr] gap-3">
+              <div><Label>Trigger keywords <span className="muted font-normal">· comma separated · resets trust</span></Label><Input value={form.keywords} onChange={e => setForm({ ...form, keywords: e.target.value })} /></div>
+              <div><Label>Where <span className="muted font-normal">· resets trust</span></Label><Input value={form.target} onChange={e => setForm({ ...form, target: e.target.value })} placeholder="#billing" /></div>
+            </div>
+          )}
+          <div><Label>The usual answer <span className="muted font-normal">· what drafts are modelled on · resets trust</span></Label><Textarea className="min-h-32" value={form.template} onChange={e => setForm({ ...form, template: e.target.value })} /></div>
+          <div className="flex justify-end gap-2"><Button variant="ghost" onClick={() => setEditing(false)}>Cancel</Button><Button variant="primary" loading={save.isPending} onClick={() => save.mutate()}>Save</Button></div>
+        </div>
+      </Modal>
 
       {p.stage_history.length > 0 && <div className="muted text-[12px] mt-4">History: {p.stage_history.map((h, i) => <span key={i}>{i > 0 && ' · '}{h.from} → {h.to} by {h.by} ({when(h.ts)}){h.why ? ` — ${h.why}` : ''}</span>)}</div>}
     </>

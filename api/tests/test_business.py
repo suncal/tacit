@@ -178,3 +178,78 @@ def test_day_one_report_costs_the_work_without_touching_anything(tacit):
     assert r["bus_factor"] and r["jobs"][0]["why"]
     with session() as db:
         assert db.query(M.Action).count() == before                        # read-only: nothing acted
+
+
+# ------------------------------------------------------------------ correcting a mined job
+def test_editing_a_job_resets_the_trust_it_earned_under_the_old_definition(client):
+    client.post("/api/v1/auth/setup", json={"email": "a@b.co", "name": "A", "password": "correct-horse"})
+    from tacit.seed import _events
+    client.post("/api/v1/events/batch", json=_events())
+    client.post("/api/v1/playbooks/mine")
+    pb = next(p for p in client.get("/api/v1/playbooks").json()["playbooks"] if "invoice" in p["name"])
+    client.post(f"/api/v1/playbooks/{pb['id']}/stage", json={"stage": "shadow"})
+    client.post("/api/v1/playbooks/backtest", json={"playbook_ids": [pb["id"]]})
+    before = client.get(f"/api/v1/playbooks/{pb['id']}").json()
+    assert before["trust"]["scored"] > 0
+
+    # cosmetic edits keep the evidence
+    r = client.patch(f"/api/v1/playbooks/{pb['id']}", json={"name": "Send invoices when finance asks", "summary": "priya replies with the invoice, net 30."})
+    assert r.status_code == 200 and r.json()["trust_reset"] is False
+    assert client.get(f"/api/v1/playbooks/{pb['id']}").json()["trust"]["scored"] == before["trust"]["scored"]
+
+    # changing what the job *is* invalidates the score earned by the old definition
+    r = client.patch(f"/api/v1/playbooks/{pb['id']}", json={"keywords": ["invoice", "billing"], "template": "Sent — net 30, filed in Finance/Invoices."}).json()
+    assert r["trust_reset"] is True and r["trust"]["scored"] == 0 and r["trust"]["trust"] == 0.0
+    assert r["trigger"]["keywords"] == ["invoice", "billing"]
+    assert client.patch(f"/api/v1/playbooks/{pb['id']}", json={"tool": "not_a_tool"}).status_code == 422
+
+
+def test_an_edited_job_is_demoted_out_of_acting(client):
+    client.post("/api/v1/auth/setup", json={"email": "a@b.co", "name": "A", "password": "correct-horse"})
+    from tacit.seed import _events
+    client.post("/api/v1/events/batch", json=_events())
+    client.post("/api/v1/playbooks/mine")
+    pb = next(p for p in client.get("/api/v1/playbooks").json()["playbooks"] if "2fa" in p["name"])
+    client.post(f"/api/v1/playbooks/{pb['id']}/stage", json={"stage": "shadow"})
+    client.post("/api/v1/playbooks/backtest", json={"playbook_ids": [pb["id"]]})
+    client.post(f"/api/v1/playbooks/{pb['id']}/stage", json={"stage": "propose"})
+    out = client.patch(f"/api/v1/playbooks/{pb['id']}", json={"template": "Totally different answer."}).json()
+    assert out["stage"] == "shadow" and out["trust_reset"] is True
+
+
+# ------------------------------------------------------------------ console services
+def test_live_stream_search_and_onboarding(client):
+    client.post("/api/v1/auth/setup", json={"email": "a@b.co", "name": "A", "password": "correct-horse"})
+    ob = client.get("/api/v1/onboarding").json()
+    done = {s["id"]: s["done"] for s in ob["steps"]}
+    assert ob["total"] == 6 and not ob["complete"]
+    assert [s["id"] for s in ob["steps"]][:2] == ["connect", "mine"]
+    # "connect" depends on the operator's own machine; the rest cannot be done on a fresh install
+    assert not any(done[k] for k in ("mine", "backtest", "shadow", "oversight"))
+
+    from tacit.seed import _events
+    client.post("/api/v1/events/batch", json=_events())
+    client.post("/api/v1/playbooks/mine")
+    ob = client.get("/api/v1/onboarding").json()
+    assert dict((s["id"], s["done"]) for s in ob["steps"])["mine"] is True
+
+    r = client.get("/api/v1/search?q=priya").json()
+    assert any(x["kind"] == "person" and x["title"] == "priya" for x in r["results"])
+    assert any(x["kind"] == "playbook" for x in client.get("/api/v1/search?q=invoice").json()["results"])
+
+    client.post("/api/v1/onboarding/dismiss")
+    assert client.get("/api/v1/onboarding").json()["dismissed"] is True
+    assert "lines" in client.get("/api/v1/digest?days=7").json()
+
+
+def test_audited_facts_reach_open_consoles(tacit):
+    from tacit.core.live import live
+    q = live.subscribe()
+    try:
+        tacit.agent.run("console", "user:admin", "run: echo watched")      # exec → needs approval
+        kinds = []
+        while not q.empty():
+            kinds.append(q.get_nowait()["kind"])
+        assert "tool.ask" in kinds                                          # the console learns without asking
+    finally:
+        live.unsubscribe(q)
