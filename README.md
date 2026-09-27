@@ -12,6 +12,8 @@ Then let the proven ones work, and pay only for the actions that stood.
 [![Tests](https://img.shields.io/badge/tests-27%20passing-16794C)](api/tests)
 [![Self-hosted](https://img.shields.io/badge/self--hosted-one%20process%2C%20one%20database-0B5C50)](#run-it)
 
+### [▸ Open the live demo](https://tacit-demo-km3d.onrender.com) &nbsp;·&nbsp; `demo@northwind.dev` / `tacit-demo`
+
 </div>
 
 ---
@@ -22,6 +24,12 @@ Every company now pays two or three AI vendors and cannot tell whether any of th
 Tacit has the only ground truth that matters: **what your own people do.** It learns the recurring jobs by
 watching, then uses that standard two ways — to grade the AI you already bought, and to earn the work itself,
 one job at a time.
+
+**Try it without installing anything:** [https://tacit-demo-km3d.onrender.com](https://tacit-demo-km3d.onrender.com) — the real product on a seeded
+company, signed in as a demo admin. Shell, filesystem and network tools are removed and no model
+credential is present, because anyone on the internet can drive it.
+
+To run the full version:
 
 ```bash
 git clone https://github.com/suncal/tacit && cd tacit

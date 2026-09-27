@@ -107,6 +107,8 @@ def onboarding(db: Session = Depends(get_db), app=Depends(get_app), _: Principal
          "detail": "Optional. The harness works without one; a model makes the drafts adapt to context.",
          "done": app.brain.is_llm, "hint": app.brain_info()["model"] if app.brain.is_llm else "set TACIT_ANTHROPIC_API_KEY", "to": "/settings"},
     ]
+    if app.settings.demo_mode:                 # a visitor cannot set an env var on someone else's server
+        steps = [s_ for s_ in steps if s_["id"] != "brain"]
     done = sum(1 for s_ in steps if s_["done"])
     return {"steps": steps, "done": done, "total": len(steps), "complete": done == len(steps),
             "dismissed": bool((db.get(M.Setting, "onboarding.dismissed") or M.Setting(key="", value=False)).value)}

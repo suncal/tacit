@@ -324,17 +324,17 @@ footer a{text-decoration:none;color:var(--ink2);transition:color .2s}footer a:ho
 
 <div class="nav" id="nav"><div class="wrap">
   <a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="currentColor" opacity=".26"/><rect x="10" y="10" width="19.5" height="19.5" rx="5.5" fill="currentColor"/><path d="M15.2 20.1l2.9 2.9 6.2-7.2" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tacit</a>
-  <ul><li><a href="#oversight">Oversight</a></li><li><a href="#judge">The judge</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li></ul>
-  <div class="right"><button class="link" id="openDlg" style="background:none;border:0;cursor:pointer;font-family:var(--sans)">Open your instance</button><a class="btn sm" href="#install"><span class="sheen"></span>Get started</a></div>
+  <ul><li><a href="#oversight">Oversight</a></li><li><a href="#judge">The judge</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li></ul>
+  <div class="right"><button class="link" id="openDlg" style="background:none;border:0;cursor:pointer;font-family:var(--sans)">Open your instance</button><a class="btn sm" href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener"><span class="sheen"></span>Try the demo</a></div>
 </div></div>
 
 <!-- ================= HERO ================= -->
 <header class="hero"><div class="wrap">
-  <a class="pillnote" href="#judge"><b>NEW</b> A model now grades the work, not the wording <i>→</i></a>
+  <a class="pillnote" href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener"><b>LIVE</b> The full product, running on a seeded company — no signup <i>→</i></a>
   <h1><span class="ln"><span>You pay three AI vendors.</span></span><span class="ln"><span>Not one of them can</span></span><span class="ln"><span>prove the work was right.</span></span></h1>
   <p class="lede">Tacit grades every AI in your company — the ones you bought and the ones you run — against the one standard that matters: what your own people actually do. Oversight is free. When Tacit does the work itself, you pay only for the actions a human approved or never took back.</p>
-  <div class="cta"><a class="btn accent" href="#install"><span class="sheen"></span>Install it — read-only</a><a class="btn ghost" href="#judge">See how it scores</a></div>
-  <div class="trust">Self-hosted, so there is no account to create. It runs on your machine and your data never leaves it.</div>
+  <div class="cta"><a class="btn accent" href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener"><span class="sheen"></span>Open the live demo</a><a class="btn ghost" href="#install">Install it yourself</a></div>
+  <div class="trust">No signup — the demo signs you in. Running it yourself is self-hosted, so your data never leaves your infrastructure.</div>
 
   <div class="stage">
     <div class="frame" id="heroFrame" style="--appH:520px">
@@ -673,7 +673,7 @@ Full review after CI passes.</div></div>
     <div class="rv"><div class="eyebrow">Start</div><h2 style="margin-top:14px">There is no sign-up. You run it.</h2>
       <p class="lede" style="margin-top:16px">Tacit is self-hosted — one process and one database on your own machine, which is the whole point when the thing being stored is how your team works. Two commands and the console is on <span class="mono">localhost:4800</span>. The pilot is read-only by construction: it reads history, mines the repeating jobs, backtests itself, and hands you a costed report. Nothing acts unless you later decide it should.</p>
       <div class="copyline"><code id="cmd">git clone https://github.com/suncal/tacit &amp;&amp; cd tacit &amp;&amp; make setup &amp;&amp; make demo</code><button id="copyBtn">Copy</button></div>
-      <div style="margin-top:22px;display:flex;gap:11px;flex-wrap:wrap"><a class="btn accent" href="https://github.com/suncal/tacit"><span class="sheen"></span>Get the code</a><button class="btn ghost" id="openDlg2">Already running? Open it</button></div></div>
+      <div style="margin-top:22px;display:flex;gap:11px;flex-wrap:wrap"><a class="btn accent" href="https://github.com/suncal/tacit"><span class="sheen"></span>Get the code</a><a class="btn ghost" href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Or just open the live demo</a><button class="btn ghost" id="openDlg2">Already running? Open it</button></div></div>
     <div class="frame rv" data-d="2" style="margin:0"><div class="bar"><i></i><i></i><i></i><span class="url">terminal</span></div><pre class="mono" style="margin:0;padding:19px 21px;font-size:12.5px;line-height:1.75;color:#C9CEC9;overflow-x:auto"><span style="color:#6FD8C2">$</span> git clone https://github.com/suncal/tacit && cd tacit
 <span style="color:#6FD8C2">$</span> make setup && make demo
 <span style="color:var(--fmuted)">Tacit is up → http://127.0.0.1:4800   docs → /api/docs</span>
@@ -712,8 +712,8 @@ Full review after CI passes.</div></div>
 
 <section class="tight" style="padding:0 0 104px"><div class="wrap"><div class="band rv">
   <h2>Find out what your AI is actually doing.</h2>
-  <p>Start with the agents you already pay for. It's free, it's read-only, it runs on your own machine, and it takes half an hour.</p>
-  <a class="btn" style="background:#fff;color:#0A0A0A" href="https://github.com/suncal/tacit"><span class="sheen"></span>Install Tacit</a>
+  <p>The live demo is a real instance on a seeded company — supervised vendors, graded drafts, a sealed audit log. No signup, nothing to install.</p>
+  <div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap"><a class="btn" style="background:#fff;color:#0A0A0A" href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener"><span class="sheen"></span>Open the live demo</a><a class="btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)" href="https://github.com/suncal/tacit">Read the source</a></div>
 </div></div></section>
 
 <div class="ov" id="ov">
@@ -724,14 +724,14 @@ Full review after CI passes.</div></div>
     <input id="inst" type="url" spellcheck="false" placeholder="http://localhost:4800" value="http://localhost:4800">
     <div class="err" id="instErr">That doesn't look like a URL. It should start with http:// or https://</div>
     <div class="acts"><button class="btn ghost" id="dlgCancel">Cancel</button><button class="btn accent" id="dlgGo"><span class="sheen"></span>Open console</button></div>
-    <div class="foot">Not running one yet? <a href="#install" id="dlgInstall">Install it in two commands →</a></div>
+    <div class="foot">Not running one yet? <a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Open the hosted demo</a> · <a href="#install" id="dlgInstall">or install it →</a></div>
   </div>
 </div>
 
 <footer><div class="wrap">
   <div class="fcols">
     <div><a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="currentColor" opacity=".26"/><rect x="10" y="10" width="19.5" height="19.5" rx="5.5" fill="currentColor"/><path d="M15.2 20.1l2.9 2.9 6.2-7.2" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tacit</a><p class="muted" style="margin-top:12px;max-width:26em">The verified work layer. Grade every AI in the company against what your own people do — then let the proven ones work.</p></div>
-    <div><h5>Product</h5><ul><li><a href="#judge">The judge</a></li><li><a href="#oversight">Oversight</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
+    <div><h5>Product</h5><ul><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li><li><a href="#judge">The judge</a></li><li><a href="#oversight">Oversight</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li></ul></div>
     <div><h5>Developers</h5><ul><li><a href="https://github.com/suncal/tacit">GitHub</a></li><li><a href="https://github.com/suncal/tacit">API reference</a></li><li><a href="https://github.com/suncal/tacit">Event API</a></li><li><a href="https://github.com/suncal/tacit">Self-hosting</a></li></ul></div>
     <div><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div>
   </div>
