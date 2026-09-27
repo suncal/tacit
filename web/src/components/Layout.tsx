@@ -1,18 +1,23 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Activity, BookOpen, Brain, ClipboardList, Eye, Inbox, LayoutDashboard, ListChecks, LogOut, MessageSquare, Moon, PlayCircle, Settings, Sun, Timer, UserRound, Users } from 'lucide-react'
+import { Activity, BookOpen, Bot, Brain, ClipboardList, Eye, FileCheck2, Inbox, LayoutDashboard, ListChecks, LogOut, MessageSquare, Moon, PlayCircle, Receipt, Settings, Sparkles, Sun, Timer, UserRound, Users } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useEffect, useState } from 'react'
 import { api, type Overview, type User } from '../lib/api'
 
 const NAV = [
   { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
+  { to: '/report', label: 'What we found', icon: Sparkles },
   { to: '/playbooks', label: 'Playbooks', icon: BookOpen },
   { to: '/shadow', label: 'Shadow', icon: Eye },
   { to: '/people', label: 'People', icon: UserRound },
   { to: '/inbox', label: 'Inbox', icon: Inbox, badge: 'approvals' },
   { to: '/runs', label: 'Runs', icon: PlayCircle },
   { to: '/chat', label: 'Chat', icon: MessageSquare },
+  { divider: true },
+  { to: '/oversight', label: 'Oversight', icon: Bot },
+  { to: '/ledger', label: 'Verified work', icon: Receipt },
+  { to: '/compliance', label: 'Evidence', icon: FileCheck2 },
   { divider: true },
   { to: '/memory', label: 'Memory', icon: Brain },
   { to: '/tasks', label: 'Tasks', icon: ListChecks },

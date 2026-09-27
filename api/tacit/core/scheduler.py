@@ -133,5 +133,11 @@ class Scheduler(threading.Thread):
             run_automation(self.app, aid)
         self.app.shadow.expire_stale()
         from .people import expire_covers
+        from .ledger import settle as settle_ledger
+        from .oversight import settle as settle_agents
+        from .compliance import seal
         with session() as db:
             expire_covers(db, self.app)
+            settle_ledger(db, self.app.settings)
+            settle_agents(db)
+            seal(db)

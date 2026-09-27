@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     linear_api_key: str = ""
     mcp_servers: str = ""                      # JSON list [{"name":..,"command":[..]}]
 
+    # verified-work pricing: you are billed only for work a human approved or did not reverse
+    price_per_verified_action_usd: float = 0.30
+    dispute_window_hours: int = 24
+    loaded_hourly_cost_usd: float = 65.0          # for the value/ROI line; set it to your own number
+    comparison_seat_price_usd: float = 30.0       # what per-seat tools would charge the same team
+
     default_read: str = "allow"
     default_write: str = "ask"
     default_exec: str = "ask"

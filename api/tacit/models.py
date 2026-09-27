@@ -100,6 +100,62 @@ class Draft(Base):
     trigger_event: Mapped[Event] = relationship(foreign_keys=[trigger_event_id])
 
 
+class Agent(Base):
+    """A non-human worker whose output Tacit supervises. Either Tacit's own playbooks or — the point —
+    somebody else's agent: Sierra, Fin, Copilot, a homegrown LangChain bot. You pay them; nobody checks them."""
+    __tablename__ = "agents"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    handle: Mapped[str] = mapped_column(String(120), unique=True, index=True)   # the actor string its events arrive under
+    name: Mapped[str] = mapped_column(String(160))
+    vendor: Mapped[str] = mapped_column(String(120), default="")
+    systems: Mapped[list[Any]] = mapped_column(JSON, default=list)              # ["slack", "zendesk"]
+    price_per_action_usd: Mapped[float] = mapped_column(Float, default=0.0)     # what the vendor charges you
+    monthly_fee_usd: Mapped[float] = mapped_column(Float, default=0.0)
+    risk_tier: Mapped[str] = mapped_column(String(20), default="limited")       # EU AI Act self-classification
+    owner: Mapped[str] = mapped_column(String(120), default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[float] = mapped_column(Float, default=now)
+
+
+class AgentAction(Base):
+    """One action a supervised agent took, graded against the standard Tacit learned from your humans.
+    'reworked' is the metric no vendor reports: a human had to step in afterwards."""
+    __tablename__ = "agent_actions"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    agent_id: Mapped[str] = mapped_column(String(40), ForeignKey("agents.id", ondelete="CASCADE"), index=True)
+    event_id: Mapped[str] = mapped_column(String(40), ForeignKey("events.id", ondelete="CASCADE"))
+    playbook_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    trigger_event_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    conformance: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # vs the human standard
+    expected: Mapped[str] = mapped_column(Text, default="")                     # what your team would have said
+    actual: Mapped[str] = mapped_column(Text, default="")
+    reworked: Mapped[bool] = mapped_column(Boolean, default=False)
+    rework_event_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    rework_by: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
+    human_grade: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    verdict: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending | conformant | off-standard | reworked
+    ts: Mapped[float] = mapped_column(Float, default=now, index=True)
+    settled_at: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
+
+class LedgerEntry(Base):
+    """Verified-work billing. An action is billable only once a human approved it, or it survived the
+    dispute window un-undone on a job that had earned its autonomy. Disputed work is free, permanently."""
+    __tablename__ = "ledger"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    action_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True, index=True)
+    run_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    playbook_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True, index=True)
+    kind: Mapped[str] = mapped_column(String(20), default="action")             # action | oversight
+    basis: Mapped[str] = mapped_column(String(40), default="")                  # human_approved | undisputed_auto | supervised_agent
+    status: Mapped[str] = mapped_column(String(20), default="pending", index=True)  # pending | verified | disputed | waived
+    amount_usd: Mapped[float] = mapped_column(Float, default=0.0)
+    minutes_saved: Mapped[float] = mapped_column(Float, default=0.0)
+    detail: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_at: Mapped[float] = mapped_column(Float, default=now, index=True)
+    settled_at: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
+
 class Lesson(Base):
     """Tacit missed; the owner explains the rule. Lessons condition every future draft of the playbook."""
     __tablename__ = "lessons"
@@ -262,6 +318,8 @@ class AuditEvent(Base):
     target: Mapped[str] = mapped_column(String(200), default="")
     detail: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     ok: Mapped[bool] = mapped_column(Boolean, default=True)
+    prev_hash: Mapped[str] = mapped_column(String(64), default="")              # tamper-evident chain (EU AI Act art. 12)
+    hash: Mapped[str] = mapped_column(String(64), default="", index=True)
 
 
 class Setting(Base):

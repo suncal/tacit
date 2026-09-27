@@ -263,8 +263,11 @@ class Agent:
             res = out if isinstance(out, ToolResult) else ToolResult(out if isinstance(out, dict) else {"result": out})
             if tool.risk != "read":
                 pv = res.preview or make_preview(tool, ctx, args)
-                db.add(M.Action(id=new_id("act"), run_id=rid, tool=tool.name, args=args, result=res.data, undo=res.undo, preview=pv))
+                act = M.Action(id=new_id("act"), run_id=rid, tool=tool.name, args=args, result=res.data, undo=res.undo, preview=pv)
+                db.add(act); db.flush()
                 r = db.get(M.Run, rid)
+                from .ledger import record as ledger_record
+                ledger_record(db, act, r)
                 if r.playbook_id:
                     pb = db.get(M.Playbook, r.playbook_id)
                     if pb:

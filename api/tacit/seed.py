@@ -58,6 +58,31 @@ NOISE = ["lunch?", "anyone seen the new figma?", "deploy going out in 10", "brb"
          "what's the wifi password in the new office", "PTO next monday", "great thread, thanks all", "I'll take a look after lunch",
          "pushing a fix now", "is staging down?", "staging is back", "ship it", "🔥", "any objections to bumping the SLA doc?"]
 
+# Two AI vendors this company already pays for — the ones nobody checks.
+SUPERVISED = [
+    {"handle": "fin", "name": "Fin (support bot)", "vendor": "Intercom", "systems": ["slack"],
+     "price_per_action_usd": 0.99, "monthly_fee_usd": 0.0, "risk_tier": "limited", "owner": "priya",
+     "notes": "Answers in #support and #billing. Billed per resolution."},
+    {"handle": "triage-bot", "name": "Triage Copilot", "vendor": "in-house", "systems": ["linear"],
+     "price_per_action_usd": 0.0, "monthly_fee_usd": 400.0, "risk_tier": "limited", "owner": "sam",
+     "notes": "Homegrown LangChain agent that triages new Linear issues."},
+]
+FIN_GOOD = ["Verify their identity via the billing email on file, then Admin → Users → Reset 2FA. It writes an audit entry and they must re-enrol within 24h.",
+            "Identity check against the billing email first, then Admin → Users → Reset 2FA. Ask them to re-enrol within 24 hours."]
+FIN_BAD = ["I've created a ticket for this and someone from the team will follow up within 24 hours. Is there anything else I can help with?",
+           "Thanks for reaching out! I've escalated this to our support specialists. You should hear back soon. 🙂",
+           "I understand you're having trouble signing in. Have you tried resetting your password from the login page?"]
+FIN_INVOICE_GOOD = ["Sent them their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices."]
+FIN_INVOICE_BAD = ["I can't access invoices directly. Please contact billing@ and they'll be able to help you with that request.",
+                   "Happy to help! Could you confirm the account email so I can look into the invoice for you?"]
+TRIAGE_GOOD = ["Triage: reproduced on staging. Severity S3. Assigning to this sprint; please add repro steps + expected vs actual."]
+TRIAGE_BAD = ["Thanks for filing! Labelled `bug` and added to the backlog.",
+              "This looks like a duplicate of an existing issue. Closing for now."]
+REWORK_2FA = ["Ignore that — no ticket needed. Verify via the billing email, then Admin → Users → Reset 2FA. They must re-enrol within 24h.",
+              "Sorry, that's not the process. Identity check on the billing email first, then Admin → Users → Reset 2FA."]
+REWORK_INVOICE = ["I've got it — sent them the invoice, net 30, copy in Finance/Invoices."]
+REWORK_TRIAGE = ["Reopening — this reproduces on staging, severity S3. Pulling it into the sprint."]
+
 MEMORIES = [
     ("Deploys are frozen every Friday after 14:00 — nothing ships Friday afternoon.", ["ops", "policy"]),
     ("Production stack: Python services on Fly.io, Postgres on Neon, frontend on Vercel.", ["eng", "infra"]),
@@ -90,6 +115,7 @@ def _pick(templates: list[str]) -> str:
 
 
 def _events() -> list[dict]:
+    R.seed(7)                     # same org every time: seeds, tests and screenshots must agree
     ev: list[dict] = []
 
     def add(system, kind, actor, text, target, thread, ts, meta=None):
@@ -128,7 +154,34 @@ def _events() -> list[dict]:
         d = R.uniform(0, DAYS - 2); author = R.choice([p for p in PEOPLE if p != "sam"]); ident = f"ENG-{120 + i}"
         add("linear", "issue.opened", author, f"{title}\n\nbug report from a customer", ident, f"linear:{ident}", _at(d, R.uniform(9, 18)), {"issue": ident})
         add("linear", "comment", "sam", _pick(BUG_TRIAGE).format(s=R.choice(["S2", "S3"])), ident, f"linear:{ident}", ev[-1]["ts"] + R.uniform(1200, 14400), {"issue": ident})
-    # 6. noise: 260 unrelated messages + a few one-off replies
+    # 6. the vendors' agents working the same channels — and the humans who had to step in afterwards
+    for i in range(34):
+        d = R.uniform(0, DAYS - 1); c = R.choice(CUSTOMERS); asker = R.choice(PEOPLE)
+        th = f"slack:C_SUPPORT:fin{i}"
+        add("slack", "message", asker, R.choice(TWOFA_ASKS).format(c=c), "#support", th, _at(d, R.uniform(9, 18)), {"channel": "#support"})
+        good = R.random() < 0.62
+        ev.append(dict(system="slack", kind="message", actor="fin", text=R.choice(FIN_GOOD if good else FIN_BAD), target="#support",
+                       thread_key=th, ts=ev[-1]["ts"] + R.uniform(20, 180), meta={"channel": "#support"}, external_id=f"seed:{len(ev)}", actor_type="agent"))
+        if not good and R.random() < 0.8:                       # a human cleans it up
+            add("slack", "message", "priya", R.choice(REWORK_2FA), "#support", th, ev[-1]["ts"] + R.uniform(900, 7200), {"channel": "#support"})
+    for i in range(18):
+        d = R.uniform(0, DAYS - 1); c = R.choice(CUSTOMERS); asker = R.choice(PEOPLE)
+        th = f"slack:C_BILLING:fin{i}"
+        add("slack", "message", asker, R.choice(INVOICE_ASKS).format(c=c), "#billing", th, _at(d, R.uniform(9, 18)), {"channel": "#billing"})
+        good = R.random() < 0.35
+        ev.append(dict(system="slack", kind="message", actor="fin", text=R.choice(FIN_INVOICE_GOOD if good else FIN_INVOICE_BAD), target="#billing",
+                       thread_key=th, ts=ev[-1]["ts"] + R.uniform(20, 180), meta={"channel": "#billing"}, external_id=f"seed:{len(ev)}", actor_type="agent"))
+        if not good and R.random() < 0.85:
+            add("slack", "message", "priya", R.choice(REWORK_INVOICE), "#billing", th, ev[-1]["ts"] + R.uniform(900, 9000), {"channel": "#billing"})
+    for i in range(22):
+        d = R.uniform(0, DAYS - 1); ident = f"ENG-{200 + i}"
+        add("linear", "issue.opened", R.choice(PEOPLE), f"{R.choice(BUG_TITLES)}\n\nbug report from a customer", ident, f"linear:{ident}", _at(d, R.uniform(9, 18)), {"issue": ident})
+        good = R.random() < 0.55
+        ev.append(dict(system="linear", kind="comment", actor="triage-bot", text=R.choice(TRIAGE_GOOD if good else TRIAGE_BAD), target=ident,
+                       thread_key=f"linear:{ident}", ts=ev[-1]["ts"] + R.uniform(30, 300), meta={"issue": ident}, external_id=f"seed:{len(ev)}", actor_type="agent"))
+        if not good and R.random() < 0.7:
+            add("linear", "comment", "sam", R.choice(REWORK_TRIAGE), ident, f"linear:{ident}", ev[-1]["ts"] + R.uniform(1800, 20000), {"issue": ident})
+    # 7. noise: 260 unrelated messages + a few one-off replies
     for i in range(260):
         d = R.uniform(0, DAYS); who = R.choice(PEOPLE); ch = R.choice(["#eng", "#general", "#support", "#billing", "#random"])
         th = f"slack:{ch}:noise{i}"
@@ -147,6 +200,8 @@ def seed(app, force: bool = False) -> dict:
     with session() as db:
         if not db.scalar(select(M.User.id).limit(1)):
             db.add(M.User(id=new_id("usr"), email="demo@northwind.dev", name="Demo Admin", role="admin", password_hash=hash_password("tacit-demo")))
+        for a in SUPERVISED:
+            db.add(M.Agent(id=new_id("agt"), **a))
         for text, tags in MEMORIES:
             db.add(M.Memory(id=new_id("mem"), text=text, tags=tags, source="seed"))
         db.add(M.Task(id=new_id("task"), title="Wire new Stripe price IDs for the relaunch", assignee="sam", source="meeting", due="Thursday"))
@@ -212,7 +267,13 @@ def seed(app, force: bool = False) -> dict:
         tp = time.time() - 5400
         ingest(app, system="github", kind="pr.opened", actor="jonas", text="Bump lodash to 4.17.22\n\nDependabot-style bump. Ready for review.", target="northwind/api", thread_key="github:northwind/api#432", ts=tp, meta={"repo": "northwind/api", "number": 432}, external_id="seed:live:pr-miss")
         ingest(app, system="github", kind="comment", actor="maya", text="Dependency bumps skip first-pass review — merging once CI is green. Thanks!", target="northwind/api", thread_key="github:northwind/api#432", ts=tp + 900, meta={"repo": "northwind/api", "number": 432}, external_id="seed:live:pr-miss-reply")
+    _seed_ledger_history(app)
     with session() as db:
+        from .core.oversight import regrade, settle as settle_agents
+        regrade(db, app)
+        from .core.compliance import seal
+        settle_agents(db)
+        seal(db)
         db.add(M.Setting(key="demo.seeded", value=True))
         audit(db, "seed", "seed.done", "", {"events": len(events), "seconds": round(time.time() - t0, 1), **mined})
     return {"seeded": True, "events": len(events), "mined": mined, "backtest": report["total"], "seconds": round(time.time() - t0, 1)}
@@ -234,3 +295,33 @@ def _fresh_trigger(pb) -> dict | None:
     if pb.system == "linear":
         return dict(system="linear", kind="issue.opened", actor="aiko", text="Invoice totals rounding error\n\nbug report from a customer", target="ENG-140", thread_key="linear:ENG-140", ts=now, meta={"issue": "ENG-140"}, external_id="seed:live:bug")
     return None
+
+
+def _seed_ledger_history(app) -> None:
+    """Past work by the job that reached auto, so the verified-work ledger has a month of real lines.
+    As synthetic as the rest of the demo org — and settled by the same rules as production."""
+    from .core.ledger import record as ledger_record, settle as settle_ledger
+    with session() as db:
+        pb = db.scalar(select(M.Playbook).where(M.Playbook.stage == "auto"))
+        if not pb:
+            return
+        tool = (pb.response or {}).get("tool", "note")
+        undo = {"slack_post": "slack_delete", "github_comment": "github_delete_comment", "linear_comment": "linear_delete_comment"}.get(tool, "memory_forget")
+        for i in range(58):
+            t = time.time() - R.uniform(1.2, 30) * 86400
+            text = _pick([pb.response.get("template", "")] + [e.get("response", "") for e in (pb.examples or [])][:2])
+            r = M.Run(id=new_id("run"), channel=f"{pb.system}:{(pb.trigger or {}).get('target', '')}", principal=f"playbook:{pb.id}",
+                      playbook_id=pb.id, input=f"[{pb.name}] triggered", output=text, status="done", tx_status="committed",
+                      steps=[{"type": "say", "text": text, "ts": t}], messages=[], created_at=t, finished_at=t + 2)
+            db.add(r); db.flush()
+            reversed_ = i % 19 == 0
+            a = M.Action(id=new_id("act"), run_id=r.id, tool=tool, args={"text": text}, result={"posted": True},
+                         undo={"tool": undo, "args": {}}, status="undone" if reversed_ else "done", ts=t,
+                         preview={"system": pb.system, "kind": "create", "summary": f"reply in {(pb.trigger or {}).get('target', '')}", "text": text})
+            db.add(a); db.flush()
+            ledger_record(db, a, r)
+            if reversed_:
+                r.tx_status = "undone"
+        pb.executions = (pb.executions or 0) + 58
+    with session() as db:
+        settle_ledger(db, app.settings)

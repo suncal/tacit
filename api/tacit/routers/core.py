@@ -61,7 +61,26 @@ def overview(db: Session = Depends(get_db), app=Depends(get_app), _: Principal =
         "top_playbooks": [{"id": p.id, "name": p.name, "stage": p.stage, "actor": p.actor, "system": p.system, "trust": trust(p)["trust"], "scored": p.drafts_scored, "evidence": p.evidence_count}
                           for p in sorted(pbs, key=lambda p: (-trust(p)["trust"], -p.evidence_count))[:6]],
         "integrations": app.integrations(),
+        "fleet": _fleet_brief(db, app),
+        "billing": _billing_brief(db, app),
     }
+
+
+def _fleet_brief(db: Session, app) -> dict:
+    from ..core.oversight import scorecard
+    cards = [scorecard(db, a, 30) for a in db.scalars(select(M.Agent))]
+    graded = [c for c in cards if c["rework_rate"] is not None]
+    worst = max(graded, key=lambda c: c["rework_rate"] or 0, default=None)
+    return {"agents": len(cards), "actions": sum(c["actions"] for c in cards),
+            "vendor_spend_usd": round(sum(c["vendor_spend_usd"] for c in cards), 2),
+            "rework_rate": round(sum(c["reworked"] for c in graded) / sum(c["actions"] for c in graded), 3) if graded and sum(c["actions"] for c in graded) else None,
+            "worst": {"name": worst["agent"]["name"], "rework_rate": worst["rework_rate"], "cost_per_landed_action_usd": worst["cost_per_landed_action_usd"]} if worst else None}
+
+
+def _billing_brief(db: Session, app) -> dict:
+    from ..core.ledger import summary as ledger_summary
+    l = ledger_summary(db, app.settings, 30)
+    return {k: l[k] for k in ("verified", "disputed", "pending", "amount_usd", "credited_usd", "hours_saved", "value_usd", "roi", "seat_equivalent_usd")}
 
 
 def _series(drafts):

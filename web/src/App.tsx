@@ -9,6 +9,10 @@ import { PlaybooksPage } from './pages/Playbooks'
 import { PlaybookDetailPage } from './pages/PlaybookDetail'
 import { ShadowPage } from './pages/Shadow'
 import { PeoplePage } from './pages/People'
+import { OversightPage } from './pages/Oversight'
+import { LedgerPage } from './pages/Ledger'
+import { CompliancePage } from './pages/Compliance'
+import { DayOnePage } from './pages/DayOne'
 import { InboxPage } from './pages/Inbox'
 import { RunDetailPage, RunsPage } from './pages/Runs'
 import { ChatPage } from './pages/Chat'
@@ -30,6 +34,10 @@ function Gate() {
         <Route path="playbooks/:id" element={<PlaybookDetailPage />} />
         <Route path="shadow" element={<ShadowPage />} />
         <Route path="people" element={<PeoplePage />} />
+        <Route path="report" element={<DayOnePage />} />
+        <Route path="oversight" element={<OversightPage />} />
+        <Route path="ledger" element={<LedgerPage />} />
+        <Route path="compliance" element={<CompliancePage />} />
         <Route path="inbox" element={<InboxPage />} />
         <Route path="runs" element={<RunsPage />} />
         <Route path="runs/:id" element={<RunDetailPage />} />

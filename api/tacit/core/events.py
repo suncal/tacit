@@ -22,7 +22,14 @@ def ingest(app, system: str, kind: str, actor: str, text: str = "", target: str 
                     thread_key=thread_key or f"{system}:{target}:{new_id('t')}", text=text or "", meta=meta or {},
                     ts=ts or time.time(), external_id=external_id)
         db.add(e)
+        db.flush()
         eid = e.id
+        if actor_type == "agent":
+            from .oversight import on_agent_event
+            on_agent_event(db, app, e)
+        elif actor_type == "human":
+            from .oversight import on_human_event
+            on_human_event(db, e)
     if shadow and actor_type == "human":
         try:
             app.shadow.on_event(eid)

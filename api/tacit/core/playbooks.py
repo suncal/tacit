@@ -36,8 +36,11 @@ def remine(by: str = "console") -> dict:
                                   trigger=f["trigger"], response=f["response"], evidence_count=f["evidence_count"],
                                   consistency=f["consistency"], median_latency_s=f["median_latency_s"], examples=f["examples"]))
                 created += 1
-        audit(db, by, "playbooks.mine", "", {"events": len(events), "found": len(found), "created": created, "updated": updated})
-    return {"events": len(events), "found": len(found), "created": created, "updated": updated}
+        db.flush()
+        from .oversight import regrade
+        regraded = regrade(db, None)
+        audit(db, by, "playbooks.mine", "", {"events": len(events), "found": len(found), "created": created, "updated": updated, "agent_actions_regraded": regraded})
+    return {"events": len(events), "found": len(found), "created": created, "updated": updated, "agent_actions_regraded": regraded}
 
 
 def public(pb: M.Playbook, shadow) -> dict:

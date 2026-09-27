@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { api, type Overview, type Playbook } from '../lib/api'
+import { clsx } from 'clsx'
 import { Avatar, Button, Card, Empty, PageHeader, Spinner, StagePill, Stat, TrustBar, useToast } from '../components/ui'
 import { STAGE_LABEL, SYSTEM_LABEL, pct } from '../lib/format'
 
@@ -62,6 +63,27 @@ export function OverviewPage() {
               </ResponsiveContainer>
             </div>
           )}
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-5">
+        <Card title="AI you already pay for" subtitle="Graded against your own team — the number the vendors don't report." action={<Link to="/oversight" className="text-accent text-[13px] font-medium">Oversight →</Link>}>
+          {o.fleet.agents === 0 ? (
+            <p className="muted text-[13.5px]">No third-party agents supervised yet. Register the AI products you already run and Tacit will grade their work against the standard it learned from your people — read-only, nothing changes on their side. <Link to="/oversight" className="text-accent">Start →</Link></p>
+          ) : (
+            <div className="flex items-center gap-6">
+              <div><div className="muted text-[11.5px] uppercase tracking-wide">Needed a human after</div><div className={clsx('text-[30px] font-semibold tnum', (o.fleet.rework_rate || 0) > 0.25 ? 'text-bad' : 'text-warn')}>{pct(o.fleet.rework_rate)}</div><div className="muted text-[12.5px]">across {o.fleet.actions} actions by {o.fleet.agents} agent{o.fleet.agents === 1 ? '' : 's'}</div></div>
+              <div className="h-12 w-px bg-[var(--line)]" />
+              <div className="min-w-0"><div className="muted text-[11.5px] uppercase tracking-wide">Paid to those vendors</div><div className="text-[30px] font-semibold tnum">${o.fleet.vendor_spend_usd.toLocaleString()}</div>{o.fleet.worst?.cost_per_landed_action_usd && <div className="muted text-[12.5px] truncate">{o.fleet.worst.name}: ${o.fleet.worst.cost_per_landed_action_usd.toFixed(2)} per action that actually landed</div>}</div>
+            </div>
+          )}
+        </Card>
+        <Card title="Verified work" subtitle="Billed only for work a human approved, or that nobody reversed." action={<Link to="/ledger" className="text-accent text-[13px] font-medium">Ledger →</Link>}>
+          <div className="flex items-center gap-6">
+            <div><div className="muted text-[11.5px] uppercase tracking-wide">Billable, 30 days</div><div className="text-[30px] font-semibold tnum text-accent">${o.billing.amount_usd.toFixed(2)}</div><div className="muted text-[12.5px]">{o.billing.verified} verified · {o.billing.disputed} credited back</div></div>
+            <div className="h-12 w-px bg-[var(--line)]" />
+            <div><div className="muted text-[11.5px] uppercase tracking-wide">Return</div><div className="text-[30px] font-semibold tnum text-ok">{o.billing.roi ? `${o.billing.roi}×` : '—'}</div><div className="muted text-[12.5px]">{o.billing.hours_saved}h returned vs ${o.billing.seat_equivalent_usd.toFixed(0)} per-seat</div></div>
+          </div>
         </Card>
       </div>
 

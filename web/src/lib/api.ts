@@ -64,6 +64,8 @@ export interface Overview {
   recommendations: (Recommendation & { playbook_id: string; name: string; stage: Stage; trust: number })[]
   top_playbooks: { id: string; name: string; stage: Stage; actor: string; system: string; trust: number; scored: number; evidence: number }[]
   integrations: Integration[]
+  fleet: { agents: number; actions: number; vendor_spend_usd: number; rework_rate: number | null; worst: { name: string; rework_rate: number | null; cost_per_landed_action_usd: number | null } | null }
+  billing: { verified: number; disputed: number; pending: number; amount_usd: number; credited_usd: number; hours_saved: number; value_usd: number; roi: number | null; seat_equivalent_usd: number }
 }
 export interface Integration { key: string; name: string; connected: boolean; detail: string; how: string; mode: string }
 export interface Memory { id: string; kind: string; text: string; tags: string[]; source: string; created_at: number }
@@ -78,3 +80,39 @@ export interface User { id: string; email: string; name: string; role: string }
 export interface Backtest { total: { n: number; hits: number; hit_rate: number }; seconds: number; playbooks: { id: string; name: string; stage: Stage; n: number; hits: number; hit_rate: number; mean_score: number; rows: { trigger: string; draft: string; actual: string; score: number; hit: boolean }[] }[] }
 export interface Lesson { id: string; playbook: { id: string; name: string; actor: string; stage: Stage } | null; draft_id: string | null; trigger_text: string; draft_text: string; actual_text: string; question: string; answer: string | null; status: string; created_at: number; answered_at: number | null; answered_by: string | null }
 export interface Person { actor: string; events: number; jobs: number; playbooks: { id: string; name: string; stage: Stage; trust: number; evidence: number; minutes_each: number }[]; coverable: number; bus_factor_risk: number; weekly_minutes: number; cover: { id: string; backup: string; until: number } | null }
+
+// ---------------------------------------------------------------- verified work, oversight, compliance, day one
+export interface LedgerLine { id: string; status: 'pending' | 'verified' | 'disputed' | 'waived'; basis: string; amount_usd: number; minutes_saved: number; playbook_id: string | null; run_id: string | null; detail: Record<string, unknown>; created_at: number; settled_at: number | null }
+export interface Ledger {
+  period_days: number; price_per_verified_action_usd: number; dispute_window_hours: number
+  verified: number; disputed: number; pending: number; not_billable: number
+  amount_usd: number; credited_usd: number; hours_saved: number; value_usd: number; roi: number | null
+  seat_equivalent_usd: number; people: number; seat_price_usd: number
+  by_playbook: { playbook_id: string; name: string; verified: number; disputed: number; amount_usd: number; hours_saved: number }[]
+  lines: LedgerLine[]
+}
+export interface AgentCard {
+  agent: { id: string; handle: string; name: string; vendor: string; systems: string[]; risk_tier: string; owner: string; price_per_action_usd: number; monthly_fee_usd: number }
+  period_days: number; actions: number; graded: number; conformance: number | null; conformant: number; off_standard: number
+  reworked: number; rework_rate: number | null; landed_rate: number | null; vendor_spend_usd: number; cost_per_landed_action_usd: number | null; unmatched: number
+  worst: { id: string; conformance: number | null; reworked: boolean; expected: string; actual: string; rework_by: string | null; ts: number }[]
+  actions_detail?: { id: string; conformance: number | null; verdict: string; reworked: boolean; rework_by: string | null; expected: string; actual: string; ts: number; playbook_id: string | null; human_grade: number | null }[]
+}
+export interface Fleet { agents: AgentCard[]; tacit: { name: string; actions: number; reworked: number; rework_rate: number | null; governed: boolean }; totals: { agents: number; actions: number; vendor_spend_usd: number; ungoverned_actions: number } }
+export interface Evidence {
+  generated_at: number; organisation: string; period_days: number; framework: string[]; statement: string
+  log_integrity: { intact: boolean; sealed_events: number; unsealed_events: number; root: string; first_break: { id: number; actor: string; action: string; reason: string } | null }
+  model: { provider: string; model: string; llm: boolean }
+  oversight: { actions_taken: number; actions_reversed_by_humans: number; approvals_requested: number; approvals_granted: number; approvals_refused: number; low_confidence_escalations: number; median_time_to_decision_s: number | null; corrections_taught_by_humans: number }
+  controls: { permission_rules: { principal: string; tool: string; decision: string }[]; defaults: Record<string, string>; budgets: { scope: string; max_writes_per_hour: number; max_usd_per_day: number }[]; data_residency: string; retention: string }
+  ai_systems: { system_id: string; name: string; owner: string; surface: string; autonomy: Stage; risk_tier: string; human_oversight: string; evidence: Record<string, number>; stage_changes: unknown[] }[]
+  supervised_third_party_agents: AgentCard[]
+}
+export interface DayOne {
+  generated_at: number; organisation: string; seconds: number
+  observed: { events: number; days: number; people: number; systems: { system: string; events: number }[] }
+  jobs: { id: string; name: string; owner: string; system: string; stage: Stage; seen: number; per_year: number; minutes_each: number; hours_per_year: number; consistency: number; backtest_n: number; would_have_handled: number; hours_recoverable: number; value_usd: number; trust: number; why: string }[]
+  totals: { jobs: number; hours_per_year: number; hours_recoverable: number; value_usd: number; coverage: number; backtest: { n: number; hits: number; hit_rate: number }; verified_cost_usd: number }
+  bus_factor: { owner: string; jobs: number; hours_per_year: number }[]
+  start_with: DayOne['jobs'][number] | null; next_steps: string[]; hours_note: string
+}

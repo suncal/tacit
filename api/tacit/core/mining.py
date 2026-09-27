@@ -209,13 +209,17 @@ def _dedupe(cands: list[dict]) -> list[dict]:
         for k in keep:
             if (k["actor"], k["system"], k["trigger"].get("mode")) != (c["actor"], c["system"], c["trigger"].get("mode")):
                 continue
+            same_signature = False
             if c["trigger"].get("mode") == "reply":
                 a, b = set(k["trigger"].get("keywords") or []), set(c["trigger"].get("keywords") or [])
                 if not (a & b):
                     continue
+                # identical trigger signature from the same person in the same place is one job,
+                # even when they have two ways of answering it (a first reply and a follow-up, say)
+                same_signature = bool(a) and a == b and k["trigger"].get("target") == c["trigger"].get("target")
             elif (k["trigger"].get("cadence") or {}).get("kind") != (c["trigger"].get("cadence") or {}).get("kind") or k["trigger"].get("target") != c["trigger"].get("target"):
                 continue
-            if T.similarity(k["response"]["template"], c["response"]["template"]) < MERGE_THRESHOLD:
+            if not same_signature and T.similarity(k["response"]["template"], c["response"]["template"]) < MERGE_THRESHOLD:
                 continue
             k["evidence_count"] += c["evidence_count"]
             k["examples"] = sorted(k["examples"] + c["examples"], key=lambda e: -e["ts"])[:6]
