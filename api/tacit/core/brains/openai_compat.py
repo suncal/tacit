@@ -6,7 +6,7 @@ import os
 
 import httpx
 
-from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, describe_impl, draft_prompt, hypothesise_impl, parse_json
+from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, draft_prompt, parse_json
 from ..ids import new_id
 
 
@@ -73,8 +73,3 @@ class OpenAICompatBrain(Brain):
             return None
         return parse_json(data["choices"][0]["message"].get("content") or "")
 
-    def describe(self, jobs):
-        return describe_impl(self, jobs)
-
-    def hypothesise(self, playbook, trigger, drafted, actual):
-        return hypothesise_impl(self, playbook, trigger, drafted, actual)

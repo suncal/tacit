@@ -75,3 +75,17 @@ def template(texts: list[str]) -> str:
         if s > best_s:
             best, best_s = t, s
     return best
+
+
+def stem(word: str) -> str:
+    """Just enough to stop a plural from hiding a fact: invoices→invoice, policies→policy, resets→reset."""
+    for suffix, repl in (("ies", "y"), ("sses", "ss"), ("ches", "ch"), ("shes", "sh"), ("xes", "x")):
+        if len(word) > len(suffix) + 1 and word.endswith(suffix):
+            return word[: -len(suffix)] + repl
+    if len(word) > 3 and word.endswith("s") and not word.endswith(("ss", "us", "is")):
+        return word[:-1]
+    return word
+
+
+def stems(text: str) -> set[str]:
+    return {stem(t) for t in tokens(text)}

@@ -7,7 +7,7 @@ import re
 import shutil
 import subprocess
 
-from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, describe_impl, draft_prompt, hypothesise_impl, parse_json
+from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, draft_prompt, parse_json
 from ..ids import new_id
 
 _PROTO = """You are operating inside Tacit, a tool-using agent harness. Answer with ONE JSON object and nothing else:
@@ -77,8 +77,3 @@ class ClaudeCLIBrain(Brain):
         except BrainError:
             return None
 
-    def describe(self, jobs):
-        return describe_impl(self, jobs)
-
-    def hypothesise(self, playbook, trigger, drafted, actual):
-        return hypothesise_impl(self, playbook, trigger, drafted, actual)

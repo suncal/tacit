@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import anthropic
 
-from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, describe_impl, draft_prompt, hypothesise_impl, parse_json
+from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, draft_prompt, parse_json
 
 PRICE = {"claude-opus-5": (5.0, 25.0), "claude-sonnet-5": (2.0, 10.0), "claude-haiku-4-5": (1.0, 5.0)}
 
@@ -72,8 +72,3 @@ class AnthropicBrain(Brain):
             return None
         return parse_json("".join(b.text for b in resp.content if b.type == "text"))
 
-    def describe(self, jobs):
-        return describe_impl(self, jobs)
-
-    def hypothesise(self, playbook, trigger, drafted, actual):
-        return hypothesise_impl(self, playbook, trigger, drafted, actual)

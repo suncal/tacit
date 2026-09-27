@@ -30,18 +30,18 @@ class Brain:
         """Write what the playbook's owner would have written in response to trigger_text."""
         raise NotImplementedError
 
-    # ---- optional: a model makes these good, and their absence costs nothing ----
+    # ---- a provider implements json_call once and gets both of these ----
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500) -> Optional[dict]:
+        """Ask for one JSON object. Return None when this brain can't (the callers degrade quietly)."""
+        return None
+
     def describe(self, jobs: list[dict]) -> dict[str, dict]:
         """{job_id: {"name": str, "summary": str}} — name the mined jobs the way the team would."""
-        return {}
+        return describe_impl(self, jobs)
 
     def hypothesise(self, playbook: dict, trigger: str, drafted: str, actual: str) -> dict:
-        """Guess why a draft missed: {"question": str, "suggestion": str}. Empty dict if you can't."""
-        return {}
-
-    def json_call(self, system: str, prompt: str, max_tokens: int = 1500) -> Optional[dict]:
-        """Ask for one JSON object. Used by describe/hypothesise; providers share the parsing."""
-        return None
+        """Guess why a draft missed: {"question": str, "suggestion": str}. Empty when it can't tell."""
+        return hypothesise_impl(self, playbook, trigger, drafted, actual)
 
 
 def parse_json(text: str) -> Optional[dict]:

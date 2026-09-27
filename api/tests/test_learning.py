@@ -8,6 +8,8 @@ from tacit.core import text as T
 from tacit.core.backtest import backtest
 from tacit.core.events import ingest
 from tacit.core.mining import mine
+from tacit.core.brains.local import LocalBrain
+from tacit.core.ids import new_id
 from tacit.core.playbooks import remine
 from tacit.core.trust import wilson_lower, trust, recommendation
 from tacit.db import session
@@ -197,3 +199,65 @@ def test_cover_promotes_and_restores(tacit):
         assert all(db.get(M.Playbook, x["playbook_id"]).stage == "propose" for x in c.promoted)
         end_cover(db, tacit, c, by="test")
         assert all(db.get(M.Playbook, x["playbook_id"]).stage == "shadow" for x in c.promoted)
+
+
+# ------------------------------------------------------------------ what a real model adds
+class StubLLM(LocalBrain):
+    """Stands in for Claude: same contract, canned JSON. Proves the wiring without spending a key."""
+    name, model, is_llm = "stub", "stub-1", True
+
+    def __init__(self):
+        self.drafts, self.json_calls = [], []
+
+    def json_call(self, system, prompt, max_tokens=1500):
+        self.json_calls.append(prompt)
+        if "give a better name" in prompt:
+            import re as _re
+            ids = _re.findall(r'<job id="([^"]+)"', prompt)
+            return {"jobs": [{"id": i, "name": f"Named job {n}", "summary": f"priya does this when asked, case {n}."} for n, i in enumerate(ids)]}
+        return {"question": "Is Acme on payment hold, so no invoice goes out until finance clears it?",
+                "suggestion": "Customers on payment hold get no invoice — tell them to ask Sam.", "one_off": False}
+
+    def draft(self, playbook, trigger_text, examples, context="", memory=""):
+        self.drafts.append({"trigger": trigger_text, "context": context, "memory": memory, "rules": playbook.get("rules", [])})
+        return "Sent them the invoice — net 30, copy in Finance/Invoices."
+
+
+def test_a_model_names_the_jobs_it_mined(tacit):
+    for e in _events():
+        ingest(tacit, shadow=False, **e)
+    stub = StubLLM()
+    out = remine(by="test", brain=stub)
+    assert out["named"] >= 4 and stub.json_calls
+    with session() as db:
+        pbs = db.scalars(select(M.Playbook)).all()
+        assert all(p.name.startswith("Named job") and p.summary for p in pbs)
+    # naming is not repeated for jobs that already have a summary
+    stub2 = StubLLM()
+    remine(by="test", brain=stub2)
+    assert stub2.json_calls == []
+
+
+def test_a_model_proposes_the_rule_behind_a_miss(tacit):
+    for e in _events():
+        ingest(tacit, shadow=False, **e)
+    remine()
+    stub = StubLLM()
+    tacit.brain = stub
+    with session() as db:
+        db.add(M.Memory(id=new_id("mem"), text="Invoices are net 30 and filed under Finance/Invoices.", tags=["finance"]))
+        pb = db.scalar(select(M.Playbook).where(M.Playbook.name.like("%invoice%")))
+        tacit.shadow.set_stage(db, pb, "shadow", by="test")
+    now = time.time()
+    ingest(tacit, system="slack", kind="message", actor="jonas", text="where's the invoice for Acme?", target="#billing", thread_key="slack:C_BILLING:llm1", ts=now, meta={"channel": "#billing"})
+    assert stub.drafts and "net 30" in stub.drafts[-1]["memory"]          # the draft sees what the company knows
+    ingest(tacit, system="slack", kind="message", actor="priya", text="Acme is on payment hold — nothing goes out until finance clears it. Ask Sam.", target="#billing", thread_key="slack:C_BILLING:llm1", ts=now + 90)
+    with session() as db:
+        l = db.scalar(select(M.Lesson).where(M.Lesson.status == "open"))
+        assert "payment hold" in l.question and l.suggestion.startswith("Customers on payment hold")
+        l.answer, l.status, l.answered_at = l.suggestion, "answered", time.time()
+        db.flush()
+        pb = db.get(M.Playbook, l.playbook_id)
+        assert tacit.shadow.lessons_for(db, pb)[0]["rule"] == l.suggestion
+    ingest(tacit, system="slack", kind="message", actor="leila", text="invoice for Globex please", target="#billing", thread_key="slack:C_BILLING:llm2", ts=now + 200, meta={"channel": "#billing"})
+    assert "payment hold" in " ".join(stub.drafts[-1]["rules"])           # the rule reaches the next draft
