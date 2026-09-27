@@ -1,12 +1,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tacit</title>
-<meta name="description" content="Tacit learns your team's recurring jobs by watching, proves it can do them in shadow, and earns autonomy one job at a time. Self-hosted. Reversible.">
+<meta name="description" content="Tacit grades every AI in your company — including the ones you bought — against what your own team does. Free oversight. Pay only for verified work. EU AI Act evidence built in.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 :root{--bg:#FFFFFF;--bg2:#F7F7F6;--ink:#0B0C0E;--ink2:#3A3D44;--muted:#70747D;--line:#E7E7E4;--line2:#D9D9D5;--accent:#0E7C86;--accent2:#0A5F67;--soft:#E6F3F4;--gold:#C7961C;--violet:#7C5CBF;--ok:#1F8A4C;--bad:#C0392B;
- --frame:#0F1115;--frame2:#171A20;--frame3:#1F232B;--ftext:#E9EAEE;--fmuted:#8C919C;--fline:rgba(255,255,255,.08);
+ --frame:#0F1115;--frame2:#171A20;--ftext:#E9EAEE;--fmuted:#8C919C;--fline:rgba(255,255,255,.08);
  --sans:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0B0C0E;--bg2:#101215;--ink:#EEEFF1;--ink2:#C3C7CE;--muted:#8B919C;--line:#22262C;--line2:#2E333B;--soft:#0F2D31;--accent:#2BA4AF;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0B0C0E;--bg2:#101215;--ink:#EEEFF1;--ink2:#C3C7CE;--muted:#8B919C;--line:#22262C;--line2:#2E333B;--soft:#0F2D31;--accent:#2BA4AF;color-scheme:dark}
@@ -14,238 +14,289 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 a{color:inherit}.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
 h1,h2,h3,h4{margin:0;text-wrap:balance}
-h1{font-size:clamp(44px,6vw,76px);line-height:1.02;font-weight:600;letter-spacing:-.035em}
-h2{font-size:clamp(32px,3.8vw,48px);line-height:1.08;font-weight:600;letter-spacing:-.03em}
-h3{font-size:20px;line-height:1.3;font-weight:600;letter-spacing:-.01em}
+h1{font-size:clamp(42px,5.6vw,72px);line-height:1.03;font-weight:600;letter-spacing:-.035em}
+h2{font-size:clamp(30px,3.6vw,46px);line-height:1.08;font-weight:600;letter-spacing:-.03em}
+h3{font-size:19px;line-height:1.3;font-weight:600;letter-spacing:-.01em}
 p{margin:0}.lede{font-size:19px;line-height:1.5;color:var(--ink2)}.muted{color:var(--muted)}.ink2{color:var(--ink2)}
 .eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .mono{font-family:var(--mono);font-size:13px}
 .btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:10px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:600;font-size:14.5px;border:0;cursor:pointer;font-family:var(--sans);transition:transform .15s,opacity .15s}
 .btn:hover{opacity:.92;transform:translateY(-1px)}.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line2)}.btn.accent{background:var(--accent);color:#fff}.btn.sm{height:36px;padding:0 14px;font-size:13.5px}
-/* nav */
 .nav{position:sticky;top:0;z-index:20;backdrop-filter:saturate(180%) blur(12px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--line)}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:20px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;text-decoration:none;letter-spacing:-.01em}.logo svg{width:26px;height:26px}
-.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:14px;font-weight:500}.nav ul a{text-decoration:none;color:var(--ink2)}.nav ul a:hover{color:var(--ink)}
+.nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:14px;font-weight:500}.nav ul a{text-decoration:none;color:var(--ink2)}.nav ul a:hover{color:var(--ink)}
 .nav .right{display:flex;gap:10px;align-items:center}.nav .right a.link{font-size:14px;font-weight:500;text-decoration:none;color:var(--ink2);margin-right:6px}
-@media(max-width:900px){.nav ul,.nav .right a.link{display:none}}
-/* hero */
-.hero{position:relative;padding:84px 0 40px;text-align:center;overflow:hidden}
+@media(max-width:940px){.nav ul,.nav .right a.link{display:none}}
+.hero{position:relative;padding:76px 0 40px;text-align:center;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:120%;background:radial-gradient(60% 50% at 50% 0%,rgba(14,124,134,.16),transparent 70%);pointer-events:none}
 .hero .wrap{position:relative}
-.pillnote{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:6px 12px 6px 6px;font-size:13px;color:var(--ink2);margin-bottom:26px;text-decoration:none}
+.pillnote{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:6px 14px 6px 6px;font-size:13px;color:var(--ink2);margin-bottom:26px;text-decoration:none}
 .pillnote b{background:var(--soft);color:var(--accent);border-radius:99px;padding:2px 8px;font-size:11.5px;font-weight:600;letter-spacing:.04em}
-.hero h1{max-width:14em;margin:0 auto}.hero .lede{max-width:40em;margin:24px auto 30px}
-.cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.trust{margin-top:18px;font-size:13px;color:var(--muted)}
-/* product frame */
-.frame{margin:56px auto 0;max-width:1120px;background:var(--frame);color:var(--ftext);border-radius:18px;border:1px solid rgba(255,255,255,.08);box-shadow:0 60px 120px -50px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.04);overflow:hidden;text-align:left;font-size:13px}
+.hero h1{max-width:15em;margin:0 auto}.hero .lede{max-width:40em;margin:24px auto 30px}
+.cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.trust{margin-top:18px;font-size:13px;color:var(--muted)}
+/* scorecard hero */
+.frame{margin:52px auto 0;max-width:1060px;background:var(--frame);color:var(--ftext);border-radius:18px;border:1px solid rgba(255,255,255,.08);box-shadow:0 60px 120px -50px rgba(0,0,0,.55);overflow:hidden;text-align:left;font-size:13px}
 .frame .bar{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-bottom:1px solid var(--fline);background:var(--frame2)}
 .frame .bar i{width:10px;height:10px;border-radius:50%;background:#3A3F49;display:inline-block}.frame .bar .url{margin-left:12px;font:12px var(--mono);color:var(--fmuted);background:var(--frame);border-radius:6px;padding:3px 10px}
-.app{display:grid;grid-template-columns:200px 1fr;min-height:560px}
-.side{border-right:1px solid var(--fline);padding:14px 10px;display:flex;flex-direction:column;gap:2px;background:var(--frame2)}
-.side .brand{display:flex;align-items:center;gap:8px;padding:4px 8px 14px;font-weight:600}.side .brand small{display:block;font-weight:400;color:var(--fmuted);font-size:11px}
-.side a{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:8px;color:var(--fmuted);font-size:13px;font-weight:500;text-decoration:none}
-.side a.on{background:rgba(14,124,134,.18);color:#7FD6DE}.side .sep{height:1px;background:var(--fline);margin:8px 0}
-.side b{background:var(--gold);color:#1b1500;border-radius:99px;font-size:10.5px;padding:0 6px;font-weight:700}
-.main{padding:22px 24px}
-.main h4{font-size:18px;font-weight:600;letter-spacing:-.01em}.main .sub{color:var(--fmuted);font-size:12.5px;margin-top:3px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
-.stat{background:var(--frame2);border:1px solid var(--fline);border-radius:10px;padding:12px 14px}.stat .l{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fmuted)}.stat .v{font-size:24px;font-weight:600;margin-top:4px;letter-spacing:-.02em}.stat .h{font-size:11.5px;color:var(--fmuted);margin-top:2px}
-.stat .v.a{color:#5FD1DA}.stat .v.g{color:#E5B94A}.stat .v.ok{color:#6FD39A}
-.cols{display:grid;grid-template-columns:1.4fr 1fr;gap:10px}
-.panel{background:var(--frame2);border:1px solid var(--fline);border-radius:10px;padding:14px}.panel .t{font-weight:600;font-size:13.5px}.panel .s{color:var(--fmuted);font-size:11.5px;margin-bottom:10px}
-.rec{display:flex;align-items:center;gap:10px;border:1px solid var(--fline);border-radius:8px;padding:9px 10px;margin-bottom:6px}.rec .n{flex:1;min-width:0}.rec .n div{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rec .n small{color:var(--fmuted);font-size:11px}
+.fbody{padding:20px 22px}
+.fh{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}.fh b{font-size:16px}.fh span{color:var(--fmuted);font-size:12.5px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.vc{background:var(--frame2);border:1px solid var(--fline);border-radius:12px;padding:14px}
+.vc .top{display:flex;align-items:center;gap:8px;margin-bottom:10px}.vc .top b{font-size:13.5px}.vc .top small{color:var(--fmuted);font-size:11.5px}
+.vc .big{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}.vc .k{font:500 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--fmuted)}
+.vc .sub{color:var(--fmuted);font-size:11.5px;margin-top:3px}
+.vc.bad .big{color:#F08A7C}.vc.warn .big{color:#E5B94A}.vc.ok .big{color:#6FD39A}
+.vc .line{border-top:1px solid var(--fline);margin-top:12px;padding-top:10px;font-size:12px;color:var(--fmuted)}
+.vc .line b{color:var(--ftext)}
 .pill{display:inline-flex;align-items:center;gap:5px;border-radius:5px;padding:1px 7px;font:600 10.5px var(--mono);letter-spacing:.04em;white-space:nowrap}
-.pill.sh{background:rgba(124,92,191,.22);color:#B9A3E8}.pill.pr{background:rgba(199,150,28,.2);color:#E5B94A}.pill.au{background:rgba(14,124,134,.25);color:#5FD1DA}.pill.ca{background:rgba(255,255,255,.08);color:#B4B8C1}.pill.hit{background:rgba(31,138,76,.22);color:#6FD39A}.pill.miss{background:rgba(192,57,43,.22);color:#F08A7C}
-.rec .b{background:#0E7C86;color:#fff;border-radius:6px;padding:5px 9px;font-size:11.5px;font-weight:600;white-space:nowrap}
-.tl{display:flex;flex-direction:column;gap:8px}.tl .row{display:grid;grid-template-columns:1fr 70px 110px;gap:8px;align-items:center;font-size:12.5px}.tl .row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}.tl .row small{display:block;color:var(--fmuted);font-size:11px;font-weight:400}
-.bar2{height:5px;border-radius:99px;background:rgba(255,255,255,.08);position:relative}.bar2 i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:#6FD39A}.bar2 i.w{background:#E5B94A}.bar2 i.d{background:#8C919C}
-.chart{height:110px;position:relative}.chart svg{width:100%;height:100%}
-/* sections */
-section{padding:96px 0}section.tight{padding-top:0}section.alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pill.ok{background:rgba(31,138,76,.22);color:#6FD39A}.pill.bad{background:rgba(192,57,43,.22);color:#F08A7C}.pill.n{background:rgba(255,255,255,.08);color:#B4B8C1}.pill.au{background:rgba(14,124,134,.25);color:#5FD1DA}
+section{padding:92px 0}section.tight{padding-top:0}section.alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .center{text-align:center}.center .lede{margin:18px auto 0;max-width:42em}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-@media(max-width:960px){.g3,.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr;gap:28px}.app{grid-template-columns:1fr}.side{display:none}.stats{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
-@media(max-width:620px){.g3,.g4{grid-template-columns:1fr}}
-.card{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:26px}.card h3{margin:14px 0 8px}.card p{color:var(--ink2);font-size:15px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}
+@media(max-width:960px){.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr;gap:28px}.cards{grid-template-columns:1fr}}
+@media(max-width:640px){.g3{grid-template-columns:1fr}}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:24px}.card h3{margin:14px 0 8px}.card p{color:var(--ink2);font-size:15px}
 .ic{width:38px;height:38px;border-radius:10px;background:var(--soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font:600 13px var(--mono)}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
-.metrics div{padding:26px 24px;border-right:1px solid var(--line)}.metrics div:last-child{border-right:0}.metrics .v{font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1}.metrics .k{color:var(--muted);font-size:13.5px;margin-top:8px}
-@media(max-width:720px){.metrics{grid-template-columns:1fr 1fr}.metrics div{border-bottom:1px solid var(--line)}}
-.story{counter-reset:s}.step{display:grid;grid-template-columns:64px 1fr;gap:18px;padding:26px 0;border-top:1px solid var(--line)}.step:last-child{border-bottom:1px solid var(--line)}
-.step .num{font:500 12px var(--mono);color:var(--accent);padding-top:6px}.step h3{margin-bottom:6px}.step p{color:var(--ink2);max-width:60em}
-.step .ui{margin-top:14px;background:var(--frame);color:var(--ftext);border-radius:12px;padding:14px 16px;font-size:13px;border:1px solid rgba(255,255,255,.06);max-width:760px}
-.msg{display:flex;gap:10px;align-items:flex-start;margin:6px 0}.msg .av{width:22px;height:22px;border-radius:50%;background:#5C6B99;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:none;color:#fff}.msg .av.t{background:#0E7C86}.msg .av.p{background:#9A5C8A}.msg .who{font:500 11px var(--mono);color:var(--fmuted)}.msg .tx{margin-top:1px}
+.metrics div{padding:24px 22px;border-right:1px solid var(--line)}.metrics div:last-child{border-right:0}.metrics .v{font-size:36px;font-weight:600;letter-spacing:-.03em;line-height:1}.metrics .k{color:var(--muted);font-size:13px;margin-top:8px}.metrics cite{display:block;margin-top:8px;font-size:11.5px;font-style:normal;color:var(--muted)}.metrics cite a{color:var(--accent)}
+@media(max-width:820px){.metrics{grid-template-columns:1fr 1fr}.metrics div{border-bottom:1px solid var(--line)}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}@media(max-width:900px){.two{grid-template-columns:1fr}}
+.prod{border:1px solid var(--line);border-radius:18px;padding:28px;background:var(--bg)}
+.prod .tag{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:4px 12px;font:600 11.5px var(--mono);letter-spacing:.06em;background:var(--soft);color:var(--accent);margin-bottom:14px}
+.prod h3{font-size:22px;letter-spacing:-.02em}.prod p{color:var(--ink2);margin-top:10px}
+.prod ul{padding-left:0;list-style:none;margin:18px 0 0;font-size:14.5px;color:var(--ink2)}.prod li{margin:9px 0;padding-left:24px;position:relative}
+.prod li::before{content:"";position:absolute;left:0;top:6px;width:13px;height:13px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 3.5px var(--accent)}
+.story{counter-reset:s}.step{display:grid;grid-template-columns:70px 1fr;gap:18px;padding:26px 0;border-top:1px solid var(--line)}.step:last-child{border-bottom:1px solid var(--line)}
+.step .num{font:500 12px var(--mono);color:var(--accent);padding-top:5px}.step h3{margin-bottom:6px}.step p{color:var(--ink2);max-width:62em}
+.step .ui{margin-top:14px;background:var(--frame);color:var(--ftext);border-radius:12px;padding:14px 16px;font-size:13px;border:1px solid rgba(255,255,255,.06);max-width:780px}
+.msg{display:flex;gap:10px;align-items:flex-start;margin:6px 0}.msg .av{width:22px;height:22px;border-radius:50%;background:#5C6B99;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:none;color:#fff}.msg .av.t{background:#0E7C86}.msg .av.p{background:#9A5C8A}.msg .av.b{background:#6E4E9E}.msg .who{font:500 11px var(--mono);color:var(--fmuted)}
 .ghost-draft{border:1px dashed rgba(255,255,255,.25);border-radius:8px;padding:8px 10px;color:var(--fmuted);font-style:italic;margin:6px 0 6px 32px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:26px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}td:first-child{color:var(--ink2);width:32%}
+td.y::before{content:"● ";color:var(--ok)}td.n{color:var(--muted)}td.n::before{content:"○ ";color:var(--muted)}
+.tscroll{overflow-x:auto}
 .sec{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media(max-width:800px){.sec{grid-template-columns:1fr}}
 .sec div{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--bg)}.sec h4{font-size:15px;margin-bottom:6px}.sec p{color:var(--ink2);font-size:14px}
-.price{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media(max-width:900px){.price{grid-template-columns:1fr}}
-.plan{border:1px solid var(--line);border-radius:18px;padding:28px;background:var(--bg);display:flex;flex-direction:column}.plan.lead{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}
-.plan .amt{font-size:44px;font-weight:600;letter-spacing:-.03em;margin:14px 0 2px;line-height:1}.plan .amt small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:4px}
-.plan ul{padding-left:0;list-style:none;margin:18px 0 22px;color:var(--ink2);font-size:14.5px;flex:1}.plan li{margin:8px 0;padding-left:22px;position:relative}.plan li::before{content:"";position:absolute;left:0;top:7px;width:12px;height:12px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 3px var(--accent)}
+.price{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}@media(max-width:1000px){.price{grid-template-columns:1fr 1fr}}@media(max-width:620px){.price{grid-template-columns:1fr}}
+.plan{border:1px solid var(--line);border-radius:18px;padding:24px;background:var(--bg);display:flex;flex-direction:column}.plan.lead{border-color:var(--accent);box-shadow:0 0 0 4px var(--soft)}
+.plan .amt{font-size:36px;font-weight:600;letter-spacing:-.03em;margin:12px 0 2px;line-height:1}.plan .amt small{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:0;display:block;margin-top:6px}
+.plan ul{padding-left:0;list-style:none;margin:16px 0 20px;color:var(--ink2);font-size:14px;flex:1}.plan li{margin:7px 0;padding-left:20px;position:relative}.plan li::before{content:"";position:absolute;left:0;top:6px;width:11px;height:11px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 3px var(--accent)}
 .faq details{border-top:1px solid var(--line);padding:18px 0}.faq details:last-child{border-bottom:1px solid var(--line)}.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;font-size:16px}.faq summary::after{content:"+";color:var(--muted);font-family:var(--mono)}.faq details[open] summary::after{content:"–"}.faq p{color:var(--ink2);margin-top:10px;max-width:66em}
-.band{background:var(--frame);color:var(--ftext);border-radius:24px;padding:64px 48px;text-align:center;position:relative;overflow:hidden}
+.band{background:var(--frame);color:var(--ftext);border-radius:24px;padding:60px 48px;text-align:center;position:relative;overflow:hidden}
 .band::before{content:"";position:absolute;inset:auto -20% -60% -20%;height:120%;background:radial-gradient(50% 50% at 50% 100%,rgba(14,124,134,.35),transparent 70%)}
-.band>*{position:relative}.band h2{color:#fff}.band p{color:#B4B8C1;max-width:36em;margin:14px auto 26px}
-footer{padding:56px 0 40px;border-top:1px solid var(--line);font-size:14px}
+.band>*{position:relative}.band h2{color:#fff}.band p{color:#B4B8C1;max-width:38em;margin:14px auto 26px}
+footer{padding:54px 0 40px;border-top:1px solid var(--line);font-size:14px}
 .fcols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}@media(max-width:800px){.fcols{grid-template-columns:1fr 1fr}}
 footer h5{margin:0 0 12px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}footer ul{list-style:none;padding:0;margin:0}footer li{margin:7px 0}footer a{text-decoration:none;color:var(--ink2)}footer a:hover{color:var(--ink)}
-.legal{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.cursor{display:inline-block;width:2px;height:1em;background:#5FD1DA;vertical-align:-2px;animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:0}}
+.legal{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <div class="nav"><div class="wrap">
   <a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg>Tacit</a>
-  <ul><li><a href="#product">Product</a></li><li><a href="#story">How it works</a></li><li><a href="#security">Security</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://github.com/suncal/tacit">Docs</a></li></ul>
-  <div class="right"><a class="link" href="#install">Sign in</a><a class="btn sm" href="#install">Get started</a></div>
+  <ul><li><a href="#oversight">Oversight</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://github.com/suncal/tacit">Docs</a></li></ul>
+  <div class="right"><a class="link" href="#install">Sign in</a><a class="btn sm" href="#install">Start free</a></div>
 </div></div>
 
 <header class="hero"><div class="wrap">
-  <a class="pillnote" href="#story"><b>NEW</b> Shadow mode, backtests and one-click undo <span aria-hidden="true">→</span></a>
-  <h1>Hire AI for one job at a time.</h1>
-  <p class="lede">Tacit watches how your team actually works, learns the recurring jobs, and proves it can do each one in shadow before it's allowed to act. Autonomy is earned per job, every action is reversible, and it runs on your infrastructure.</p>
-  <div class="cta"><a class="btn accent" href="#install">Start free — self-hosted</a><a class="btn ghost" href="#story">See a job get hired</a></div>
-  <div class="trust">Open source · Works in GitHub, Slack and Linear · Bring your own Claude</div>
+  <a class="pillnote" href="#evidence"><b>NEW</b> EU AI Act art. 12 &amp; 14 evidence, generated from your own log <span aria-hidden="true">→</span></a>
+  <h1>You pay three AI vendors. Not one of them can prove the work was right.</h1>
+  <p class="lede">Tacit grades every AI in your company — the ones you bought and the ones you run — against the one standard that matters: what your own people actually do. Oversight is free. When Tacit does the work itself, you pay only for the actions a human approved or never took back.</p>
+  <div class="cta"><a class="btn accent" href="#install">Start free — read-only</a><a class="btn ghost" href="#oversight">See what it finds</a></div>
+  <div class="trust">Self-hosted · 30 minutes to a report · No write access required to begin</div>
 
-  <div class="frame" id="product" aria-label="Tacit console">
-    <div class="bar"><i></i><i></i><i></i><span class="url">tacit.northwind.internal / overview</span></div>
-    <div class="app">
-      <div class="side">
-        <div class="brand"><svg width="22" height="22" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg><span>Tacit<small>Northwind Labs</small></span></div>
-        <a class="on">Overview</a><a>Playbooks</a><a>Shadow</a><a>People</a><a>Inbox <b>2</b></a><a>Runs</a><a>Chat</a><div class="sep"></div><a>Memory</a><a>Tasks</a><a>Automations</a><a>Meetings</a><div class="sep"></div><a>Audit log</a><a>Settings</a>
-      </div>
-      <div class="main">
-        <h4>Good morning. @tacit is watching 4 jobs.</h4>
-        <div class="sub">455 observed actions across your tools · 66 shadow drafts graded against what your team actually did.</div>
-        <div class="stats">
-          <div class="stat"><div class="l">Shadow accuracy</div><div class="v a" id="f-acc">79%</div><div class="h">52 of 66 drafts matched the human</div></div>
-          <div class="stat"><div class="l">Running on auto</div><div class="v">1</div><div class="h">1 proposing · 2 shadowing · 1 candidate</div></div>
-          <div class="stat"><div class="l">Awaiting a tap</div><div class="v g">2</div><div class="h">1 to approve · 1 to teach</div></div>
-          <div class="stat"><div class="l">Hours returned</div><div class="v ok">38.4</div><div class="h">312 reversible actions on record</div></div>
+  <div class="frame" aria-label="Tacit oversight">
+    <div class="bar"><i></i><i></i><i></i><span class="url">tacit.northwind.internal / oversight</span></div>
+    <div class="fbody">
+      <div class="fh"><b>Oversight</b><span>every non-human worker in the company, graded against your own people · last 30 days</span></div>
+      <div class="cards">
+        <div class="vc bad">
+          <div class="top"><b>Fin (support bot)</b><small>Intercom · slack</small></div>
+          <div class="k">Needed a human after</div><div class="big">48%</div><div class="sub">25 of 52 actions were reworked by your team</div>
+          <div class="line">Billed <b>$0.99</b> per action → <b>$1.91</b> per action that actually landed</div>
         </div>
-        <div class="cols">
-          <div class="panel"><div class="t">Ready to graduate</div><div class="s">Recommendations are computed, never applied. You decide.</div>
-            <div class="rec"><span class="pill ca">CANDIDATE</span><div class="n"><div>First reply on new issues</div><small>9 past occurrences · consistency 69% · shadowing costs nothing</small></div><span class="b">Move to Shadow</span></div>
-            <div class="rec"><span class="pill sh">SHADOW</span><div class="n"><div>First reply on new pull requests in northwind/api</div><small>12/14 drafts matched what maya actually did · trust 60%</small></div><span class="b">Move to Propose</span></div>
-            <div class="rec"><span class="pill pr">PROPOSE</span><div class="n"><div>Answer “2fa” threads in #support</div><small>11 approved · 1 rejected · 0 undos</small></div><span class="b">Move to Auto</span></div>
-          </div>
-          <div class="panel"><div class="t">Shadow accuracy over time</div><div class="s">Mean draft score, graded against real replies</div>
-            <div class="chart"><svg viewBox="0 0 320 110" preserveAspectRatio="none"><defs><linearGradient id="fg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0E7C86" stop-opacity=".5"/><stop offset="1" stop-color="#0E7C86" stop-opacity="0"/></linearGradient></defs><path d="M0,70 C30,66 40,58 60,52 S100,44 130,46 S170,30 200,28 S250,24 280,20 L320,18 L320,110 L0,110Z" fill="url(#fg)"/><path d="M0,70 C30,66 40,58 60,52 S100,44 130,46 S170,30 200,28 S250,24 280,20 L320,18" fill="none" stroke="#5FD1DA" stroke-width="2"/></svg></div>
-            <div class="tl" style="margin-top:8px">
-              <div class="row"><span class="nm">Answer “2fa” threads<small>priya · Slack</small></span><span class="pill au">AUTO</span><span class="bar2"><i style="width:70%"></i></span></div>
-              <div class="row"><span class="nm">Answer “invoice” threads<small>priya · Slack</small></span><span class="pill pr">PROPOSE</span><span class="bar2"><i style="width:62%"></i></span></div>
-              <div class="row"><span class="nm">First reply on new PRs<small>maya · GitHub</small></span><span class="pill sh">SHADOW</span><span class="bar2"><i class="w" style="width:60%"></i></span></div>
-              <div class="row"><span class="nm">Monday on-call summary<small>sam · Slack</small></span><span class="pill sh">SHADOW</span><span class="bar2"><i class="d" style="width:27%"></i></span></div>
-            </div>
-          </div>
+        <div class="vc warn">
+          <div class="top"><b>Triage Copilot</b><small>in-house · linear</small></div>
+          <div class="k">Needed a human after</div><div class="big">32%</div><div class="sub">matches your team's triage 24% of the time</div>
+          <div class="line"><b>$400</b>/mo for 22 actions → <b>$26.67</b> per action that landed</div>
+        </div>
+        <div class="vc ok">
+          <div class="top"><b>@tacit</b><small><span class="pill au">GOVERNED</span></small></div>
+          <div class="k">Needed a human after</div><div class="big">7%</div><div class="sub">59 actions, 4 reversed — each one reversible</div>
+          <div class="line">Billed <b>$16.20</b> for 54 verified · <b>4 credited back</b></div>
         </div>
       </div>
     </div>
   </div>
 </div></header>
 
-<section class="tight" style="padding-top:64px"><div class="wrap">
+<section class="tight" style="padding-top:60px"><div class="wrap">
   <div class="metrics">
-    <div><div class="v">79%</div><div class="k">of last quarter's triggers handled correctly in backtest, on the sample org that ships with every install</div></div>
-    <div><div class="v">0</div><div class="k">prompts to write. The ground truth is what your people already do</div></div>
-    <div><div class="v">100%</div><div class="k">of writes carry an undo recipe. Roll back a whole run across systems</div></div>
-    <div><div class="v">1</div><div class="k">process, one database, on your infrastructure. Export everything in one call</div></div>
-  </div>
-</div></section>
-
-<section id="story"><div class="wrap">
-  <div class="center"><div class="eyebrow">How a job gets hired</div><h2 style="margin-top:14px">A Tuesday with Tacit.</h2><p class="lede">Priya works in support. Twelve times a month someone asks “where's the invoice for Acme?” and she answers the same way. Nobody wrote that job down. Here is how Tacit takes it over — and only that job.</p></div>
-  <div class="story" style="margin-top:44px">
-    <div class="step"><div class="num">01 · WATCH</div><div><h3>It notices the job exists</h3><p>You connect Slack. Tacit reads what happens and spots that this question → this reply recurs, from Priya, quickly, consistently. It writes it up as a playbook with the evidence attached.</p>
-      <div class="ui"><span class="pill ca">CANDIDATE</span> &nbsp;<b>Answer “invoice” threads in #billing</b> · priya · seen 14× · usually answered within 1.0h · consistency 78%</div></div></div>
-    <div class="step"><div class="num">02 · SHADOW</div><div><h3>It practises in secret</h3><p>You click “shadow”. From now on, every time someone asks for an invoice, Tacit writes the reply Priya would write — and files it where nobody sees it. Two hours later Priya replies for real. Tacit compares the two and scores itself.</p>
-      <div class="ui"><div class="msg"><span class="av">J</span><div><div class="who">jonas · #billing</div><div class="tx">hey, where's the invoice for Globex? finance is chasing</div></div></div><div class="ghost-draft">Tacit (unsent): Sent Globex their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.</div><div class="msg"><span class="av p">P</span><div><div class="who">priya · 47 min later</div><div class="tx">Sent Globex their invoice — net 30, copy in Finance/Invoices.</div></div></div><div style="margin-top:8px;font:12px var(--mono);color:var(--fmuted)">similarity 0.81 · <span class="pill hit">HIT</span> · trust 13/15 → 62%</div></div></div></div>
-    <div class="step"><div class="num">03 · BACKTEST</div><div><h3>You get the number on day one</h3><p>You don't have to wait weeks. Tacit replays the same shadow process over the last 90 days of history — drafting blind, scoring against the replies that already happened — and shows you every hit and every miss.</p>
-      <div class="ui"><b>Backtest · Answer “invoice” threads</b> &nbsp; 13 of 15 historical triggers matched · mean score 89 · 0.2s &nbsp; <span class="pill hit">WOULD HAVE HANDLED 87%</span></div></div></div>
-    <div class="step"><div class="num">04 · PROPOSE</div><div><h3>It asks for permission — each time</h3><p>When the score clears the bar, Tacit recommends promotion. Now invoice questions land in your Inbox as a finished reply with a preview of exactly what will be posted. One tap approves. Anything that looks unlike the pattern is flagged as an outlier and escalated even later, on auto.</p>
-      <div class="ui"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill pr">PROPOSE</span><b>Answer “invoice” threads</b><span class="pill au">TRUST 62%</span><span class="pill hit">CONFIDENCE 91%</span><span style="margin-left:auto" class="pill hit">APPROVE</span><span class="pill ca">DENY</span></div><div style="margin-top:10px;border:1px solid var(--fline);border-radius:8px;padding:10px">Slack · reply in #billing · reversible<br><span style="color:var(--fmuted)">Sent Tyrell their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.</span></div></div></div></div>
-    <div class="step"><div class="num">05 · AUTO</div><div><h3>It takes over — with an undo button</h3><p>After enough approvals and no rejections, it asks to go fully automatic for this one job. It runs under a budget, every action is logged with its inverse, and three undos demote it back to asking. When Priya misses a draft, Tacit asks her one question and the answer becomes a rule.</p>
-      <div class="ui"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill au">AUTO</span><b>run · slack_post · #billing</b><span class="pill hit">COMMITTED</span><span style="margin-left:auto;font:12px var(--mono);color:var(--fmuted)">undo: slack_delete · budget 3/10 writes this hour</span></div></div></div></div>
-  </div>
-</div></section>
-
-<section class="alt"><div class="wrap">
-  <div class="center"><div class="eyebrow">Why it's different</div><h2 style="margin-top:14px">Other AI teammates ask for trust on day one.<br>Tacit earns it, in public.</h2></div>
-  <div class="g3" style="margin-top:44px">
-    <div class="card"><span class="ic">01</span><h3>Self-supervised trust</h3><p>No labelling, no eval sets. Every draft is graded against the human's real action. Trust is a Wilson lower bound, so ten lucky hits don't count as proof.</p></div>
-    <div class="card"><span class="ic">02</span><h3>Autonomy per job, not per bot</h3><p>Shadow → propose → auto, each job on its own ladder, with demotion when undos or rejections pile up. You always know exactly what it may do unattended.</p></div>
-    <div class="card"><span class="ic">03</span><h3>Outliers get escalated</h3><p>A trigger that doesn't resemble anything the job was learned from is routed to a human — even on auto. Confidence is shown on every draft.</p></div>
-    <div class="card"><span class="ic">04</span><h3>Reversible by construction</h3><p>Comments know how to delete themselves; file writes keep the previous content. Undo a run across GitHub, Slack and files in one click, and the undo is audited too.</p></div>
-    <div class="card"><span class="ic">05</span><h3>It learns from corrections</h3><p>When a draft misses, Tacit asks the owner one question. The answer becomes a rule that conditions every future draft of that job.</p></div>
-    <div class="card"><span class="ic">06</span><h3>Cover when someone's out</h3><p>See which jobs live only in one person's head. When they're on leave, promote their proven jobs to propose for a week — with approvals routed to a backup.</p></div>
+    <div><div class="v">47%</div><div class="k">of companies encouraging AI agents have governance over them — while 87% encourage the use</div><cite><a href="https://www.okta.com/newsroom/articles/ai-agents-at-work-2026-agentic-enterprise-security/">Okta, 2026</a></cite></div>
+    <div><div class="v">88%</div><div class="k">had a confirmed or suspected agent security incident last year; over half of agents have no logging at all</div><cite><a href="https://www.gravitee.io/blog/state-of-ai-agent-security-2026-report-when-adoption-outpaces-control">Gravitee, 2026</a></cite></div>
+    <div><div class="v">23%</div><div class="k">of organisations see significant ROI from AI agents. Nobody can say which ones are working</div><cite><a href="https://writer.com/blog/enterprise-ai-adoption-2026/">Writer, 2026</a></cite></div>
+    <div><div class="v">Aug 2</div><div class="k">2026 — EU AI Act art. 12 logging and art. 14 human oversight became enforceable. €15M or 3% of turnover</div><cite><a href="https://artificialintelligenceact.eu/article/14/">EU AI Act</a></cite></div>
   </div>
 </div></section>
 
 <section><div class="wrap">
+  <div class="center"><div class="eyebrow">One engine, two jobs</div><h2 style="margin-top:14px">Grade the AI you bought. Then let Tacit earn the work.</h2><p class="lede">Both run on the same thing: a model of how your team actually does its job, learned by watching, never by you writing it down.</p></div>
+  <div class="two">
+    <div class="prod">
+      <span class="tag">FREE FOREVER</span>
+      <h3>Oversight</h3>
+      <p>Point Tacit at any AI that acts in a system it can see — Sierra, Fin, Copilot, a homegrown agent. Their actions arrive as read-only events; nothing about your setup changes and no vendor needs to cooperate.</p>
+      <ul>
+        <li><b>Graded against your own team</b>, not against the vendor's idea of "resolved"</li>
+        <li><b>Rework rate</b> — how often a human had to step in afterwards. The number no vendor reports</li>
+        <li><b>Real cost per action that landed</b>, next to what you were billed</li>
+        <li>The exact cases it got wrong, side by side with what your team would have said</li>
+        <li>Every supervised agent lands in your Article 12 log automatically</li>
+      </ul>
+    </div>
+    <div class="prod">
+      <span class="tag">PAY FOR VERIFIED WORK</span>
+      <h3>Work</h3>
+      <p>Tacit finds the repeating jobs your people do, practises them in shadow, and asks to take each one over only once it has proven itself. Autonomy is earned per job and every action is reversible.</p>
+      <ul>
+        <li><b>Shadow</b> — drafts silently and grades itself against the human's real reply</li>
+        <li><b>Backtest</b> — what it would have done with last quarter, before it does anything</li>
+        <li><b>Propose → Auto</b> — a ladder per job, with automatic demotion when it slips</li>
+        <li>Outliers escalate to a person even on auto; misses become rules your team writes</li>
+        <li><b>You are billed only for actions a human approved or never reversed</b></li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<section class="alt" id="oversight"><div class="wrap">
   <div class="g2">
-    <div><div class="eyebrow">Replay</div><h2 style="margin-top:14px">A regression suite you never had to write.</h2><p class="lede" style="margin-top:16px">Every run is a recording: the input, the decisions, the tool results. Replay any of them against a new model or prompt with recorded results substituted in — nothing touches the outside world — and diff the decisions. Upgrading the model becomes a measurement, not a leap of faith.</p></div>
-    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">runs / run_01m28…</span></div><div class="main">
-      <div style="display:flex;gap:8px;align-items:center"><b>Replay result</b><span class="pill hit">IDENTICAL</span><span class="muted" style="font-size:12px;color:var(--fmuted)">claude-opus-5 vs recorded · 0 side effects</span></div>
-      <div class="cols" style="margin-top:12px"><div class="panel"><div class="s">ORIGINAL</div><div class="mono" style="font-size:12px">memory_search({"query":"invoices"})<br>slack_post({"channel":"#billing", …})</div></div><div class="panel"><div class="s">REPLAYED</div><div class="mono" style="font-size:12px">memory_search({"query":"invoices"})<br>slack_post({"channel":"#billing", …})</div></div></div>
+    <div>
+      <div class="eyebrow">The number nobody reports</div>
+      <h2 style="margin-top:12px">"Resolved" means the conversation ended. It doesn't mean it was right.</h2>
+      <p class="lede" style="margin-top:16px">Every outcome-priced AI vendor grades its own homework. Tacit measures what actually happened next: did a human have to step in and redo it? That single number, multiplied by what you were billed, is the true cost of every AI in your stack — and it is usually not the number on the invoice.</p>
+      <p class="lede" style="margin-top:14px">It works because Tacit already knows how your team answers. Nothing to label, no evaluation set to write.</p>
+    </div>
+    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">oversight / fin</span></div><div class="fbody">
+      <div class="msg"><span class="av">J</span><div><div class="who">jonas · #support</div><div>customer can't get into their account, 2fa codes not arriving</div></div></div>
+      <div class="msg"><span class="av b">F</span><div><div class="who">fin · 30 seconds later · <span class="pill bad">SCORE 15</span></div><div>Thanks for reaching out! I've escalated this to our support specialists. You should hear back soon. 🙂</div></div></div>
+      <div class="ghost-draft">Your team's answer: Verify identity via the billing email on file, then Admin → Users → Reset 2FA. It logs an audit entry; they must re-enrol within 24h.</div>
+      <div class="msg"><span class="av p">P</span><div><div class="who">priya · 41 minutes later · <span class="pill bad">REWORK</span></div><div>Ignore that — no ticket needed. Verify via the billing email, then Admin → Users → Reset 2FA.</div></div></div>
+      <div style="border-top:1px solid var(--fline);margin-top:12px;padding-top:10px;font:12px var(--mono);color:var(--fmuted)">billed by vendor <b style="color:var(--ftext)">$0.99</b> · landed <b style="color:#F08A7C">no</b> · a person spent 4 minutes fixing it</div>
     </div></div>
   </div>
 </div></section>
 
-<section class="alt" id="security"><div class="wrap">
-  <div class="center"><div class="eyebrow">Security & control</div><h2 style="margin-top:14px">Built for the people who say no.</h2><p class="lede">Everything a security review asks about is a first-class object with an API, not a slide.</p></div>
-  <div class="sec" style="margin-top:40px">
-    <div><h4>Self-hosted</h4><p>One process, one SQLite or Postgres database, on your machine or in your VPC. Your context never leaves unless you connect a cloud model.</p></div>
-    <div><h4>Permissions as rules</h4><p>Every tool carries a risk class. Rules map (principal, tool) → allow, ask or deny. Denied tools aren't even offered to the model.</p></div>
-    <div><h4>Hard budgets</h4><p>Writes per hour and dollars per day per principal pattern. Enforced before execution; no model can talk its way past them.</p></div>
-    <div><h4>Append-only audit</h4><p>Who asked, what ran, what changed, whether it worked — including undos and stage changes. Export as JSONL to your SIEM.</p></div>
-    <div><h4>Secrets stay secrets</h4><p>Tokens live in the environment, never in the database. API keys are hashed; sessions are signed cookies; passwords use scrypt.</p></div>
-    <div><h4>Leave in one call</h4><p><span class="mono">GET /api/v1/export</span> returns every table as JSON. No export request, no retention window, no lock-in.</p></div>
+<section id="work"><div class="wrap">
+  <div class="center"><div class="eyebrow">How a job gets hired</div><h2 style="margin-top:14px">A Tuesday with Tacit.</h2><p class="lede">Priya works in support. Twelve times a month someone asks "where's the invoice for Acme?" and she answers the same way. Nobody wrote that job down. Here is how Tacit takes it over — and only that job.</p></div>
+  <div class="story" style="margin-top:40px">
+    <div class="step"><div class="num">01 · WATCH</div><div><h3>It notices the job exists</h3><p>You connect one source, read-only. Tacit spots that this question → this reply recurs, from Priya, quickly, consistently, and writes it up with the evidence attached.</p>
+      <div class="ui"><span class="pill n">CANDIDATE</span> &nbsp;<b>Answer "invoice" threads in #billing</b> · priya · seen 28× · usually answered within 1.0h · consistency 78%</div></div></div>
+    <div class="step"><div class="num">02 · SHADOW</div><div><h3>It practises in secret</h3><p>Every time the question comes up, Tacit writes the reply Priya would write and files it where nobody sees it. When Priya answers for real, the draft is scored against her.</p>
+      <div class="ui"><div class="ghost-draft" style="margin-left:0">Tacit (unsent): Sent Globex their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.</div><div class="msg"><span class="av p">P</span><div><div class="who">priya · 47 min later</div><div>Sent Globex their invoice — net 30, copy in Finance/Invoices.</div></div></div><div style="margin-top:8px;font:12px var(--mono);color:var(--fmuted)">similarity 0.81 · <span class="pill ok">HIT</span> · trust 24/27 → 72%</div></div></div></div>
+    <div class="step"><div class="num">03 · BACKTEST</div><div><h3>You get the number on day one</h3><p>You don't wait weeks. Tacit replays the same process over the history you already have — drafting blind, scoring against replies that already happened — and costs the result in hours and money.</p>
+      <div class="ui"><b>Day one · Northwind Labs</b> &nbsp; 5 repeating jobs · 20.4h/year of repetitive load · <span class="pill ok">WOULD HAVE HANDLED 70%</span> · 14.3h recoverable ≈ $931/yr, at $73/yr of verified work</div></div></div>
+    <div class="step"><div class="num">04 · PROPOSE</div><div><h3>It asks for permission — each time</h3><p>Drafts land in an inbox as finished work, with a preview of exactly what will change. One tap approves. Anything unlike the pattern is flagged as an outlier and escalated to a person, even later on auto.</p>
+      <div class="ui"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill n">PROPOSE</span><b>Answer "invoice" threads</b><span class="pill au">TRUST 72%</span><span class="pill ok">CONFIDENCE 91%</span><span style="margin-left:auto" class="pill ok">APPROVE</span><span class="pill n">DENY</span></div><div style="margin-top:10px;border:1px solid var(--fline);border-radius:8px;padding:10px">Slack · reply in #billing · reversible<br><span style="color:var(--fmuted)">Sent Tyrell their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.</span></div></div></div></div>
+    <div class="step"><div class="num">05 · AUTO, AND ONLY THEN BILLED</div><div><h3>It takes over — and you pay for what stood</h3><p>After enough approvals with no rejections it asks to go fully automatic for this one job, under a budget, with an undo on every action. It is billed only once a human approved the action or the dispute window closed without anyone reversing it.</p>
+      <div class="ui"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="pill au">AUTO</span><b>ledger</b><span class="pill ok">54 VERIFIED · $16.20</span><span class="pill bad">4 CREDITED BACK</span><span style="margin-left:auto;font:12px var(--mono);color:var(--fmuted)">a vendor charging per resolution would have billed all 58</span></div></div></div></div>
   </div>
+</div></section>
+
+<section class="alt" id="evidence"><div class="wrap">
+  <div class="g2">
+    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">compliance / evidence</span></div><div class="fbody">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px"><span class="pill ok">LOG INTACT</span><span style="font-size:12.5px;color:var(--fmuted)">591 events sealed into a hash chain</span></div>
+      <div class="cards" style="grid-template-columns:1fr 1fr">
+        <div class="vc"><div class="k">Human decisions</div><div class="big">11/12</div><div class="sub">1 refused · median 4 min to decide</div></div>
+        <div class="vc"><div class="k">Escalated to a human</div><div class="big">3</div><div class="sub">low-confidence cases the AI declined to handle alone</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:12.5px;color:var(--fmuted);line-height:1.6">No AI system below the "auto" stage may act without a named human approving the specific action. Systems at auto act only within enforced budgets, escalate low-confidence cases, and carry a recorded inverse so a human can reverse them.</div>
+      <div style="border-top:1px solid var(--fline);margin-top:12px;padding-top:10px;font:11.5px var(--mono);color:var(--fmuted)">root 8b07413d37e94b4af748b60c…</div>
+    </div></div>
+    <div>
+      <div class="eyebrow">Evidence, not a project</div>
+      <h2 style="margin-top:12px">The compliance work is already done, because it is how the product works.</h2>
+      <p class="lede" style="margin-top:16px">Article 12 asks for automatic, traceable records over the system's life. Article 14 asks you to show that a human can understand, intervene and override. Both became enforceable on 2 August 2026.</p>
+      <p class="lede" style="margin-top:14px">Tacit's log is append-only and sealed into a hash chain, so an altered or deleted record is detectable by anyone holding an earlier root. One click produces the bundle: every system in scope, its autonomy level, the oversight that applies, the approvals, the refusals, the reversals — including for the third-party agents you supervise.</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="center"><div class="eyebrow">Why this is different</div><h2 style="margin-top:14px">Everybody bought observability. Nobody owns whether the work was right.</h2></div>
+  <div class="g3" style="margin-top:40px">
+    <div class="card"><span class="ic">01</span><h3>Ground truth, not a rubric</h3><p>Other tools score an AI against a prompt or a panel of judges. Tacit scores it against what your colleague actually did, in the same thread, minutes later. There is nothing to label and nothing to maintain.</p></div>
+    <div class="card"><span class="ic">02</span><h3>It grades your other vendors</h3><p>The only product that will tell you a tool you already pay for is producing work your team has to redo. Free, read-only, and no cooperation needed from the vendor.</p></div>
+    <div class="card"><span class="ic">03</span><h3>Pricing that can't be gamed</h3><p>Per-resolution pricing bills you when the chat ends. Verified-work pricing bills only when a human approved the action or let it stand. Reversed work is credited back, permanently.</p></div>
+    <div class="card"><span class="ic">04</span><h3>Autonomy per job, earned</h3><p>Shadow → propose → auto, one job at a time, with demotion when rejections or reversals pile up. You always know precisely what may act unattended, and why.</p></div>
+    <div class="card"><span class="ic">05</span><h3>Reversible by construction</h3><p>Every write records its inverse. Undo a run across Slack, GitHub and files in one click — and the undo is on the audit log too.</p></div>
+    <div class="card"><span class="ic">06</span><h3>Cover when someone's out</h3><p>See which jobs live in one person's head. When they go on leave, promote their proven jobs for a week with approvals routed to a backup, then restore them automatically.</p></div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <div class="eyebrow">Compare</div>
+  <h2 style="margin-top:12px;max-width:20em">Three categories, one gap between them.</h2>
+  <div class="tscroll"><table>
+    <tr><th></th><th>Tacit</th><th>Agent vendors<br><span class="muted" style="font-weight:400;text-transform:none;letter-spacing:0">(Sierra, Fin, Copilot)</span></th><th>Observability<br><span class="muted" style="font-weight:400;text-transform:none;letter-spacing:0">(LangSmith, Braintrust)</span></th></tr>
+    <tr><td>Tells you if the work was <i>right</i></td><td class="y">Against your own team's behaviour</td><td class="n">Self-graded: "resolved"</td><td class="n">Against a rubric you write and maintain</td></tr>
+    <tr><td>Grades AI you bought elsewhere</td><td class="y">Yes — free, read-only</td><td class="n">No</td><td class="n">Only what you instrument yourself</td></tr>
+    <tr><td>Measures rework by humans</td><td class="y">Core metric</td><td class="n">No</td><td class="n">No</td></tr>
+    <tr><td>Proof before it acts</td><td class="y">Backtest on your own history</td><td class="n">A demo</td><td class="y">Offline evals</td></tr>
+    <tr><td>Approval and undo on every action</td><td class="y">Built in, per job</td><td class="n">Varies; usually global</td><td class="n">Out of scope</td></tr>
+    <tr><td>Article 12 / 14 evidence</td><td class="y">One click, hash-sealed</td><td class="n">Their logs, their cloud</td><td class="n">Traces, not oversight evidence</td></tr>
+    <tr><td>Pricing</td><td class="y">Free oversight; verified work only</td><td class="n">Per resolution, verified by them</td><td class="n">Per trace / per seat</td></tr>
+    <tr><td>Where your data lives</td><td class="y">Your infrastructure</td><td class="n">Their cloud</td><td class="n">Their cloud</td></tr>
+  </table></div>
 </div></section>
 
 <section id="install"><div class="wrap">
   <div class="g2">
-    <div><div class="eyebrow">Install</div><h2 style="margin-top:14px">Ten minutes to your first backtest.</h2><p class="lede" style="margin-top:16px">Clone, run, connect a tool, mine. Tacit shows you the jobs it found and what it would have done with last quarter's triggers. Nothing acts until you say so.</p>
+    <div><div class="eyebrow">Start</div><h2 style="margin-top:14px">Thirty minutes. No write access. A report at the end.</h2>
+      <p class="lede" style="margin-top:16px">The pilot is read-only by construction: Tacit reads history, mines the repeating jobs, backtests itself against them, and hands you a costed report. Nothing acts unless you later decide it should.</p>
       <div style="margin-top:22px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn accent" href="https://github.com/suncal/tacit">Get the code</a><a class="btn ghost" href="#pricing">Or let us host it</a></div></div>
-    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">terminal</span></div><pre class="mono" style="margin:0;padding:18px 20px;font-size:13px;line-height:1.7;color:#C9CDD6"><span style="color:#5FD1DA">$</span> git clone https://github.com/suncal/tacit && cd tacit
+    <div class="frame" style="margin:0;max-width:none"><div class="bar"><i></i><i></i><i></i><span class="url">terminal</span></div><pre class="mono" style="margin:0;padding:18px 20px;font-size:13px;line-height:1.7;color:#C9CDD6;overflow-x:auto"><span style="color:#5FD1DA">$</span> git clone https://github.com/suncal/tacit && cd tacit
 <span style="color:#5FD1DA">$</span> make setup && make demo
 <span style="color:#8C919C">Tacit is up → http://127.0.0.1:4800   docs → /api/docs</span>
-<span style="color:#5FD1DA">$</span> export TACIT_SLACK_CHANNELS=C0BILLING TACIT_ANTHROPIC_API_KEY=sk-…
-<span style="color:#5FD1DA">$</span> curl -X POST localhost:4800/api/v1/playbooks/mine
-<span style="color:#8C919C">{"events": 452, "found": 5, "created": 5}</span>
-<span style="color:#5FD1DA">$</span> curl -X POST localhost:4800/api/v1/playbooks/backtest
-<span style="color:#8C919C">{"total": {"n": 66, "hits": 52, "hit_rate": 0.788}}</span></pre></div>
+<span style="color:#5FD1DA">$</span> export TACIT_SLACK_CHANNELS=C0BILLING   <span style="color:#8C919C"># read-only scope</span>
+<span style="color:#5FD1DA">$</span> curl -X POST localhost:4800/api/v1/pilot/report
+<span style="color:#8C919C">{"jobs": 5, "hours_recoverable": 14.3, "coverage": 0.70}</span>
+<span style="color:#5FD1DA">$</span> curl -X POST localhost:4800/api/v1/oversight \
+    -d '{"handle":"fin","name":"Fin","vendor":"Intercom","price_per_action_usd":0.99}'
+<span style="color:#8C919C">{"id": "agt_…"}   # now their work is graded too</span></pre></div>
   </div>
 </div></section>
 
 <section class="alt" id="pricing"><div class="wrap">
-  <div class="center"><div class="eyebrow">Pricing</div><h2 style="margin-top:14px">Free to run. Paid to not run it yourself.</h2></div>
-  <div class="price" style="margin-top:40px">
-    <div class="plan"><div class="eyebrow">Self-hosted</div><div class="amt">$0<small>MIT license</small></div><p class="ink2">Everything. Unlimited members, jobs and events.</p><ul><li>Mining, shadow, backtest, trust ladder</li><li>Undo, budgets, audit, replay, teach, cover</li><li>GitHub · Slack · Linear · MCP · Event API</li><li>Any model — or none</li></ul><a class="btn ghost" href="https://github.com/suncal/tacit">Get the code</a></div>
-    <div class="plan lead"><div class="eyebrow">Cloud</div><div class="amt">$49<small>per org / month</small></div><p class="ink2">We run your instance. It's still your instance: export the database and leave any time.</p><ul><li>Managed updates and backups</li><li>Public webhooks, SSO, audit forwarding</li><li>Cancel = we hand you the file</li></ul><a class="btn accent" href="#install">Start free trial</a></div>
-    <div class="plan"><div class="eyebrow">Enterprise</div><div class="amt">Custom<small></small></div><p class="ink2">In your VPC or air-gapped. Custom connectors. A named engineer.</p><ul><li>Custom event sources and MCP tools</li><li>Trust-ladder policy tuned to your risk appetite</li><li>Priority fixes and roadmap input</li></ul><a class="btn ghost" href="#install">Talk to us</a></div>
+  <div class="center"><div class="eyebrow">Pricing</div><h2 style="margin-top:14px">Watching is free. You pay for work that passed.</h2><p class="lede">No seats. No minimums. No bill for anything a human took back.</p></div>
+  <div class="price" style="margin-top:38px">
+    <div class="plan"><div class="eyebrow">Oversight</div><div class="amt">$0<small>unlimited agents, forever</small></div><ul><li>Supervise any AI you already pay for</li><li>Rework rate and true cost per landed action</li><li>Shadow mode on your own jobs</li><li>Day-One report and backtests</li><li>Self-hosted, MIT licensed</li></ul><a class="btn ghost" href="https://github.com/suncal/tacit">Get the code</a></div>
+    <div class="plan lead"><div class="eyebrow">Verified work</div><div class="amt">$0.30<small>per verified action — nothing else</small></div><ul><li>Billed only when a human approved it, or nobody reversed it in 24h</li><li>Reversed or refused work credited back</li><li>Full ledger, line by line, auditable</li><li>Budgets cap spend before execution</li><li>Typical job: a few dollars a month</li></ul><a class="btn accent" href="#install">Start free</a></div>
+    <div class="plan"><div class="eyebrow">Compliance</div><div class="amt">$500<small>per org / month</small></div><ul><li>Signed Article 12 / 14 evidence exports</li><li>Auditor access with read-only roles</li><li>Retention policy and log forwarding</li><li>SSO and SCIM</li><li>Annual attestation pack</li></ul><a class="btn ghost" href="#install">Talk to us</a></div>
+    <div class="plan"><div class="eyebrow">Enterprise</div><div class="amt">Custom<small>VPC or air-gapped</small></div><ul><li>Deployment inside your network</li><li>Custom event sources and tools</li><li>Trust-ladder policy tuned to your risk appetite</li><li>Named engineer, priority fixes</li></ul><a class="btn ghost" href="#install">Talk to us</a></div>
   </div>
+  <p class="muted" style="margin-top:22px;font-size:13.5px;text-align:center">Why free oversight? Because the fastest way to prove Tacit is worth trusting with work is to let it show you the truth about the AI you already bought.</p>
 </div></section>
 
 <section class="faq"><div class="wrap">
-  <div class="eyebrow">FAQ</div><h2 style="margin:14px 0 26px">Questions worth asking</h2>
-  <details open><summary>Isn't “similarity to what the human wrote” a crude score?</summary><p>It's an explainable one, and it's calibrated against the only thing that matters: would the team have accepted this? Every score sits next to the draft and the real reply. A human can override any grade with one tap, and misses turn into questions the owner answers in a sentence.</p></details>
-  <details><summary>What about jobs that need judgement?</summary><p>They score badly in shadow, which is the point: Tacit recommends leaving them alone, or retiring the playbook. And on the jobs it does take, triggers that don't resemble the pattern are escalated to a person — even on auto.</p></details>
-  <details><summary>Does it need a model?</summary><p>No. The local brain drafts from your team's own past replies and runs a deterministic planner, so the entire harness works without a key. Add Claude when you want drafts that adapt to context.</p></details>
-  <details><summary>How is this different from process mining or RPA?</summary><p>Process mining tells you a pattern exists. RPA replays clicks. Tacit does the knowledge-work version — replies, triage, reviews, summaries — and proves each job in shadow against the human before it is allowed to act.</p></details>
-  <details><summary>Where does the data live?</summary><p>On your infrastructure, in one database. Secrets are environment variables, never rows. One API call exports everything.</p></details>
+  <div class="eyebrow">FAQ</div><h2 style="margin:14px 0 24px">Questions worth asking</h2>
+  <details open><summary>How can you grade another vendor's agent without their cooperation?</summary><p>You already have the record: the messages, comments and tickets it produced sit in your own tools. Tacit reads those as events — the same read-only feed it uses for humans — and compares them with what your team does in the same situation. The vendor is not involved and nothing on their side changes.</p></details>
+  <details><summary>Isn't "similarity to what a human wrote" a crude score?</summary><p>On its own, yes. That's why the headline metric is rework: did a person have to step in afterwards? That is a fact, not a judgement. Similarity explains <i>why</i>, and anyone can override a grade with one tap.</p></details>
+  <details><summary>What stops you billing for work that looks fine but isn't?</summary><p>The dispute window and the undo button. Nothing is billed while a human can still reverse it, and reversing it credits the line permanently. You can also read every line and see the exact reason it was billed.</p></details>
+  <details><summary>Does it need a model?</summary><p>No. The local brain drafts from your team's own past replies and runs a deterministic planner, so mining, shadow scoring, oversight, approvals, undo and the audit log all work with no key at all. Add Claude when you want drafts that adapt to context.</p></details>
+  <details><summary>Where does the data live?</summary><p>On your infrastructure, in one database — SQLite or Postgres. Secrets are environment variables, never rows. One API call exports everything, including the chain root.</p></details>
 </div></section>
 
-<section class="tight"><div class="wrap"><div class="band"><h2>Stop asking your team to trust an AI.<br>Let the AI earn it.</h2><p>Run the demo org in ten minutes. Point it at one channel. Read the backtest. Decide.</p><a class="btn" style="background:#fff;color:#0B0C0E" href="#install">Get started</a></div></div></section>
+<section class="tight"><div class="wrap"><div class="band"><h2>Find out what your AI is actually doing.</h2><p>Start with the agents you already pay for. It's free, it's read-only, and it takes half an hour.</p><a class="btn" style="background:#fff;color:#0B0C0E" href="#install">Start free</a></div></div></section>
 
 <footer><div class="wrap">
   <div class="fcols">
-    <div><a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg>Tacit</a><p class="muted" style="margin-top:12px;max-width:26em">The AI teammate that learns your job by watching, proves it can do it, and earns autonomy one job at a time.</p></div>
-    <div><h5>Product</h5><ul><li><a href="#story">How it works</a></li><li><a href="#security">Security</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#install">Install</a></li></ul></div>
-    <div><h5>Developers</h5><ul><li><a href="https://github.com/suncal/tacit">GitHub</a></li><li><a href="https://github.com/suncal/tacit">API reference</a></li><li><a href="https://github.com/suncal/tacit">Event API</a></li><li><a href="https://github.com/suncal/tacit">Changelog</a></li></ul></div>
+    <div><a class="logo" href="#"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0E7C86"/><path d="M9 11h14M9 16h9M9 21h5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="20" r="3.5" fill="#F5C451"/></svg>Tacit</a><p class="muted" style="margin-top:12px;max-width:26em">The verified work layer. Grade every AI in the company against what your own people do — then let the proven ones work.</p></div>
+    <div><h5>Product</h5><ul><li><a href="#oversight">Oversight</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
+    <div><h5>Developers</h5><ul><li><a href="https://github.com/suncal/tacit">GitHub</a></li><li><a href="https://github.com/suncal/tacit">API reference</a></li><li><a href="https://github.com/suncal/tacit">Event API</a></li><li><a href="https://github.com/suncal/tacit">Self-hosting</a></li></ul></div>
     <div><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div>
   </div>
-  <div class="legal"><span>© 2026 Tacit. MIT licensed.</span><span>Not affiliated with GitHub, Slack, Linear or Anthropic. Metrics shown are from the sample organisation included with every install.</span></div>
+  <div class="legal"><span>© 2026 Tacit. MIT licensed.</span><span>Not affiliated with Intercom, Sierra, GitHub, Slack, Linear or Anthropic. Product figures come from the sample organisation included with every install; cited statistics link to their sources.</span></div>
 </div></footer>
