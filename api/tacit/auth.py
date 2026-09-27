@@ -82,8 +82,9 @@ def current_principal(request: Request, db: Session = Depends(get_db)) -> Princi
         u = db.get(M.User, uid)
         if u:
             return Principal("user", u.id, u.email, u.role)
-    # first-run convenience: no users exist yet → open console, so setup is possible
-    if db.scalar(select(M.User.id).limit(1)) is None:
+    # first-run convenience: no users exist yet → open console, so setup is possible.
+    # never on a public demo, where the database is always seeded.
+    if not get_settings().demo_mode and db.scalar(select(M.User.id).limit(1)) is None:
         return Principal("user", "setup", "setup", "admin")
     raise HTTPException(401, "not signed in")
 

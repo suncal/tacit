@@ -62,6 +62,13 @@ export function Layout({ user }: { user: User }) {
   return (
     <div className="lg:grid lg:grid-cols-[236px_1fr] min-h-full">
       <CommandPalette />
+      {ov.data?.demo && (
+        <div className="lg:col-span-2 flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-[12.5px] border-b line bg-accent-soft text-accent no-print">
+          <b className="font-semibold">Public demo</b>
+          <span className="text-[var(--ink-2)]">Real product, seeded organisation. Shell, file and network tools are removed, no model is connected, and everything resets when the instance restarts.</span>
+          <a className="underline underline-offset-2 ml-auto" href="https://github.com/suncal/tacit" target="_blank" rel="noopener">Run it yourself →</a>
+        </div>
+      )}
       <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 h-14 px-4 border-b line bg-[var(--surface)] no-print">
         <button className="p-1.5 -ml-1.5 rounded-md muted hover:bg-[var(--surface-2)]" onClick={() => setOpenNav(o => !o)} aria-label="Menu"><PanelLeft size={18} /></button>
         <Mark size={22} className="text-accent" /><span className="display text-[15px]">Tacit</span>

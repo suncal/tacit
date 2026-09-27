@@ -41,6 +41,9 @@ class Registry:
     def get(self, name: str) -> Optional[Tool]:
         return self._tools.get(name)
 
+    def remove(self, name: str) -> bool:
+        return self._tools.pop(name, None) is not None
+
     def all(self) -> list[Tool]:
         return list(self._tools.values())
 

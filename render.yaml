@@ -1,0 +1,16 @@
+# One-click deploy of the public demo: https://render.com → New → Blueprint → pick this repo.
+services:
+  - type: web
+    name: tacit-demo
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./demo/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: TACIT_SECRET_KEY
+        generateValue: true
+      - key: TACIT_PUBLIC_URL
+        value: https://tacit-demo.onrender.com

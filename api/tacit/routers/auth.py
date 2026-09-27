@@ -12,6 +12,7 @@ from ..auth import COOKIE, Principal, current_principal, hash_password, make_ses
 from ..core.audit import audit
 from ..core.ids import new_id
 from ..db import get_db
+from .deps import get_app
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -40,7 +41,9 @@ def status(db: Session = Depends(get_db)):
 
 
 @router.post("/setup", response_model=UserOut)
-def setup(body: SetupIn, response: Response, db: Session = Depends(get_db)):
+def setup(body: SetupIn, response: Response, db: Session = Depends(get_db), app=Depends(get_app)):
+    if app.settings.demo_mode:
+        raise HTTPException(403, "this is a public demo — sign in with the demo account shown on the page")
     if db.scalar(select(M.User.id).limit(1)) is not None:
         raise HTTPException(409, "already set up")
     u = M.User(id=new_id("usr"), email=body.email.lower(), name=body.name, role="admin", password_hash=hash_password(body.password))

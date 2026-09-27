@@ -58,7 +58,7 @@ export interface Run {
 }
 export interface Approval { id: string; run_id: string; tool: string; args: Record<string, unknown>; preview: Preview; principal: string; reason: string; escalated?: boolean; confidence?: number | null; status: string; created_at: number; decided_at: number | null; decided_by: string | null; playbook: { id: string; name: string; stage: Stage; trust: number } | null }
 export interface Overview {
-  org: string; handle: string; brain: { provider: string; model: string; llm: boolean }
+  org: string; handle: string; demo?: boolean; brain: { provider: string; model: string; llm: boolean }
   counts: { events: number; events_24h: number; playbooks: Record<Stage, number>; drafts_pending: number; approvals: number; runs_24h: number; actions_reversible: number; memories: number; tasks_open: number; automations: number }
   shadow: { scored: number; hits: number; hit_rate: number; series: { day: string; score: number; n: number }[] }
   hours_returned: number; return_method: string; lessons_open: number

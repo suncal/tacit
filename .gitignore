@@ -3,6 +3,8 @@ api/.venv/
 __pycache__/
 *.pyc
 *.db
+# the public demo's seeded organisation — synthetic data, scanned, no secrets
+!demo/seed.db
 *.db-wal
 *.db-shm
 .pytest_cache/

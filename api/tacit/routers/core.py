@@ -41,7 +41,7 @@ def overview(db: Session = Depends(get_db), app=Depends(get_app), _: Principal =
     recent_scores = db.scalars(select(M.Draft).where(M.Draft.status == "scored").order_by(M.Draft.resolved_at.desc()).limit(600)).all()
     series = _series(recent_scores)
     return {
-        "org": app.settings.org_name, "handle": app.settings.handle, "brain": app.brain_info(),
+        "org": app.settings.org_name, "handle": app.settings.handle, "brain": app.brain_info(), "demo": app.settings.demo_mode,
         "counts": {
             "events": db.scalar(select(func.count(M.Event.id))) or 0,
             "events_24h": db.scalar(select(func.count(M.Event.id)).where(M.Event.ts >= day)) or 0,

@@ -46,6 +46,11 @@ class Settings(BaseSettings):
     loaded_hourly_cost_usd: float = 65.0          # for the value/ROI line; set it to your own number
     comparison_seat_price_usd: float = 30.0       # what per-seat tools would charge the same team
 
+    # a public demo is a different threat model: no shell, no filesystem, no outbound fetch,
+    # no unbounded model spend, and no way to become the admin.
+    demo_mode: bool = False
+    demo_reset_hours: int = 6
+
     default_read: str = "allow"
     default_write: str = "ask"
     default_exec: str = "ask"

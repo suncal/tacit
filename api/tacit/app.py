@@ -33,12 +33,26 @@ class TacitApp:
         self.bus = Bus(self)
         self.shadow = Shadow(self)
         register_builtins(self.registry, self.settings)
+        if self.settings.demo_mode:
+            self._lock_down_for_public_demo()
         self.github, self.slack, self.linear = GitHub(self), Slack(self), Linear(self)
         for c in (self.github, self.slack, self.linear):
             if c.ok():
                 c.register(self.registry)
         self.mcp = register_servers(self.registry, self.settings)
         self.scheduler: Scheduler | None = None
+
+    # ------------------------------------------------------------------ public demo
+    UNSAFE_IN_DEMO = ("shell_run", "file_write", "file_delete", "file_read", "file_list", "web_fetch", "emit_event")
+
+    def _lock_down_for_public_demo(self) -> None:
+        """Anyone on the internet can drive this instance, so the tools that reach outside the process
+        are removed entirely — not merely gated. A visitor cannot run a command, read the disk, or make
+        the server fetch a URL (which on a cloud host means the metadata endpoint)."""
+        removed = [t for t in self.UNSAFE_IN_DEMO if self.registry.get(t)]
+        for name in removed:
+            self.registry.remove(name)
+        log.warning("demo mode: removed %s", ", ".join(removed) or "nothing")
 
     def start_background(self):
         self.scheduler = Scheduler(self, self.settings.scheduler_tick)
