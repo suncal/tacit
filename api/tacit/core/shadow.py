@@ -90,10 +90,18 @@ class Shadow:
             pb.drafts_hit += 1
         audit(db, "shadow", "draft.scored", pb.name, {"draft": d.id, "score": score, "hit": score >= HIT_THRESHOLD, "mode": d.mode})
         if d.mode == "live" and score < LESSON_BELOW:
-            db.add(M.Lesson(id=new_id("les"), playbook_id=pb.id, draft_id=d.id, trigger_text=(db.get(M.Event, d.trigger_event_id) or actual).text,
-                            draft_text=d.content.get("text", ""), actual_text=actual.text,
-                            question=f"You answered this differently from what I drafted. What's the rule I'm missing?"))
-            audit(db, "shadow", "lesson.asked", pb.name, {"draft": d.id})
+            trig = db.get(M.Event, d.trigger_event_id) or actual
+            drafted = d.content.get("text", "")
+            q, sug = "You answered this differently from what I drafted. What's the rule I'm missing?", ""
+            if self.app.brain.is_llm:
+                try:                                   # a specific question gets answered; a generic one gets ignored
+                    h = self.app.brain.hypothesise({"name": pb.name, "actor": pb.actor}, trig.text, drafted, actual.text)
+                    q, sug = h.get("question") or q, h.get("suggestion", "")
+                except Exception:
+                    log.warning("hypothesis failed for %s", d.id, exc_info=True)
+            db.add(M.Lesson(id=new_id("les"), playbook_id=pb.id, draft_id=d.id, trigger_text=trig.text,
+                            draft_text=drafted, actual_text=actual.text, question=q, suggestion=sug))
+            audit(db, "shadow", "lesson.asked", pb.name, {"draft": d.id, "hypothesised": bool(sug)})
         return {"draft_id": d.id, "playbook_id": pb.id, "score": score, "hit": score >= HIT_THRESHOLD}
 
     def confidence(self, pb: M.Playbook, trigger: M.Event) -> float:
@@ -119,8 +127,9 @@ class Shadow:
         context = self._thread_context(db, trigger)
         conf = self.confidence(pb, trigger)
         examples = (pb.examples or []) + [{"trigger": l["trigger"], "response": l["response"], "ts": 0} for l in lessons]
+        memory = self._memory(db, trigger.text) if self.app.brain.is_llm else ""
         try:
-            text = self.app.brain.draft(pbd, trigger.text, examples, context)
+            text = self.app.brain.draft(pbd, trigger.text, examples, context, memory)
         except Exception as ex:
             log.warning("draft failed for %s: %s", pb.id, ex)
             text = pb.response.get("template", "")
@@ -133,6 +142,10 @@ class Shadow:
         pb.drafts_total += 1
         audit(db, "shadow", "draft.created", pb.name, {"draft": d.id, "trigger": trigger.id, "stage": pb.stage, "mode": mode, "confidence": conf})
         return {"draft_id": d.id, "playbook_id": pb.id, "stage": pb.stage, "text": text, "confidence": conf}
+
+    def _memory(self, db, text: str, limit: int = 6) -> str:
+        from .memory import search
+        return "\n".join(f"- {m.text}" for m in search(db, text, limit))
 
     def _thread_context(self, db, trigger: M.Event, limit: int = 6) -> str:
         rows = db.scalars(select(M.Event).where(M.Event.thread_key == trigger.thread_key, M.Event.ts < trigger.ts)

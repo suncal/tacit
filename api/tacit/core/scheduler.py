@@ -132,6 +132,8 @@ class Scheduler(threading.Thread):
         for aid in due:
             run_automation(self.app, aid)
         self.app.shadow.expire_stale()
+        from .notify import chase_stale_approvals
+        chase_stale_approvals(self.app)
         from .people import expire_covers
         from .ledger import settle as settle_ledger
         from .oversight import settle as settle_agents

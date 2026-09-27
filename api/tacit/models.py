@@ -62,6 +62,7 @@ class Playbook(Base):
     stage: Mapped[str] = mapped_column(String(20), default="candidate", index=True)  # candidate | shadow | propose | auto | retired
     trigger: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)     # {kind, keywords, target, cadence}
     response: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)    # {kind, target, template, tool}
+    summary: Mapped[str] = mapped_column(Text, default="")                 # one line, written by the model
     evidence_count: Mapped[int] = mapped_column(Integer, default=0)
     consistency: Mapped[float] = mapped_column(Float, default=0.0)          # mean intra-cluster similarity
     median_latency_s: Mapped[float] = mapped_column(Float, default=0.0)     # how fast the human usually responds
@@ -166,6 +167,7 @@ class Lesson(Base):
     draft_text: Mapped[str] = mapped_column(Text, default="")
     actual_text: Mapped[str] = mapped_column(Text, default="")
     question: Mapped[str] = mapped_column(Text, default="")
+    suggestion: Mapped[str] = mapped_column(Text, default="")              # the model's guess at the rule, to confirm or correct
     answer: Mapped[Optional[str]] = mapped_column(Text, nullable=True)     # the rule, in the owner's words
     status: Mapped[str] = mapped_column(String(20), default="open", index=True)  # open | answered | dismissed
     created_at: Mapped[float] = mapped_column(Float, default=now)

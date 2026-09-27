@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     linear_api_key: str = ""
     mcp_servers: str = ""                      # JSON list [{"name":..,"command":[..]}]
 
+    # getting a human's attention
+    public_url: str = ""                          # what links in notifications should point at
+    notify_slack_channel: str = ""                # channel id for approvals + digests
+    notify_webhook: str = ""                      # any HTTPS endpoint; also fine for PagerDuty/Teams
+    notify_after_minutes: int = 45                # chase an approval once, after this long
+
     # verified-work pricing: you are billed only for work a human approved or did not reverse
     price_per_verified_action_usd: float = 0.30
     dispute_window_hours: int = 24

@@ -28,7 +28,7 @@ export function CompliancePage() {
         <code className="mono text-[11px] muted hidden lg:block" title="chain root — keep a copy and anyone can re-verify later">{e.log_integrity.root.slice(0, 24)}…</code>
       </div>
 
-      <div className="grid grid-cols-4 gap-3.5 mb-5">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3.5 mb-5">
         <Stat label="Actions taken by AI" value={o.actions_taken} hint={`${o.actions_reversed_by_humans} reversed by a human`} />
         <Stat label="Human decisions" value={`${o.approvals_granted}/${o.approvals_requested}`} hint={`${o.approvals_refused} refused · median ${o.median_time_to_decision_s !== null ? `${Math.round(o.median_time_to_decision_s / 60)} min` : '—'} to decide`} tone="accent" />
         <Stat label="Escalated to a human" value={o.low_confidence_escalations} hint="low-confidence cases the AI declined to handle alone" tone="warn" />

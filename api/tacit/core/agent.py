@@ -246,6 +246,12 @@ class Agent:
                                    preview=pv, principal=principal, reason=why, playbook_id=r.playbook_id)
                     db.add(a)
                     audit(db, principal, "tool.ask", tool.name, {"approval": a.id, "args": call["input"], "preview": pv.get("summary")})
+                    db.flush()
+                    try:
+                        from .notify import approval_pending
+                        approval_pending(self.app, db, a)
+                    except Exception:
+                        log.warning("approval notification failed", exc_info=True)
                     steps.append({"type": "approval", "name": tool.name, "approval": a.id, "args": call["input"], "preview": pv, "text": "waiting for approval", "ts": time.time()})
                     return None
                 if existing.status == "pending":

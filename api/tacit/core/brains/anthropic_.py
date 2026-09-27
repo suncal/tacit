@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import anthropic
 
-from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, draft_prompt
+from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, describe_impl, draft_prompt, hypothesise_impl, parse_json
 
 PRICE = {"claude-opus-5": (5.0, 25.0), "claude-sonnet-5": (2.0, 10.0), "claude-haiku-4-5": (1.0, 5.0)}
 
@@ -54,9 +54,26 @@ class AnthropicBrain(Brain):
                 turn.raw.append({"type": "thinking", "thinking": b.thinking, "signature": getattr(b, "signature", "")})
         return turn
 
-    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "") -> str:
+    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "", memory: str = "") -> str:
         system = DRAFT_SYSTEM.format(actor=playbook.get("actor"), org=playbook.get("org", "the team"),
                                      kind=playbook.get("response", {}).get("kind", "reply"))
-        kw = self._kwargs(system, [{"role": "user", "content": draft_prompt(playbook, trigger_text, examples, context)}], max_tokens=2000)
+        kw = self._kwargs(system, [{"role": "user", "content": draft_prompt(playbook, trigger_text, examples, context, memory)}], max_tokens=1500)
         resp = self.client.messages.create(**kw)
+        if resp.stop_reason == "refusal":
+            return ""
         return "".join(b.text for b in resp.content if b.type == "text").strip()
+
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500):
+        kw = self._kwargs(system, [{"role": "user", "content": prompt}], max_tokens=max_tokens)
+        kw["output_config"] = {**kw.get("output_config", {}), "effort": "low"}     # structured, cheap, no deliberation needed
+        try:
+            resp = self.client.messages.create(**kw)
+        except anthropic.APIStatusError:
+            return None
+        return parse_json("".join(b.text for b in resp.content if b.type == "text"))
+
+    def describe(self, jobs):
+        return describe_impl(self, jobs)
+
+    def hypothesise(self, playbook, trigger, drafted, actual):
+        return hypothesise_impl(self, playbook, trigger, drafted, actual)

@@ -29,7 +29,7 @@ export function OversightPage() {
       <PageHeader title="Oversight" subtitle="Every non-human worker in the company, graded against what your own people do. Vendors grade themselves; this doesn't."
         action={<><select className="h-9 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-2.5 text-sm" value={days} onChange={e => setDays(+e.target.value)}>{[7, 30, 90].map(d => <option key={d} value={d}>last {d} days</option>)}</select><Button variant="primary" onClick={() => setAdding(true)}><Plus size={15} />Supervise an agent</Button></>} />
 
-      <div className="grid grid-cols-4 gap-3.5 mb-5">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3.5 mb-5">
         <Stat label="Agents supervised" value={totals.agents} hint={`${totals.actions.toLocaleString()} actions incl. this system`} />
         <Stat label="Paid to vendors" value={`$${totals.vendor_spend_usd.toLocaleString()}`} hint={`over ${days} days, from the rates you entered`} />
         <Stat label="Worst rework rate" value={worstRework?.rework_rate !== undefined && worstRework?.rework_rate !== null ? pct(worstRework.rework_rate) : '—'} hint={worstRework ? `${worstRework.agent.name} — a human stepped in afterwards` : 'nothing graded yet'} tone={(worstRework?.rework_rate || 0) > 0.25 ? 'bad' : undefined} />
@@ -40,7 +40,7 @@ export function OversightPage() {
         <Empty title="No third-party agents supervised yet" hint="Register the AI products you already pay for. Their actions arrive through the same event API as everything else — read-only, no write access needed — and Tacit grades them against the standard it learned from your team."
           action={<Button variant="primary" onClick={() => setAdding(true)}>Supervise an agent</Button>} />
       ) : (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid lg:grid-cols-2 gap-4">
           {agents.map(a => <AgentTile key={a.agent.id} c={a} onOpen={() => setOpen(a.agent.id)} onDrop={() => confirm(`Stop supervising ${a.agent.name}?`) && drop.mutate(a.agent.id)} />)}
           <div className="surface p-5 border-dashed">
             <div className="flex items-center gap-2 mb-2"><ShieldCheck size={18} className="text-accent" /><span className="font-semibold">{tacit.name}</span><Badge tone="accent">governed</Badge></div>

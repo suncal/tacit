@@ -61,8 +61,21 @@ export function InboxPage() {
                   <div><div className="muted text-[11px] uppercase tracking-wide mb-1">{l.playbook?.actor} actually did</div><div className="rounded-lg surface-2 p-2.5 whitespace-pre-wrap">{l.actual_text}</div></div>
                 </div>
                 <div className="font-medium text-[13.5px] mb-1.5">{l.question}</div>
-                <Textarea className="min-h-16" placeholder="e.g. Dependency bumps don't get a first-pass review — just merge on green." value={answers[l.id] || ''} onChange={e => setAnswers({ ...answers, [l.id]: e.target.value })} />
-                <div className="flex gap-2 mt-2"><Button variant="primary" size="sm" disabled={!answers[l.id]?.trim()} loading={answer.isPending} onClick={() => answer.mutate({ id: l.id, text: answers[l.id] })}>Save rule</Button><Button variant="ghost" size="sm" onClick={() => dismiss.mutate(l.id)}>Not a rule, just this once</Button></div>
+                {l.suggestion && !(l.id in answers) && (
+                  <div className="rounded-lg surface-2 p-3 mb-2 text-[13px]">
+                    <div className="eyebrow mb-1.5">Proposed rule</div>
+                    <div className="ink-2 leading-relaxed">{l.suggestion}</div>
+                    <div className="flex gap-2 mt-2.5">
+                      <Button size="sm" variant="primary" loading={answer.isPending} onClick={() => answer.mutate({ id: l.id, text: l.suggestion! })}>That's right</Button>
+                      <Button size="sm" variant="ghost" onClick={() => setAnswers({ ...answers, [l.id]: l.suggestion! })}>Edit it</Button>
+                      <Button size="sm" variant="ghost" onClick={() => dismiss.mutate(l.id)}>Just this once</Button>
+                    </div>
+                  </div>
+                )}
+                {(!l.suggestion || l.id in answers) && (<>
+                  <Textarea className="min-h-16" placeholder="e.g. Dependency bumps don't get a first-pass review — just merge on green." value={answers[l.id] || ''} onChange={e => setAnswers({ ...answers, [l.id]: e.target.value })} />
+                  <div className="flex gap-2 mt-2"><Button variant="primary" size="sm" disabled={!answers[l.id]?.trim()} loading={answer.isPending} onClick={() => answer.mutate({ id: l.id, text: answers[l.id] })}>Save rule</Button><Button variant="ghost" size="sm" onClick={() => dismiss.mutate(l.id)}>Not a rule, just this once</Button></div>
+                </>)}
               </div>
             ))}
           </div>

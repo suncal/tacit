@@ -6,7 +6,7 @@ import os
 
 import httpx
 
-from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, draft_prompt
+from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, describe_impl, draft_prompt, hypothesise_impl, parse_json
 from ..ids import new_id
 
 
@@ -60,7 +60,21 @@ class OpenAICompatBrain(Brain):
         u = data.get("usage") or {}
         return Turn(text=msg.get("content") or "", tool_calls=calls, usage={"input_tokens": u.get("prompt_tokens", 0), "output_tokens": u.get("completion_tokens", 0), "usd": 0, "model": self.model})
 
-    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "") -> str:
+    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "", memory: str = "") -> str:
         system = DRAFT_SYSTEM.format(actor=playbook.get("actor"), org=playbook.get("org", "the team"), kind=playbook.get("response", {}).get("kind", "reply"))
-        data = self._post({"model": self.model, "messages": [{"role": "system", "content": system}, {"role": "user", "content": draft_prompt(playbook, trigger_text, examples, context)}]})
+        data = self._post({"model": self.model, "messages": [{"role": "system", "content": system}, {"role": "user", "content": draft_prompt(playbook, trigger_text, examples, context, memory)}]})
         return (data["choices"][0]["message"].get("content") or "").strip()
+
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500):
+        try:
+            data = self._post({"model": self.model, "max_tokens": max_tokens, "response_format": {"type": "json_object"},
+                               "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]})
+        except BrainError:
+            return None
+        return parse_json(data["choices"][0]["message"].get("content") or "")
+
+    def describe(self, jobs):
+        return describe_impl(self, jobs)
+
+    def hypothesise(self, playbook, trigger, drafted, actual):
+        return hypothesise_impl(self, playbook, trigger, drafted, actual)

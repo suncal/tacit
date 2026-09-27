@@ -23,7 +23,7 @@ export function PlaybooksPage() {
       <PageHeader title="Playbooks" subtitle="Recurring jobs Tacit found by watching your team. Each one climbs the ladder only as fast as it earns trust."
         action={<><Button onClick={() => mine.mutate()} loading={mine.isPending}><Pickaxe size={15} />Mine patterns</Button><Button variant="primary" onClick={() => backtest.mutate()} loading={backtest.isPending}><FlaskConical size={15} />Backtest all</Button></>} />
       {pbs.length === 0 ? <Empty title="No patterns yet" hint="Tacit needs to see your team work. Connect GitHub, Slack or Linear in Settings — or POST events to /api/v1/events — then mine." action={<Button variant="primary" onClick={() => mine.mutate()}>Mine patterns</Button>} /> : (
-        <div className="grid grid-cols-4 gap-4 items-start">
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
           {LADDER.map(stage => {
             const items = pbs.filter(p => p.stage === stage)
             return (
@@ -39,7 +39,7 @@ export function PlaybooksPage() {
           })}
         </div>
       )}
-      {retired.length > 0 && <div className="mt-8"><div className="font-semibold mb-2">Retired <span className="muted font-normal">{retired.length}</span></div><div className="grid grid-cols-4 gap-3">{retired.map(p => <PlaybookCard key={p.id} p={p} />)}</div></div>}
+      {retired.length > 0 && <div className="mt-8"><div className="font-semibold mb-2">Retired <span className="muted font-normal">{retired.length}</span></div><div className="grid md:grid-cols-2 xl:grid-cols-4 gap-3">{retired.map(p => <PlaybookCard key={p.id} p={p} />)}</div></div>}
       <Modal open={!!bt} onClose={() => setBt(null)} title="Backtest — what Tacit would have done" wide>
         {bt && (
           <>
@@ -66,7 +66,8 @@ function PlaybookCard({ p }: { p: Playbook }) {
   return (
     <Link to={`/playbooks/${p.id}`} className="surface raised block p-4 hover:border-[var(--line-strong)] hover:shadow-[var(--shadow)] transition-[box-shadow,border-color]">
       <div className="flex items-center gap-2 mb-1.5"><Avatar name={p.actor} size={20} /><span className="text-[12.5px] muted truncate">{p.actor} · {SYSTEM_LABEL[p.system] || p.system}</span></div>
-      <div className="font-semibold tracking-[-0.015em] leading-snug mb-2.5">{p.name}</div>
+      <div className="font-semibold tracking-[-0.015em] leading-snug mb-1">{p.name}</div>
+      {p.summary && <div className="muted text-[12px] leading-snug mb-2.5 line-clamp-2">{p.summary}</div>}
       <div className="flex flex-wrap gap-1 mb-2.5">
         <Badge>{p.evidence_count}× seen</Badge>
         {p.trigger.mode === 'schedule' ? <Badge tone="neutral">{p.trigger.cadence?.human}</Badge> : (p.trigger.keywords || []).slice(0, 2).map(k => <Badge key={k} tone="accent">“{k}”</Badge>)}

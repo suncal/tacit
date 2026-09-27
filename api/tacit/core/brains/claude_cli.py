@@ -7,7 +7,7 @@ import re
 import shutil
 import subprocess
 
-from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, draft_prompt
+from .base import Brain, BrainError, Turn, DRAFT_SYSTEM, describe_impl, draft_prompt, hypothesise_impl, parse_json
 from ..ids import new_id
 
 _PROTO = """You are operating inside Tacit, a tool-using agent harness. Answer with ONE JSON object and nothing else:
@@ -66,7 +66,19 @@ class ClaudeCLIBrain(Brain):
         calls = [{"id": new_id("call"), "name": c["name"], "input": c.get("input") or {}} for c in obj.get("tool_calls") or [] if c.get("name")]
         return Turn(text=obj.get("reply", ""), tool_calls=calls)
 
-    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "") -> str:
+    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "", memory: str = "") -> str:
         system = DRAFT_SYSTEM.format(actor=playbook.get("actor"), org=playbook.get("org", "the team"),
                                      kind=playbook.get("response", {}).get("kind", "reply"))
-        return self._run(system, draft_prompt(playbook, trigger_text, examples, context)).strip()
+        return self._run(system, draft_prompt(playbook, trigger_text, examples, context, memory)).strip()
+
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500):
+        try:
+            return parse_json(self._run(system + "\n\nReply with one JSON object and nothing else.", prompt))
+        except BrainError:
+            return None
+
+    def describe(self, jobs):
+        return describe_impl(self, jobs)
+
+    def hypothesise(self, playbook, trigger, drafted, actual):
+        return hypothesise_impl(self, playbook, trigger, drafted, actual)

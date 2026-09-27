@@ -220,7 +220,7 @@ def seed(app, force: bool = False) -> dict:
     events = _events()
     for e in events:
         ingest(app, shadow=False, **e)
-    mined = remine(by="seed")
+    mined = remine(by="seed", brain=app.brain)
     # graduate the strongest patterns so the console shows the whole arc
     with session() as db:
         pbs = sorted(db.scalars(select(M.Playbook)).all(), key=lambda p: -p.evidence_count)

@@ -5,6 +5,7 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 import { api, type Overview, type Playbook } from '../lib/api'
 import { clsx } from 'clsx'
 import { Avatar, Button, Card, Empty, PageHeader, Spinner, StagePill, Stat, TrustBar, useToast } from '../components/ui'
+import { Onboarding } from '../components/Onboarding'
 import { STAGE_LABEL, SYSTEM_LABEL, pct } from '../lib/format'
 
 export function OverviewPage() {
@@ -22,17 +23,18 @@ export function OverviewPage() {
   const watching = stages.shadow + stages.propose + stages.auto
   return (
     <>
+      <Onboarding />
       <PageHeader title={`Good ${greeting()}. @${o.handle} is watching ${watching} job${watching === 1 ? '' : 's'}.`}
         subtitle={`${o.counts.events.toLocaleString()} observed actions across your tools · ${o.counts.events_24h} in the last 24h · ${o.shadow.scored} shadow drafts graded against what your team actually did.`} />
 
-      <div className="grid grid-cols-4 gap-3.5 mb-5">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3.5 mb-5">
         <Stat label="Shadow accuracy" value={pct(o.shadow.hit_rate)} hint={`${o.shadow.hits} of ${o.shadow.scored} drafts matched the human`} tone="accent" />
         <Stat label="Running on auto" value={stages.auto} hint={`${stages.propose} proposing · ${stages.shadow} shadowing · ${stages.candidate} candidates`} />
         <Stat label="Awaiting a tap" value={o.counts.approvals + o.lessons_open} hint={o.counts.approvals + o.lessons_open ? <Link to="/inbox" className="text-accent">{o.counts.approvals} to approve · {o.lessons_open} to teach →</Link> : 'Nothing waiting'} tone={o.counts.approvals + o.lessons_open ? 'warn' : undefined} />
         <Stat label="Hours returned" value={o.hours_returned.toFixed(1)} hint={<span title={o.return_method}>{o.counts.actions_reversible} reversible actions · <span className="underline decoration-dotted cursor-help">how it's counted</span></span>} tone="ok" />
       </div>
 
-      <div className="grid grid-cols-[1.4fr_1fr] gap-4 mb-5">
+      <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4 mb-5">
         <Card title="Ready to graduate" subtitle="Recommendations are computed, never applied. You decide.">
           {o.recommendations.length === 0 ? <Empty title="Nothing to decide right now" hint="As shadow drafts get graded, playbooks that earn it will show up here." /> : (
             <div className="flex flex-col gap-2">
@@ -66,7 +68,7 @@ export function OverviewPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-5">
+      <div className="grid lg:grid-cols-2 gap-4 mb-5">
         <Card title="AI you already pay for" subtitle="Graded against your own team — the number the vendors don't report." action={<Link to="/oversight" className="text-accent text-[13px] font-medium">Oversight →</Link>}>
           {o.fleet.agents === 0 ? (
             <p className="muted text-[13.5px]">No third-party agents supervised yet. Register the AI products you already run and Tacit will grade their work against the standard it learned from your people — read-only, nothing changes on their side. <Link to="/oversight" className="text-accent">Start →</Link></p>
@@ -87,7 +89,7 @@ export function OverviewPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-[1.4fr_1fr] gap-4">
+      <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4">
         <Card title="Playbooks by trust" action={<Link to="/playbooks" className="text-accent text-[13px] font-medium">All playbooks →</Link>}>
           {o.top_playbooks.length === 0 ? <Empty title="No playbooks yet" hint="Connect a tool or feed events, then mine patterns." action={<Link to="/playbooks"><Button variant="primary">Go to playbooks</Button></Link>} /> : (
             <div className="flex flex-col">

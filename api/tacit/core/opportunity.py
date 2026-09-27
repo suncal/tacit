@@ -22,7 +22,7 @@ from .trust import trust
 def run(app, days_observed: int | None = None, by: str = "pilot") -> dict:
     from ..db import session
     t0 = time.time()
-    mined = remine(by=by)
+    mined = remine(by=by, brain=app.brain)
     report = backtest(app)
     with session() as db:
         span = db.execute(select(func.min(M.Event.ts), func.max(M.Event.ts)).where(M.Event.actor_type == "human")).first()

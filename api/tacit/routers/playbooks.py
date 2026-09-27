@@ -78,7 +78,7 @@ def playbooks(stage: Optional[str] = None, db: Session = Depends(get_db), app=De
 
 @router.post("/playbooks/mine")
 def mine(app=Depends(get_app), p: Principal = Depends(current_principal)):
-    return remine(by=p.label)
+    return remine(by=p.label, brain=app.brain)
 
 
 class BacktestIn(BaseModel):
@@ -183,7 +183,7 @@ def grade(draft_id: str, body: GradeIn, db: Session = Depends(get_db), p: Princi
 def _lesson(db, l: M.Lesson) -> dict:
     pb = db.get(M.Playbook, l.playbook_id)
     return {"id": l.id, "playbook": {"id": pb.id, "name": pb.name, "actor": pb.actor, "stage": pb.stage} if pb else None, "draft_id": l.draft_id,
-            "trigger_text": l.trigger_text, "draft_text": l.draft_text, "actual_text": l.actual_text, "question": l.question,
+            "trigger_text": l.trigger_text, "draft_text": l.draft_text, "actual_text": l.actual_text, "question": l.question, "suggestion": l.suggestion,
             "answer": l.answer, "status": l.status, "created_at": l.created_at, "answered_at": l.answered_at, "answered_by": l.answered_by}
 
 

@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from . import __version__
 from .app import TacitApp
 from .db import Base, engine
-from .routers import auth, business, core, playbooks, webhooks, work
+from .routers import auth, business, console, core, playbooks, webhooks, work
 from .settings import get_settings
 
 logging.basicConfig(level=logging.INFO, format='{"ts":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}')
@@ -37,7 +37,7 @@ def create_app(tacit: TacitApp | None = None, background: bool = True) -> FastAP
     app = FastAPI(title="Tacit", version=__version__, lifespan=lifespan,
                   description="The AI teammate that learns your job by watching, proves it can do it, then asks to take over.",
                   docs_url="/api/docs", openapi_url="/api/openapi.json", redoc_url=None)
-    for r in (auth.router, core.router, playbooks.router, work.router, business.router, webhooks.router):
+    for r in (auth.router, core.router, playbooks.router, work.router, business.router, console.router, webhooks.router):
         app.include_router(r, prefix="/api/v1")
 
     @app.get("/api/health", tags=["meta"])

@@ -31,7 +31,7 @@ export interface Trust { scored: number; hits: number; hit_rate: number; mean_sc
 export interface Recommendation { to: Stage; why: string }
 export interface Example { trigger: string; response: string; ts: number }
 export interface Playbook {
-  id: string; name: string; system: string; actor: string; stage: Stage
+  id: string; name: string; summary?: string; system: string; actor: string; stage: Stage
   trigger: { mode: 'reply' | 'schedule'; kind?: string; keywords?: string[]; target?: string; match?: string; cadence?: { human: string } }
   response: { kind: string; target: string; template: string; tool: string }
   evidence_count: number; consistency: number; median_latency_s: number; examples: Example[]
@@ -78,7 +78,7 @@ export interface Budget { id: string; scope: string; max_writes_per_hour: number
 export interface Tool { name: string; description: string; risk: 'read' | 'write' | 'exec'; source: string; system: string; params: string[]; reversible: boolean }
 export interface User { id: string; email: string; name: string; role: string }
 export interface Backtest { total: { n: number; hits: number; hit_rate: number }; seconds: number; playbooks: { id: string; name: string; stage: Stage; n: number; hits: number; hit_rate: number; mean_score: number; rows: { trigger: string; draft: string; actual: string; score: number; hit: boolean }[] }[] }
-export interface Lesson { id: string; playbook: { id: string; name: string; actor: string; stage: Stage } | null; draft_id: string | null; trigger_text: string; draft_text: string; actual_text: string; question: string; answer: string | null; status: string; created_at: number; answered_at: number | null; answered_by: string | null }
+export interface Lesson { suggestion?: string; id: string; playbook: { id: string; name: string; actor: string; stage: Stage } | null; draft_id: string | null; trigger_text: string; draft_text: string; actual_text: string; question: string; answer: string | null; status: string; created_at: number; answered_at: number | null; answered_by: string | null }
 export interface Person { actor: string; events: number; jobs: number; playbooks: { id: string; name: string; stage: Stage; trust: number; evidence: number; minutes_each: number }[]; coverable: number; bus_factor_risk: number; weekly_minutes: number; cover: { id: string; backup: string; until: number } | null }
 
 // ---------------------------------------------------------------- verified work, oversight, compliance, day one

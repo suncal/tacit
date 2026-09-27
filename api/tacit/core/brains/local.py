@@ -19,7 +19,7 @@ class LocalBrain(Brain):
     is_llm = False
 
     # ------------------------------------------------------------------ drafts
-    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "") -> str:
+    def draft(self, playbook: dict, trigger_text: str, examples: list[dict], context: str = "", memory: str = "") -> str:
         if not examples:
             return playbook.get("response", {}).get("template", "")
         ts = T.shingles(trigger_text)

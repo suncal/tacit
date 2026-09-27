@@ -26,7 +26,7 @@ export function PlaybookDetailPage() {
     <>
       <div className="text-[12.5px] muted mb-2"><Link to="/playbooks" className="hover:text-accent">Playbooks</Link> / {p.actor}</div>
       <PageHeader title={<span className="flex items-center gap-3">{p.name}<StagePill stage={p.stage} /></span>}
-        subtitle={<span className="flex items-center gap-2"><Avatar name={p.actor} size={18} /> {p.actor}'s job in {SYSTEM_LABEL[p.system] || p.system}{p.trigger.target ? ` · ${p.trigger.target}` : ''} · seen {p.evidence_count}× · usually answered within {dur(p.median_latency_s || 0)}</span>}
+        subtitle={<span className="flex items-center gap-2 flex-wrap">{p.summary && <span className="w-full mb-1 text-[14px] ink-2">{p.summary}</span>}<Avatar name={p.actor} size={18} /> {p.actor}'s job in {SYSTEM_LABEL[p.system] || p.system}{p.trigger.target ? ` · ${p.trigger.target}` : ''} · seen {p.evidence_count}× · usually answered within {dur(p.median_latency_s || 0)}</span>}
         action={<><Button onClick={() => backtest.mutate()} loading={backtest.isPending}><FlaskConical size={15} />Backtest</Button><Button variant="ghost" onClick={() => confirm('Delete this playbook and its drafts?') && del.mutate()} title="Delete"><Trash2 size={15} /></Button></>} />
 
       {/* ladder */}

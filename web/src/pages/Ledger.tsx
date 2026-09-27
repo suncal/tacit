@@ -20,7 +20,7 @@ export function LedgerPage() {
       <PageHeader title="Verified work" subtitle={`You are billed $${l.price_per_verified_action_usd.toFixed(2)} for an action only once a human approved it, or it ran on a job that had earned its autonomy and nobody reversed it within ${l.dispute_window_hours} hours. Everything else is free, permanently.`}
         action={<select className="h-9 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] px-2.5 text-sm" value={days} onChange={e => setDays(+e.target.value)}>{[7, 30, 90].map(d => <option key={d} value={d}>last {d} days</option>)}</select>} />
 
-      <div className="grid grid-cols-4 gap-3.5 mb-5">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3.5 mb-5">
         <Stat label="Billable this period" value={`$${l.amount_usd.toFixed(2)}`} hint={`${l.verified} verified action${l.verified === 1 ? '' : 's'}`} tone="accent" />
         <Stat label="Credited back" value={`$${l.credited_usd.toFixed(2)}`} hint={`${l.disputed} reversed or refused — never billed`} tone={l.disputed ? 'bad' : undefined} />
         <Stat label="Time returned" value={`${l.hours_saved}h`} hint={`≈ $${l.value_usd.toLocaleString()} of your team's time`} tone="ok" />
