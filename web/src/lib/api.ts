@@ -44,7 +44,7 @@ export interface EventRef { id: string; actor: string; text: string; target?: st
 export interface Draft {
   id: string; playbook_id: string; status: 'pending' | 'scored' | 'expired' | 'proposed' | 'executed' | 'rejected'; mode: 'live' | 'backtest'
   content: { text: string; target: string; tool: string; args: Record<string, unknown>; confidence?: number }
-  score: number | null; score_detail: { hit?: boolean; similarity?: number; human?: boolean }; human_grade: number | null; run_id: string | null
+  score: number | null; score_detail: { hit?: boolean; similarity?: number; human?: boolean; graded_by?: 'model' | 'overlap'; why?: string; equivalent?: boolean }; human_grade: number | null; run_id: string | null
   created_at: number; resolved_at: number | null; trigger: EventRef | null; actual: EventRef | null
   playbook?: { id: string; name: string; stage: Stage; actor: string }
 }
@@ -92,12 +92,13 @@ export interface Ledger {
   by_playbook: { playbook_id: string; name: string; verified: number; disputed: number; amount_usd: number; hours_saved: number }[]
   lines: LedgerLine[]
 }
+export interface Grading { graded_by?: 'model' | 'overlap'; similarity?: number; why?: string; equivalent?: boolean }
 export interface AgentCard {
   agent: { id: string; handle: string; name: string; vendor: string; systems: string[]; risk_tier: string; owner: string; price_per_action_usd: number; monthly_fee_usd: number }
   period_days: number; actions: number; graded: number; conformance: number | null; conformant: number; off_standard: number
   reworked: number; rework_rate: number | null; landed_rate: number | null; vendor_spend_usd: number; cost_per_landed_action_usd: number | null; unmatched: number
-  worst: { id: string; conformance: number | null; reworked: boolean; expected: string; actual: string; rework_by: string | null; ts: number }[]
-  actions_detail?: { id: string; conformance: number | null; verdict: string; reworked: boolean; rework_by: string | null; expected: string; actual: string; ts: number; playbook_id: string | null; human_grade: number | null }[]
+  worst: { id: string; conformance: number | null; reworked: boolean; expected: string; actual: string; rework_by: string | null; ts: number; detail?: Grading }[]
+  actions_detail?: { id: string; conformance: number | null; verdict: string; reworked: boolean; rework_by: string | null; expected: string; actual: string; ts: number; playbook_id: string | null; human_grade: number | null; detail?: Grading }[]
 }
 export interface Fleet { agents: AgentCard[]; tacit: { name: string; actions: number; reworked: number; rework_rate: number | null; governed: boolean }; totals: { agents: number; actions: number; vendor_spend_usd: number; ungoverned_actions: number } }
 export interface Evidence {

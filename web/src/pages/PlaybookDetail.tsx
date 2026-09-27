@@ -4,6 +4,7 @@ import { ArrowRight, Check, FlaskConical, Pencil, ThumbsDown, ThumbsUp, Trash2 }
 import { clsx } from 'clsx'
 import { api, type Backtest, type Draft, type Playbook, type Stage } from '../lib/api'
 import { useState } from 'react'
+import { Why } from '../components/Grade'
 import { Avatar, Badge, Button, Card, Empty, Input, Label, Modal, PageHeader, ScoreDot, Spinner, StagePill, Stat, Table, Td, Textarea, useToast } from '../components/ui'
 import { STAGE_HELP, STAGE_LABEL, SYSTEM_LABEL, ago, dur, pct, when } from '../lib/format'
 
@@ -101,7 +102,7 @@ export function PlaybookDetailPage() {
                 <Td className="w-[22%] whitespace-pre-wrap"><span className="muted text-[12px]">{d.trigger?.actor} · {ago(d.trigger?.ts)}</span><br />{d.trigger?.text?.slice(0, 160)}</Td>
                 <Td className="w-[28%] whitespace-pre-wrap">{d.content.text?.slice(0, 240)}</Td>
                 <Td className="w-[28%] whitespace-pre-wrap">{d.actual ? d.actual.text.slice(0, 240) : <span className="muted">—</span>}</Td>
-                <Td><ScoreDot score={d.score} hit={!!d.score_detail?.hit} /></Td>
+                <Td className="w-[16%]"><ScoreDot score={d.score} hit={!!d.score_detail?.hit} /><Why className="mt-1" why={d.score_detail?.why} gradedBy={d.score_detail?.graded_by} similarity={d.score_detail?.similarity} /></Td>
                 <Td><Badge tone={d.status === 'executed' ? 'accent' : d.status === 'scored' ? 'neutral' : d.status === 'pending' ? 'warn' : 'neutral'}>{d.status}{d.mode === 'backtest' ? ' · backtest' : ''}</Badge>{d.run_id && <div className="mt-1"><Link to={`/runs/${d.run_id}`} className="text-accent text-[12px]">run →</Link></div>}</Td>
                 <Td><div className="flex gap-1"><button title="Good draft" className={clsx('p-1 rounded hover:bg-[var(--surface-2)]', d.human_grade === 1 && 'text-ok')} onClick={() => grade.mutate({ d: d.id, g: 1 })}><ThumbsUp size={14} /></button><button title="Bad draft" className={clsx('p-1 rounded hover:bg-[var(--surface-2)]', d.human_grade === -1 && 'text-bad')} onClick={() => grade.mutate({ d: d.id, g: -1 })}><ThumbsDown size={14} /></button></div></Td>
               </tr>

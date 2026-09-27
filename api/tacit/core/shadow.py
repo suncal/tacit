@@ -77,13 +77,27 @@ class Shadow:
         return scored
 
     def _score(self, db, d: M.Draft, pb: M.Playbook, actual: M.Event) -> dict:
-        sim = T.similarity(d.content.get("text", ""), actual.text)
+        """Did the draft do the job? A model judges substance; word overlap is the fallback and the second opinion.
+        Overlap alone punishes a good paraphrase, which is exactly the work you want the assistant doing."""
+        drafted = d.content.get("text", "")
+        sim = T.similarity(drafted, actual.text)
         target_ok = (d.content.get("target") or "") == (actual.target or "") if d.content.get("target") else True
-        score = round(min(1.0, sim + (0.05 if target_ok else -0.15)), 4)
+        verdict = None
+        if self.app.settings.judge_enabled and self.app.brain.is_llm:
+            try:
+                verdict = self.app.brain.judge(
+                    {"name": pb.name, "actor": pb.actor, "judge_model": self.app.settings.judge_model},
+                    (db.get(M.Event, d.trigger_event_id) or actual).text, drafted, actual.text)
+            except Exception:
+                log.warning("judge failed for %s", d.id, exc_info=True)
+        base = verdict["score"] if verdict else sim
+        score = round(max(0.0, min(1.0, base + (0.05 if target_ok else -0.15))), 4)
         d.score, d.actual_event_id, d.status = score, actual.id, "scored"
         d.resolved_at = actual.ts if d.mode == "backtest" else time.time()   # backtests keep history honest
-        d.score_detail = {"similarity": sim, "target_match": target_ok, "draft_tokens": len(T.tokens(d.content.get("text", ""))),
-                          "actual_tokens": len(T.tokens(actual.text)), "hit": score >= HIT_THRESHOLD, "threshold": HIT_THRESHOLD}
+        d.score_detail = {"graded_by": "model" if verdict else "overlap", "similarity": sim, "target_match": target_ok,
+                          "draft_tokens": len(T.tokens(drafted)), "actual_tokens": len(T.tokens(actual.text)),
+                          "hit": score >= HIT_THRESHOLD, "threshold": HIT_THRESHOLD,
+                          **({"why": verdict["why"], "equivalent": verdict["equivalent"]} if verdict else {})}
         pb.drafts_scored += 1
         pb.score_sum += score
         if score >= HIT_THRESHOLD:

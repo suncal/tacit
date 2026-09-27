@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     brain_provider: str = "auto"               # auto | anthropic | claude-cli | openai-compatible | local
     brain_model: str = "claude-opus-5"
     brain_effort: str = "medium"
+    judge_model: str = "claude-sonnet-5"          # scoring is small and frequent; it doesn't need the big model
+    judge_enabled: bool = True
     brain_base_url: str = ""
     anthropic_api_key: str = ""
 

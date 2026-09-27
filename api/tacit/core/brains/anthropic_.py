@@ -63,8 +63,12 @@ class AnthropicBrain(Brain):
             return ""
         return "".join(b.text for b in resp.content if b.type == "text").strip()
 
-    def json_call(self, system: str, prompt: str, max_tokens: int = 1500):
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500, model: str | None = None):
         kw = self._kwargs(system, [{"role": "user", "content": prompt}], max_tokens=max_tokens)
+        if model:                                   # judging is a small, frequent call — it gets its own model
+            kw["model"] = model
+            kw.pop("thinking", None)
+            kw.pop("output_config", None)
         kw["output_config"] = {**kw.get("output_config", {}), "effort": "low"}     # structured, cheap, no deliberation needed
         try:
             resp = self.client.messages.create(**kw)

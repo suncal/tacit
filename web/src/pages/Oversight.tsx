@@ -6,6 +6,7 @@ import { clsx } from 'clsx'
 import { api, type AgentCard, type Fleet } from '../lib/api'
 import { Badge, Button, Card, Empty, Input, Modal, PageHeader, Spinner, Stat, Table, Td, useToast } from '../components/ui'
 import { ago, pct } from '../lib/format'
+import { Why } from '../components/Grade'
 
 /** The page nobody else can build: an independent grade for every AI you already pay for. */
 export function OversightPage() {
@@ -112,7 +113,7 @@ function AgentDetail({ id, onClose, days }: { id: string | null; onClose: () => 
                 <tr key={a.id}>
                   <Td><span className={clsx('tnum font-semibold', (a.conformance || 0) >= 0.5 ? 'text-ok' : 'text-bad')}>{Math.round((a.conformance || 0) * 100)}</span></Td>
                   <Td className="w-[32%] whitespace-pre-wrap muted">{a.expected.slice(0, 260)}</Td>
-                  <Td className="w-[32%] whitespace-pre-wrap">{a.actual.slice(0, 260)}</Td>
+                  <Td className="w-[32%] whitespace-pre-wrap">{a.actual.slice(0, 260)}<Why className="mt-1.5" why={a.detail?.why} gradedBy={a.detail?.graded_by} similarity={a.detail?.similarity} /></Td>
                   <Td>{a.reworked ? <Badge tone="bad">{a.rework_by} stepped in</Badge> : <Badge tone={a.verdict === 'conformant' ? 'ok' : 'warn'}>{a.verdict}</Badge>}<div className="muted text-[11.5px] mt-1">{ago(a.ts)}</div></Td>
                   <Td><div className="flex gap-1"><button className={clsx('p-1 rounded hover:bg-[var(--surface-2)]', a.human_grade === 1 && 'text-ok')} title="This was fine" onClick={() => grade.mutate({ a: a.id, g: 1 })}><ThumbsUp size={14} /></button><button className={clsx('p-1 rounded hover:bg-[var(--surface-2)]', a.human_grade === -1 && 'text-bad')} title="This was wrong" onClick={() => grade.mutate({ a: a.id, g: -1 })}><ThumbsDown size={14} /></button></div></Td>
                 </tr>

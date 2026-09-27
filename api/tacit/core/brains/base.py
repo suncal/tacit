@@ -31,9 +31,14 @@ class Brain:
         raise NotImplementedError
 
     # ---- a provider implements json_call once and gets both of these ----
-    def json_call(self, system: str, prompt: str, max_tokens: int = 1500) -> Optional[dict]:
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500, model: Optional[str] = None) -> Optional[dict]:
         """Ask for one JSON object. Return None when this brain can't (the callers degrade quietly)."""
         return None
+
+    def judge(self, playbook: dict, trigger: str, drafted: str, actual: str) -> Optional[dict]:
+        """Would this draft have done the job, compared with what the person actually wrote?
+        {"score": 0..1, "equivalent": bool, "why": str} — or None when this brain can't tell."""
+        return judge_impl(self, playbook, trigger, drafted, actual)
 
     def describe(self, jobs: list[dict]) -> dict[str, dict]:
         """{job_id: {"name": str, "summary": str}} — name the mined jobs the way the team would."""
@@ -127,3 +132,46 @@ def hypothesise_impl(brain, playbook: dict, trigger: str, drafted: str, actual: 
     if not data or not data.get("question"):
         return {}
     return {"question": str(data["question"])[:400], "suggestion": "" if data.get("one_off") else str(data.get("suggestion", ""))[:400]}
+
+
+JUDGE_SYSTEM = """You decide whether an assistant's draft would have done the same job as what a person actually
+wrote. You are judging substance, not wording. Rephrasing, different length, a warmer or terser tone, or naming a
+customer the original left implicit are all fine — what matters is whether the recipient would end up equally well
+served and equally correctly informed.
+
+Mark it down when the draft: states something factually different, omits a step or condition the person included,
+adds a commitment or instruction the person did not make, sends the recipient somewhere else, or would require a
+colleague to step in and correct it."""
+
+JUDGE_PROMPT = """Job: %s
+The person who normally does it: %s
+
+What they were responding to:
+%s
+
+What %s actually wrote:
+%s
+
+What the assistant drafted:
+%s
+
+Return ONLY JSON: {"score": 0.0-1.0, "equivalent": true|false, "why": "..."}
+score 1.0 = would serve the recipient just as well; 0.5 = partly right but a colleague would want to add something;
+0.0 = wrong, misleading, or would have to be redone. "equivalent" is true when you would have been happy for the
+assistant to send this instead. "why" is one short sentence naming the specific difference that decided it."""
+
+
+def judge_impl(brain, playbook: dict, trigger: str, drafted: str, actual: str) -> Optional[dict]:
+    if not (drafted or "").strip() or not (actual or "").strip():
+        return None
+    actor = playbook.get("actor", "the owner")
+    data = brain.json_call(JUDGE_SYSTEM, JUDGE_PROMPT % (
+        playbook.get("name", "this job"), actor, (trigger or "(scheduled)")[:2000], actor, actual[:2500], drafted[:2500]),
+        max_tokens=400, model=playbook.get("judge_model"))
+    if not data or "score" not in data:
+        return None
+    try:
+        score = max(0.0, min(1.0, float(data["score"])))
+    except (TypeError, ValueError):
+        return None
+    return {"score": round(score, 4), "equivalent": bool(data.get("equivalent", score >= 0.6)), "why": str(data.get("why", ""))[:400]}

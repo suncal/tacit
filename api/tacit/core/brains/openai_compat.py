@@ -65,9 +65,9 @@ class OpenAICompatBrain(Brain):
         data = self._post({"model": self.model, "messages": [{"role": "system", "content": system}, {"role": "user", "content": draft_prompt(playbook, trigger_text, examples, context, memory)}]})
         return (data["choices"][0]["message"].get("content") or "").strip()
 
-    def json_call(self, system: str, prompt: str, max_tokens: int = 1500):
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500, model: str | None = None):
         try:
-            data = self._post({"model": self.model, "max_tokens": max_tokens, "response_format": {"type": "json_object"},
+            data = self._post({"model": model or self.model, "max_tokens": max_tokens, "response_format": {"type": "json_object"},
                                "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]})
         except BrainError:
             return None

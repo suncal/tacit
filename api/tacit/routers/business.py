@@ -61,7 +61,7 @@ def oversight_one(agent_id: str, days: int = Query(30, ge=1, le=365), db: Sessio
     rows = db.scalars(select(M.AgentAction).where(M.AgentAction.agent_id == a.id).order_by(M.AgentAction.ts.desc()).limit(100)).all()
     card["actions_detail"] = [{"id": r.id, "conformance": r.conformance, "verdict": r.verdict, "reworked": r.reworked,
                                "rework_by": r.rework_by, "expected": r.expected, "actual": r.actual, "ts": r.ts,
-                               "playbook_id": r.playbook_id, "human_grade": r.human_grade} for r in rows]
+                               "playbook_id": r.playbook_id, "human_grade": r.human_grade, "detail": r.detail} for r in rows]
     return card
 
 

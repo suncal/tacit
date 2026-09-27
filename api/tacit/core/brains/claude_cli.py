@@ -71,7 +71,7 @@ class ClaudeCLIBrain(Brain):
                                      kind=playbook.get("response", {}).get("kind", "reply"))
         return self._run(system, draft_prompt(playbook, trigger_text, examples, context, memory)).strip()
 
-    def json_call(self, system: str, prompt: str, max_tokens: int = 1500):
+    def json_call(self, system: str, prompt: str, max_tokens: int = 1500, model: str | None = None):
         try:
             return parse_json(self._run(system + "\n\nReply with one JSON object and nothing else.", prompt))
         except BrainError:

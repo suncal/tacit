@@ -25,9 +25,10 @@ REWORK_WINDOW_S = 6 * 3600
 CONFORMANT_AT = 0.5
 
 
-def _conformance(pb: M.Playbook, trigger: M.Event, actual: str) -> tuple[Optional[float], str]:
-    """How close is this to what your team would have said? Measured against the job's usual reply and
-    against the closest real example of this exact situation — whichever the agent matched better."""
+def _conformance(pb: M.Playbook, trigger: M.Event, actual: str, app=None) -> tuple[Optional[float], str, dict]:
+    """How close is this to what your team would have said? Compared with the job's usual reply and with the
+    closest real example of this situation. A vendor that paraphrases correctly should not be marked down, so
+    when a model is available it judges substance and the word overlap becomes the fallback."""
     cands = [pb.response.get("template", "")] + [e.get("response", "") for e in (pb.examples or [])]
     ts = T.shingles(trigger.text or "")
     best_ex = max((e for e in (pb.examples or []) if e.get("trigger")), key=lambda e: T.jaccard(ts, T.shingles(e["trigger"])), default=None)
@@ -35,9 +36,18 @@ def _conformance(pb: M.Playbook, trigger: M.Event, actual: str) -> tuple[Optiona
         cands.append(best_ex.get("response", ""))
     scored = [(T.similarity(actual, c), c) for c in cands if c]
     if not scored:
-        return None, ""
-    best = max(scored, key=lambda x: x[0])
-    return round(best[0], 4), best[1]
+        return None, "", {}
+    sim, expected = max(scored, key=lambda x: x[0])
+    if app is not None and app.settings.judge_enabled and app.brain.is_llm:
+        try:
+            v = app.brain.judge({"name": pb.name, "actor": pb.actor, "judge_model": app.settings.judge_model},
+                                trigger.text or "", actual, expected)
+            if v:
+                return v["score"], expected, {"graded_by": "model", "similarity": round(sim, 4), "why": v["why"], "equivalent": v["equivalent"]}
+        except Exception:
+            import logging
+            logging.getLogger("tacit.oversight").warning("judge failed", exc_info=True)
+    return round(sim, 4), expected, {"graded_by": "overlap", "similarity": round(sim, 4)}
 
 
 def agent_for(db, handle: str) -> Optional[M.Agent]:
@@ -55,12 +65,13 @@ def on_agent_event(db, app, event: M.Event) -> Optional[dict]:
     if trigger is not None:
         pb = next((p for p in db.scalars(select(M.Playbook).where(M.Playbook.system == event.system, M.Playbook.stage != "retired"))
                    if matches(p, trigger)), None)
+    detail = {}
     if pb is not None:
-        conformance, expected = _conformance(pb, trigger, event.text or "")
+        conformance, expected, detail = _conformance(pb, trigger, event.text or "", app)
     a = M.AgentAction(id=new_id("aa"), agent_id=agent.id, event_id=event.id,
                       playbook_id=pb.id if pb else None, trigger_event_id=trigger.id if trigger else None,
                       conformance=conformance, expected=expected[:4000], actual=(event.text or "")[:4000],
-                      verdict="pending", ts=event.ts)
+                      detail=detail, verdict="pending", ts=event.ts)
     db.add(a)
     audit(db, f"agent:{agent.handle}", "agent.action", agent.name,
           {"event": event.id, "playbook": pb.name if pb else None, "conformance": conformance})
@@ -107,10 +118,10 @@ def regrade(db, app, force: bool = False) -> int:
         pb = next((p for p in pbs if p.system == ev.system and matches(p, trig)), None)
         if pb is None:
             continue
-        conf, expected = _conformance(pb, trig, ev.text or "")
+        conf, expected, detail = _conformance(pb, trig, ev.text or "", app)
         if conf is None:
             continue
-        a.playbook_id, a.conformance, a.expected = pb.id, conf, expected[:4000]
+        a.playbook_id, a.conformance, a.expected, a.detail = pb.id, conf, expected[:4000], detail
         if a.verdict in ("pending", "unmatched") and not a.reworked:
             a.verdict = "conformant" if conf >= CONFORMANT_AT else "off-standard"
         n += 1
@@ -154,7 +165,7 @@ def scorecard(db, agent: M.Agent, days: int = 30) -> dict:
         "cost_per_landed_action_usd": round(spend / landed, 3) if landed else None,
         "unmatched": len([r for r in rows if r.conformance is None]),
         "worst": [{"id": r.id, "conformance": r.conformance, "reworked": r.reworked, "expected": r.expected[:400],
-                   "actual": r.actual[:400], "rework_by": r.rework_by, "ts": r.ts}
+                   "actual": r.actual[:400], "rework_by": r.rework_by, "ts": r.ts, "detail": r.detail}
                   for r in sorted(graded, key=lambda r: (not r.reworked, r.conformance or 0))[:6]],
     }
 

@@ -33,18 +33,25 @@ INVOICE_ASKS = ["hey, where's the invoice for {c}? finance is chasing", "can som
 INVOICE_REPLIES = ["Sent {c} their invoice just now — net 30 as usual, copy in the shared drive under Finance/Invoices.",
                    "Done — {c} invoice sent, net 30. PDF is in Finance/Invoices.",
                    "{c} invoice went out this morning, net 30 terms. Copy in Finance/Invoices if you need it.",
-                   "Sent to {c} — net 30, copy filed under Finance/Invoices."]
+                   "Sent to {c} — net 30, copy filed under Finance/Invoices.",
+                   "Just emailed it over to {c}. Net 30, and there's a copy in Finance/Invoices.",
+                   "That's away — {c}, net 30. Grab the PDF from Finance/Invoices.",
+                   "Handled. {c} has it, standard net 30, filed in Finance/Invoices."]
 TWOFA_ASKS = ["customer can't get into their account, 2fa codes not arriving", "how do I reset 2FA for a user who lost their phone?",
               "user locked out — 2fa device gone. what's the process?", "2fa reset request from {c}, who handles this?"]
 TWOFA_REPLIES = ["Process: verify identity via the billing email on file, then Admin → Users → Reset 2FA. It logs an audit entry. Tell them to re-enrol within 24h.",
                  "Verify them via the billing email first, then Admin → Users → Reset 2FA (it writes an audit entry). They must re-enrol within 24h.",
-                 "Same as always: identity check via billing email → Admin → Users → Reset 2FA → ask them to re-enrol within 24h."]
+                 "Same as always: identity check via billing email → Admin → Users → Reset 2FA → ask them to re-enrol within 24h.",
+                 "Check they are who they say via the billing email, then reset 2FA from Admin → Users. Audit entry is automatic. 24h to re-enrol.",
+                 "Identity first — billing email on file. Then Admin → Users → Reset 2FA. Remind them they have 24 hours to re-enrol."]
 PR_TITLES = ["Add retry to webhook dispatcher", "Fix off-by-one in pagination", "Migrate billing to Stripe price IDs", "Refactor auth middleware",
              "Add rate limiting to public API", "Upgrade Postgres driver", "Cache customer lookups", "Fix flaky invoice test", "Add audit log export",
              "Tighten CSP headers", "Replace moment with date-fns", "Add index on events.thread_key", "Handle Slack retries idempotently", "Bump Python to 3.12"]
 PR_REVIEW = ["First pass:\n- Does this need a migration? If so, is it reversible?\n- Tests cover the failure path?\n- Please add a line to CHANGELOG.\nI'll do a full review once CI is green.",
              "Quick first look:\n- Migration reversible?\n- Failure-path tests?\n- CHANGELOG entry please.\nFull review after CI passes.",
-             "First-pass checklist: reversible migration (if any), tests for the failure path, CHANGELOG line. Will review properly once CI is green."]
+             "First-pass checklist: reversible migration (if any), tests for the failure path, CHANGELOG line. Will review properly once CI is green.",
+             "Before I read it properly: is the migration reversible, do the tests hit the failure path, and is there a CHANGELOG line? Full review when CI is green.",
+             "Three things first — reversible migration, a test on the unhappy path, CHANGELOG. Then I'll go through it once CI passes."]
 ONCALL = ["On-call summary for the week:\n• Pages: {p}\n• Incidents: {i} (all resolved)\n• Noisy alert: {a} — tuning threshold\n• Handover: {h}",
           "Weekly on-call recap:\n• {p} pages, {i} incidents, all resolved\n• Noisiest alert: {a}, threshold being tuned\n• Handing over to {h}"]
 ALERTS = ["queue-depth", "p95-latency", "disk-usage", "error-rate", "cert-expiry"]
@@ -52,7 +59,9 @@ BUG_TITLES = ["Export CSV drops last row", "Invoice PDF shows wrong currency", "
               "Dashboard chart off by one day", "Search ignores accents", "2FA reset email in spam", "Timezone wrong in audit log", "Slow customer page"]
 BUG_TRIAGE = ["Triage: reproduced on staging. Severity {s}. Assigning to this sprint; please add repro steps + expected vs actual to the description.",
               "Triaged — reproduces on staging, severity {s}. Pulling into the sprint. Add repro steps and expected/actual please.",
-              "Repro confirmed on staging (sev {s}). Into this sprint. Needs repro steps + expected vs actual in the description."]
+              "Repro confirmed on staging (sev {s}). Into this sprint. Needs repro steps + expected vs actual in the description.",
+              "Got a repro on staging, calling it {s}. Taking it this sprint — can you add the steps and what you expected instead?",
+              "Reproduces for me on staging. {s}. Sprint-bound; description needs repro steps and expected vs actual."]
 NOISE = ["lunch?", "anyone seen the new figma?", "deploy going out in 10", "brb", "nice work on the demo yesterday", "can we move standup to 10?",
          "who owns the analytics dashboard now?", "reminder: friday deploy freeze", "the coffee machine is dead again", "merged 🎉",
          "what's the wifi password in the new office", "PTO next monday", "great thread, thanks all", "I'll take a look after lunch",
@@ -110,8 +119,9 @@ def _at(day_offset: float, hour: float, minute: float = 0) -> float:
 
 
 def _pick(templates: list[str]) -> str:
-    """People have a canned reply and occasionally paraphrase it."""
-    return templates[0] if R.random() < 0.75 else R.choice(templates[1:])
+    """People have a habitual answer and reword it constantly. Anything closer to a canned string would
+    flatter a system that just retrieves the last reply."""
+    return templates[0] if R.random() < 0.4 else R.choice(templates[1:])
 
 
 def _events() -> list[dict]:

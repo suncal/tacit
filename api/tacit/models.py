@@ -130,6 +130,7 @@ class AgentAction(Base):
     conformance: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # vs the human standard
     expected: Mapped[str] = mapped_column(Text, default="")                     # what your team would have said
     actual: Mapped[str] = mapped_column(Text, default="")
+    detail: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)      # how it was graded, and why
     reworked: Mapped[bool] = mapped_column(Boolean, default=False)
     rework_event_id: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     rework_by: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)

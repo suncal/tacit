@@ -5,6 +5,7 @@ import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { clsx } from 'clsx'
 import { api, type Draft } from '../lib/api'
 import { Avatar, Badge, Button, Empty, PageHeader, ScoreDot, Spinner, StagePill } from '../components/ui'
+import { Why } from '../components/Grade'
 import { ago } from '../lib/format'
 
 const TABS = [['all', 'All'], ['pending', 'Waiting for the human'], ['scored', 'Graded'], ['executed', 'Executed'], ['expired', 'Expired']] as const
@@ -36,6 +37,7 @@ export function ShadowPage() {
                 <div><div className="muted text-[11.5px] uppercase tracking-wide mb-1">Tacit drafted</div><div className="rounded-lg border border-accent/40 p-2.5 whitespace-pre-wrap">{d.content.text}</div></div>
                 <div><div className="muted text-[11.5px] uppercase tracking-wide mb-1 flex items-center gap-1.5">{d.playbook?.actor || 'human'} actually did</div>{d.actual ? <div className="rounded-lg surface-2 p-2.5 whitespace-pre-wrap">{d.actual.text}</div> : <div className="rounded-lg border border-dashed line p-2.5 muted">{d.status === 'pending' ? 'waiting…' : d.status === 'executed' ? 'Tacit did it' : d.status === 'proposed' ? 'in the Inbox' : '—'}</div>}</div>
               </div>
+              <Why className="mt-3" why={d.score_detail?.why} gradedBy={d.score_detail?.graded_by} similarity={d.score_detail?.similarity} />
               {d.run_id && <div className="mt-2 text-[12.5px]"><Link to={`/runs/${d.run_id}`} className="text-accent">View run →</Link></div>}
             </div>
           ))}
