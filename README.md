@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="site/favicon.svg" width="56" height="56" alt="">
+<img src="docs/favicon.svg" width="56" height="56" alt="">
 
 # Tacit
 
@@ -136,5 +136,7 @@ web/                           React 19 · TypeScript · Vite · Tailwind 4 · T
 Oversight is **free forever**, self-hosted or not: unlimited supervised agents, shadow mode, backtests.
 Work is **$0.30 per verified action** — nothing else, and nothing for work a human took back.
 A **compliance** tier adds signed evidence exports, auditor roles and SSO.
+
+Site source in [`docs/`](docs) · published at https://suncal.github.io/tacit
 
 MIT licensed. Not affiliated with Intercom, Sierra, GitHub, Slack, Linear or Anthropic.
