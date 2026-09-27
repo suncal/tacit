@@ -98,6 +98,14 @@ def grade_agent_action(action_id: str, body: GradeIn, db: Session = Depends(get_
     return {"ok": True, "verdict": a.verdict}
 
 
+# ------------------------------------------------------------------ is the oversight real?
+@router.get("/oversight-quality")
+def oversight_quality(days: int = Query(90, ge=1, le=730), db: Session = Depends(get_db), app=Depends(get_app), _: Principal = Depends(current_principal)):
+    """Article 14 asks for oversight that is effective. This measures whether it is."""
+    from ..core.oversight_quality import report
+    return report(db, app, days)
+
+
 # ------------------------------------------------------------------ compliance
 @router.get("/compliance")
 def compliance(days: int = Query(90, ge=1, le=730), db: Session = Depends(get_db), app=Depends(get_app), _: Principal = Depends(current_principal)):

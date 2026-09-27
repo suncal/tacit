@@ -120,7 +120,9 @@ def test_propose_pauses_and_auto_acts_reversibly(tacit):
     r = tacit.agent.decide_approval(aid, True, by="test")
     assert r["status"] == "done" and r["actions"] and r["actions"][0]["status"] == "done"
     with session() as db:
-        assert db.get(M.Playbook, inv_id).approvals == 1
+        # the action happened, but an instant approval is a signature: it must not buy autonomy
+        assert db.get(M.Playbook, inv_id).approvals == 0
+        assert any(e.action == "approval.unread" for e in db.scalars(select(M.AuditEvent)))
     out = tacit.agent.undo_run(run_id, by="test")
     assert out["tx_status"] == "undone" and out["results"][0]["undone"]
     with session() as db:

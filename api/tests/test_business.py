@@ -1,6 +1,8 @@
 """Verified-work billing, third-party agent oversight, tamper-evident compliance, Day-One report."""
 import time
 
+import pytest
+
 from sqlalchemy import select
 
 from tacit import models as M
@@ -253,3 +255,132 @@ def test_audited_facts_reach_open_consoles(tacit):
         assert "tool.ask" in kinds                                          # the console learns without asking
     finally:
         live.unsubscribe(q)
+
+
+# ------------------------------------------------------------------ measuring the human, not the AI
+def _considered(db, approval_id: str, seconds: float = 40.0):
+    """Back-date an approval's creation so the decision looks like someone actually read it."""
+    a = db.get(M.Approval, approval_id)
+    a.created_at = time.time() - seconds
+    db.flush()
+    return a
+
+
+def test_an_approval_nobody_had_time_to_read_does_not_buy_autonomy(tacit):
+    from tacit.core.oversight_quality import counted_as_evidence, decision_quality, min_read_seconds
+    _seed_events(tacit)
+    with session() as db:
+        pb = db.scalar(select(M.Playbook).where(M.Playbook.name.like("%invoice%")))
+        tacit.shadow.set_stage(db, pb, "propose", by="test")
+        pb_id = pb.id
+
+    # 1. instant approval on a long preview — a signature
+    ingest(tacit, system="slack", kind="message", actor="jonas", text="where's the invoice for Acme?", target="#billing", thread_key="slack:C_BILLING:q1", meta={"channel": "#billing"})
+    with session() as db:
+        a = db.scalar(select(M.Approval).where(M.Approval.status == "pending"))
+        assert min_read_seconds(a) > 2.5          # there is real text to read
+        aid = a.id
+    tacit.agent.decide_approval(aid, True, by="user:rushed")
+    with session() as db:
+        q = decision_quality(db, db.get(M.Approval, aid))
+        assert q["attention"] == "rubber-stamped" and q["seconds"] < q["needed_seconds"]
+        assert db.get(M.Playbook, pb_id).approvals == 0            # not evidence
+        assert not counted_as_evidence(db, db.get(M.Approval, aid))
+        assert any(e.action == "approval.unread" for e in db.scalars(select(M.AuditEvent)))
+
+    # 2. the same decision, taken with time — evidence
+    ingest(tacit, system="slack", kind="message", actor="leila", text="where's the invoice for Globex?", target="#billing", thread_key="slack:C_BILLING:q2", meta={"channel": "#billing"})
+    with session() as db:
+        aid2 = _considered(db, db.scalar(select(M.Approval).where(M.Approval.status == "pending")).id).id
+    tacit.agent.decide_approval(aid2, True, by="user:careful")
+    with session() as db:
+        assert decision_quality(db, db.get(M.Approval, aid2))["attention"] == "considered"
+        assert db.get(M.Playbook, pb_id).approvals == 1            # only this one counted
+
+
+def test_the_index_names_what_is_wrong_and_who(tacit):
+    from tacit.core.oversight_quality import report
+    _seed_events(tacit)
+    with session() as db:
+        pb = db.scalar(select(M.Playbook).where(M.Playbook.name.like("%invoice%")))
+        tacit.shadow.set_stage(db, pb, "propose", by="test")
+
+    for i in range(6):                                              # one person, always instant, never refusing
+        ingest(tacit, system="slack", kind="message", actor="jonas", text=f"where's the invoice for Acme {i}?", target="#billing", thread_key=f"slack:C_BILLING:i{i}", meta={"channel": "#billing"})
+        with session() as db:
+            aid = db.scalar(select(M.Approval).where(M.Approval.status == "pending")).id
+        tacit.agent.decide_approval(aid, True, by="user:rushed")
+
+    with session() as db:
+        r = report(db, tacit, 90)
+    assert r["decisions"] == 6
+    rv = r["reviewers"][0]
+    assert rv["reviewer"] == "user:rushed" and rv["rubber_stamp_rate"] == 1.0 and rv["refusal_rate"] == 0.0
+    assert 0 <= r["index"] <= 100 and r["index"] < 60               # this is not effective oversight
+    titles = " ".join(f["title"] for f in r["findings"])
+    assert "signed, not read" in titles and "ever been refused" in titles and "one person" in titles
+    assert {c["name"] for c in r["components"]} >= {"Attention", "Independence", "Spread"}
+    assert sum(c["weight"] for c in r["components"]) == pytest.approx(1.0, abs=0.01)
+
+
+def test_evidence_bundle_reports_whether_oversight_was_real(client):
+    client.post("/api/v1/auth/setup", json={"email": "a@b.co", "name": "A", "password": "correct-horse"})
+    from tacit.seed import _events
+    client.post("/api/v1/events/batch", json=_events())
+    client.post("/api/v1/playbooks/mine")
+    pb = next(p for p in client.get("/api/v1/playbooks").json()["playbooks"] if "invoice" in p["name"])
+    client.post(f"/api/v1/playbooks/{pb['id']}/stage", json={"stage": "propose"})
+    client.post("/api/v1/events", json={"system": "slack", "kind": "message", "actor": "jonas", "text": "where's the invoice for Acme?", "target": "#billing", "thread_key": "slack:C_BILLING:ev1", "meta": {"channel": "#billing"}})
+    aid = client.get("/api/v1/approvals").json()["approvals"][0]["id"]
+    client.post(f"/api/v1/approvals/{aid}/decide", json={"approve": True})
+
+    q = client.get("/api/v1/oversight-quality?days=90").json()
+    assert q["decisions"] == 1 and q["reviewers"][0]["rubber_stamp_rate"] == 1.0
+    ev = client.get("/api/v1/compliance").json()["oversight_effectiveness"]
+    assert ev["index"] == q["index"] and ev["reviewers"] and "rubber-stamped" in ev["method"]
+    assert any("signed, not read" in f["title"] for f in ev["findings"])
+
+
+def test_the_band_will_not_say_effective_while_something_high_severity_stands(tacit):
+    from tacit.core.oversight_quality import _band
+    assert _band(92, []) == "effective"
+    assert _band(92, [{"severity": "medium"}]) == "effective"
+    assert _band(92, [{"severity": "high"}]) == "nominal"      # the weighted average does not get to whitewash it
+    assert _band(31, [{"severity": "high"}]) == "decorative"   # and the cap never flatters a bad score upwards
+
+
+def test_fatigue_is_measured_against_the_reviewer_s_own_pace_not_a_fixed_number_of_seconds(tacit):
+    """A team whose previews are short would never trip an absolute seconds-per-day threshold, and that is
+    exactly the team most likely to be rubber-stamping."""
+    from tacit.core.oversight_quality import _findings, _reviewer
+    now = time.time()
+    quick = [{"id": i, "by": "user:tired", "status": "approved", "seconds": s, "needed_seconds": 4.0,
+              "attention": "considered", "confidence": 0.8, "reversed_after": False, "escalated": False,
+              "decided_at": now - (30 - i) * 86400, "created_at": now - (30 - i) * 86400, "tool": "slack_post",
+              "playbook_id": None}
+             for i, s in enumerate([9, 10, 8, 9, 7, 6, 4, 3, 2, 2, 1, 1])]
+    r = _reviewer("user:tired", quick)
+    assert r["early_seconds"] and r["late_seconds"] and r["late_seconds"] < r["early_seconds"]
+    assert abs(r["fatigue_slope_seconds_per_day"]) < 1        # would not have tripped the old absolute rule
+    titles = " ".join(f["title"] for f in _findings(quick, [r], []))
+    assert "deciding faster over time" in titles
+
+
+def test_one_reviewer_signing_unread_is_caught_even_when_the_team_average_looks_fine(tacit):
+    """The average is where this hides: two careful reviewers can carry a third who signs everything."""
+    from tacit.core.oversight_quality import _findings, _reviewer
+    now = time.time()
+
+    def dec(by, secs, i):
+        return {"id": i, "by": by, "status": "approved", "seconds": secs, "needed_seconds": 8.0,
+                "attention": "rubber-stamped" if secs < 8.0 else "considered", "confidence": 0.8,
+                "reversed_after": False, "escalated": False, "decided_at": now - i * 3600,
+                "created_at": now - i * 3600, "tool": "slack_post", "playbook_id": None}
+
+    careful = [dec("user:careful", 20.0, i) for i in range(50)]
+    rushed = [dec("user:rushed", 1.0, 100 + i) for i in range(9)]
+    rows = careful + rushed
+    assert sum(1 for q in rows if q["attention"] == "rubber-stamped") / len(rows) < 0.2   # team average is "fine"
+    reviewers = [_reviewer("user:careful", careful), _reviewer("user:rushed", rushed)]
+    f = next(f for f in _findings(rows, reviewers, []) if "signed, not read" in f["title"])
+    assert f["severity"] == "high" and "user:rushed" in f["detail"]

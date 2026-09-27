@@ -12,6 +12,7 @@ import { PeoplePage } from './pages/People'
 import { OversightPage } from './pages/Oversight'
 import { LedgerPage } from './pages/Ledger'
 import { CompliancePage } from './pages/Compliance'
+import { OversightQualityPage } from './pages/OversightQuality'
 import { DayOnePage } from './pages/DayOne'
 import { InboxPage } from './pages/Inbox'
 import { RunDetailPage, RunsPage } from './pages/Runs'
@@ -36,6 +37,7 @@ function Gate() {
         <Route path="people" element={<PeoplePage />} />
         <Route path="report" element={<DayOnePage />} />
         <Route path="oversight" element={<OversightPage />} />
+        <Route path="oversight-quality" element={<OversightQualityPage />} />
         <Route path="ledger" element={<LedgerPage />} />
         <Route path="compliance" element={<CompliancePage />} />
         <Route path="inbox" element={<InboxPage />} />

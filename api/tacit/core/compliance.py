@@ -116,6 +116,7 @@ def evidence(db, app, days: int = 90) -> dict:
             "median_time_to_decision_s": _median([a.decided_at - a.created_at for a in decided if a.decided_at]),
             "corrections_taught_by_humans": n(M.Lesson, M.Lesson.status == "answered"),
         },
+        "oversight_effectiveness": _effectiveness(db, app, days),
         "controls": {
             "permission_rules": [{"principal": r.principal, "tool": r.tool, "decision": r.decision} for r in db.scalars(select(M.Policy))],
             "defaults": app.policy.defaults,
@@ -126,6 +127,18 @@ def evidence(db, app, days: int = 90) -> dict:
         "ai_systems": register,
         "supervised_third_party_agents": supervised,
     }
+
+
+def _effectiveness(db, app, days: int) -> dict:
+    """Art. 14 is not satisfied by the existence of an approval button. This is the evidence that the
+    people pressing it were actually exercising judgement — including where they were not."""
+    from .oversight_quality import report
+    r = report(db, app, days)
+    return {"index": r["index"], "band": r["band"], "components": r["components"], "decisions": r["decisions"],
+            "reviewers": [{k: v for k, v in rv.items() if k in
+                           ("reviewer", "decisions", "approved", "refused", "refusal_rate", "median_seconds",
+                            "rubber_stamp_rate", "miss_rate", "calibration")} for rv in r["reviewers"]],
+            "findings": r["findings"], "method": r["method"]}
 
 
 def _median(xs: list[float]) -> Optional[float]:

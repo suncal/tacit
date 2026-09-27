@@ -118,3 +118,23 @@ export interface DayOne {
   bus_factor: { owner: string; jobs: number; hours_per_year: number }[]
   start_with: DayOne['jobs'][number] | null; next_steps: string[]; hours_note: string
 }
+
+export interface ReviewerQuality {
+  reviewer: string; decisions: number; approved: number; refused: number; refusal_rate: number
+  median_seconds: number; p90_seconds: number; rubber_stamped: number; rubber_stamp_rate: number
+  reversed_after_approval: number; miss_rate: number | null; calibration: number | null
+  fatigue_slope_seconds_per_day: number; span_days: number
+  early_seconds: number | null; late_seconds: number | null; escalations_seen: number
+}
+export interface DecisionQuality {
+  id: number; tool: string; playbook_id: number | null; by: string; status: string
+  seconds: number; needed_seconds: number; attention: 'rubber-stamped' | 'considered'
+  confidence: number | null; reversed_after: boolean; created_at: number; decided_at: number; escalated: boolean
+}
+export interface OversightQuality {
+  period_days: number; decisions: number; index: number; band: string
+  components: { name: string; score: number; weight: number; what: string }[]
+  reviewers: ReviewerQuality[]
+  findings: { severity: 'high' | 'medium' | 'low'; title: string; detail: string; do: string }[]
+  pending: number; pending_oldest_hours: number; method: string; recent: DecisionQuality[]
+}

@@ -74,13 +74,22 @@ class Agent:
             a.decided_at, a.decided_by = time.time(), by
             audit(db, by, "approval." + a.status, a.tool, {"approval": a.id, "args": a.args, "run": a.run_id})
             run_id, pb_id = a.run_id, a.playbook_id
+            # An approval granted faster than the preview could be read is a signature, not oversight.
+            # It still happened and is still logged — it simply cannot be evidence that the job is safe.
+            from .oversight_quality import decision_quality
+            q = decision_quality(db, a) or {}
+            considered = q.get("attention") == "considered"
             if pb_id:
                 pb = db.get(M.Playbook, pb_id)
                 if pb:
-                    if approve:
-                        pb.approvals += 1
-                    else:
+                    if not approve:
                         pb.rejections += 1
+                    elif considered:
+                        pb.approvals += 1
+            if approve and not considered:
+                audit(db, by, "approval.unread", a.tool,
+                      {"approval": a.id, "seconds": q.get("seconds"), "needed_seconds": q.get("needed_seconds"),
+                       "note": "approved faster than the preview could be read — not counted towards autonomy"})
             r = db.get(M.Run, run_id)
             if r and r.draft_id:
                 d = db.get(M.Draft, r.draft_id)

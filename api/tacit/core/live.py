@@ -15,7 +15,7 @@ MAX_BACKLOG = 400
 # Only these reach the browser. The audit log records everything; the stream is for things a person
 # would want to see happen without refreshing.
 INTERESTING = {
-    "tool.ask", "approval.approved", "approval.denied", "run.done", "run.error",
+    "tool.ask", "approval.approved", "approval.denied", "approval.unread", "run.done", "run.error",
     "draft.created", "draft.scored", "draft.escalated", "lesson.asked", "lesson.answered",
     "playbook.stage", "playbooks.mine", "agent.action", "agent.reworked", "cover.start", "cover.end",
     "backtest.run", "pilot.report", "automation.create",

@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Activity, BookOpen, Bot, Brain, Eye, FileCheck2, Inbox, LayoutDashboard, ListChecks, LogOut, MessageSquare, Monitor, Moon, PanelLeft, PlayCircle, Receipt, Search, Settings, Sparkles, Sun, Timer, UserRound, Users } from 'lucide-react'
+import { Activity, BookOpen, Bot, Brain, Eye, FileCheck2, Inbox, LayoutDashboard, ListChecks, LogOut, MessageSquare, Monitor, Moon, PanelLeft, PlayCircle, Receipt, ScanEye, Search, Settings, Sparkles, Sun, Timer, UserRound, Users } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useEffect, useState } from 'react'
 import { api, type Overview, type User } from '../lib/api'
@@ -25,6 +25,7 @@ const GROUPS: { label: string; items: Item[] }[] = [
   ] },
   { label: 'Accountability', items: [
     { to: '/oversight', label: 'Oversight', icon: Bot },
+    { to: '/oversight-quality', label: 'Oversight quality', icon: ScanEye },
     { to: '/ledger', label: 'Verified work', icon: Receipt },
     { to: '/compliance', label: 'Evidence', icon: FileCheck2 },
     { to: '/audit', label: 'Audit log', icon: Activity },

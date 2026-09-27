@@ -210,8 +210,10 @@ def seed(app, force: bool = False) -> dict:
     with session() as db:
         if not db.scalar(select(M.User.id).limit(1)):
             db.add(M.User(id=new_id("usr"), email="demo@northwind.dev", name="Demo Admin", role="admin", password_hash=hash_password("tacit-demo")))
+        have = set(db.scalars(select(M.Agent.handle)).all())
         for a in SUPERVISED:
-            db.add(M.Agent(id=new_id("agt"), **a))
+            if a["handle"] not in have:                  # --force reseeds into an existing org
+                db.add(M.Agent(id=new_id("agt"), **a))
         for text, tags in MEMORIES:
             db.add(M.Memory(id=new_id("mem"), text=text, tags=tags, source="seed"))
         db.add(M.Task(id=new_id("task"), title="Wire new Stripe price IDs for the relaunch", assignee="sam", source="meeting", due="Thursday"))
@@ -241,12 +243,11 @@ def seed(app, force: bool = False) -> dict:
         pbs = sorted(db.scalars(select(M.Playbook).where(M.Playbook.stage == "shadow")).all(), key=lambda p: -(p.drafts_hit / max(p.drafts_scored, 1)))
         if pbs:
             best = pbs[0]
-            best.approvals, best.rejections = 11, 1          # a history of human approvals
-            app.shadow.set_stage(db, best, "auto", by="demo@northwind.dev", why="11 approved / 1 rejected, 0 undos")
+            app.shadow.set_stage(db, best, "auto", by="demo@northwind.dev", why=f"{best.drafts_hit}/{best.drafts_scored} shadow drafts matched, then a run of approvals")
         if len(pbs) > 1:
             second = pbs[1]
-            second.approvals, second.rejections = 4, 0
             app.shadow.set_stage(db, second, "propose", by="demo@northwind.dev", why=f"{second.drafts_hit}/{second.drafts_scored} shadow drafts matched")
+    _seed_oversight_history(app)                             # the approvals behind those promotions, decision by decision
     # live triggers: one pending approval (propose) and one executed+reversible run (auto)
     live_ids = []
     with session() as db:
@@ -335,3 +336,89 @@ def _seed_ledger_history(app) -> None:
         pb.executions = (pb.executions or 0) + 58
     with session() as db:
         settle_ledger(db, app.settings)
+
+
+# Three months of approval decisions, with the shape real ones have: a careful owner, a stretched
+# second approver, and someone whose decisions have quietly got faster. This is what the oversight
+# quality page reads — and the reason the demo org's index is imperfect rather than flattering.
+REVIEWERS = [
+    # name,                      share, care (multiple of the minimum read time), refusal rate, fatigue (s/day)
+    ("maya@northwind.dev",        0.44, (1.6, 4.2), 0.16,  0.0),
+    ("sam@northwind.dev",         0.24, (1.0, 2.4), 0.09, -0.1),
+    ("jonas@northwind.dev",       0.32, (2.4, 4.0), 0.00, -2.6),   # starts careful, ends signing
+]
+
+
+def _seed_oversight_history(app) -> None:
+    from .core.oversight_quality import min_read_seconds
+    with session() as db:
+        pbs = db.scalars(select(M.Playbook).where(M.Playbook.stage.in_(("auto", "propose")))).all()
+        if not pbs:
+            return
+        events = db.scalars(select(M.Event.id).where(M.Event.thread_key.isnot(None)).limit(400)).all()
+        considered: dict[str, int] = {}
+        refused: dict[str, int] = {}
+        window = 62.0                                        # days of decision history
+        for pb in pbs:
+            tool = (pb.response or {}).get("tool", "note")
+            if not events:
+                continue
+            n = 26 if pb.stage == "auto" else 14
+            for i in range(n):
+                age = window * (1 - i / n) + R.uniform(-0.4, 0.4)   # oldest first, so fatigue reads as a trend
+                t = time.time() - max(0.2, age) * 86400
+                who, care, refuse_p, fatigue = _reviewer_for(i)
+                text = _pick([(pb.response or {}).get("template", "")] + [e.get("response", "") for e in (pb.examples or [])][:3])
+                conf = round(R.betavariate(6, 2), 2)
+                r = M.Run(id=new_id("run"), channel=f"{pb.system}:{(pb.trigger or {}).get('target', '')}",
+                          principal=f"playbook:{pb.id}", playbook_id=pb.id, input=f"[{pb.name}] triggered",
+                          output=text, status="done", tx_status="committed", steps=[], messages=[],
+                          created_at=t, finished_at=t + 3)
+                db.add(r); db.flush()
+                d = M.Draft(id=new_id("dft"), playbook_id=pb.id, trigger_event_id=R.choice(events),
+                            content={"text": text, "tool": tool, "confidence": conf}, status="proposed",
+                            run_id=r.id, created_at=t)
+                db.add(d); db.flush()
+                r.draft_id = d.id
+                preview = {"system": pb.system, "kind": "create",
+                           "summary": f"reply in {(pb.trigger or {}).get('target', '')}", "text": text}
+                a = M.Approval(id=new_id("apr"), run_id=r.id, call_id=f"seed-{i}", tool=tool,
+                               args={"text": text}, preview=preview, principal=f"playbook:{pb.id}",
+                               reason="playbook at propose stage", playbook_id=pb.id, created_at=t)
+                # attention is well calibrated: the shaky drafts get looked at, the confident ones less
+                need = min_read_seconds(a)
+                lo, hi = care
+                mult = R.uniform(lo, hi) * (1.35 if conf < 0.6 else 1.0)
+                mult += fatigue * (window - age) / 20          # the drift, applied across the window
+                took = max(1.0, need * max(0.35, mult))
+                refuse = R.random() < refuse_p * (2.2 if conf < 0.6 else 0.5)   # refusals land on shaky work
+                a.status, a.decided_at, a.decided_by = ("denied" if refuse else "approved"), t + took, who
+                db.add(a)
+                if refuse:
+                    refused[pb.id] = refused.get(pb.id, 0) + 1
+                    d.status = "rejected"
+                else:
+                    if took >= need:
+                        considered[pb.id] = considered.get(pb.id, 0) + 1
+                    reversed_ = (i % 23 == 7)                 # one approval that turned out wrong
+                    act = M.Action(id=new_id("act"), run_id=r.id, tool=tool, args={"text": text},
+                                   result={"posted": True}, undo={"tool": "memory_forget", "args": {}},
+                                   status="undone" if reversed_ else "done", ts=t + took + 1, preview=preview)
+                    db.add(act)
+                    if reversed_:
+                        r.tx_status = "undone"
+        # the ladder counts only what was actually read — keep the stored tallies honest with the record
+        for pb in pbs:
+            pb.approvals = considered.get(pb.id, 0)
+            pb.rejections = refused.get(pb.id, 0)
+
+
+def _reviewer_for(i: int) -> tuple[str, tuple[float, float], float, float]:
+    x = R.random()
+    cum = 0.0
+    for name, share, care, refuse, fatigue in REVIEWERS:
+        cum += share
+        if x <= cum:
+            return name, care, refuse, fatigue
+    name, _, care, refuse, fatigue = REVIEWERS[0]
+    return name, care, refuse, fatigue

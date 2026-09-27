@@ -324,7 +324,7 @@ footer a{text-decoration:none;color:var(--ink2);transition:color .2s}footer a:ho
 
 <div class="nav" id="nav"><div class="wrap">
   <a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="currentColor" opacity=".26"/><rect x="10" y="10" width="19.5" height="19.5" rx="5.5" fill="currentColor"/><path d="M15.2 20.1l2.9 2.9 6.2-7.2" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tacit</a>
-  <ul><li><a href="#oversight">Oversight</a></li><li><a href="#judge">The judge</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li></ul>
+  <ul><li><a href="#oversight">Oversight</a></li><li><a href="#judge">The judge</a></li><li><a href="#quality">Oversight quality</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li></ul>
   <div class="right"><button class="link" id="openDlg" style="background:none;border:0;cursor:pointer;font-family:var(--sans)">Open your instance</button><a class="btn sm" href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener"><span class="sheen"></span>Try the demo</a></div>
 </div></div>
 
@@ -347,7 +347,7 @@ footer a{text-decoration:none;color:var(--ink2);transition:color .2s}footer a:ho
           <div class="grp">The work</div>
           <a><span class="dot"></span>Playbooks</a><a><span class="dot"></span>Shadow</a><a><span class="dot"></span>People</a><a><span class="dot"></span>Runs</a>
           <div class="grp">Accountability</div>
-          <a><span class="dot"></span>Oversight</a><a><span class="dot"></span>Verified work</a><a><span class="dot"></span>Evidence</a><a><span class="dot"></span>Audit log</a>
+          <a><span class="dot"></span>Oversight</a><a><span class="dot"></span>Oversight quality</a><a><span class="dot"></span>Verified work</a><a><span class="dot"></span>Evidence</a><a><span class="dot"></span>Audit log</a>
         </div>
         <div class="scrollport" id="port"><div class="inner" id="inner">
           <div class="pane">
@@ -622,6 +622,36 @@ Full review after CI passes.</div></div>
   </div>
 </div></section>
 
+<!-- ================= OVERSIGHT QUALITY ================= -->
+<section id="quality"><div class="wrap">
+  <div class="g2">
+    <div class="frame rv" style="margin:0"><div class="bar"><i></i><i></i><i></i><span class="url">oversight quality</span></div><div style="padding:18px 20px;color:var(--ftext)">
+      <div style="display:flex;gap:20px;align-items:center;margin-bottom:14px">
+        <div style="position:relative;width:96px;height:96px;flex:none">
+          <svg viewBox="0 0 96 96" style="transform:rotate(-90deg)"><circle cx="48" cy="48" r="38" fill="none" stroke="var(--frame3)" stroke-width="8"/><circle cx="48" cy="48" r="38" fill="none" stroke="#E5B94A" stroke-width="8" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="54.9"/></svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:26px;font-weight:600;letter-spacing:-.03em;line-height:1">77</div><div style="font:500 8px var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--fmuted);margin-top:2px">out of 100</div></div>
+        </div>
+        <div><div style="font-size:13px;font-weight:600;color:#E5B94A">Nominal</div>
+          <div style="font-size:11.5px;color:var(--fmuted);margin-top:3px;max-width:24em">The button is being pressed. Whether anyone is reading is another matter.</div>
+          <div style="font-size:11px;color:#E5B94A;margin-top:7px;max-width:26em">Held below its weighted score while a high-severity finding about the oversight itself is unresolved.</div></div>
+      </div>
+      <table class="tbl" style="color:var(--ftext)"><thead><tr><th>Reviewer</th><th>Median</th><th>Signed unread</th><th>Attention over time</th></tr></thead><tbody>
+        <tr><td>maya@northwind.dev</td><td class="tnum">11.4s</td><td class="tnum">0 (0%)</td><td class="tnum" style="color:var(--fmuted)">7.9s → 11.9s</td></tr>
+        <tr><td>jonas@northwind.dev</td><td class="tnum">2.2s</td><td class="tnum" style="color:#F08A7C">7 (64%)</td><td class="tnum" style="color:#F08A7C">20.1s → 1.3s</td></tr>
+        <tr><td>sam@northwind.dev</td><td class="tnum">7.5s</td><td class="tnum">0 (0%)</td><td class="tnum" style="color:var(--fmuted)">5s → 8.2s</td></tr>
+      </tbody></table>
+      <div style="border-top:1px solid var(--fline);margin-top:12px;padding-top:11px;font:11px var(--mono);color:var(--fmuted)">7 of 38 approvals granted faster than the preview could be read · <b style="color:#F08A7C">excluded from promotion evidence</b></div>
+    </div></div>
+    <div class="rv" data-d="2">
+      <div class="eyebrow">The thing nobody measures</div>
+      <h2 style="margin-top:12px">Everyone grades the model. Nobody grades the person approving it.</h2>
+      <p class="lede" style="margin-top:16px">An approval granted in two seconds on a four-hundred-word change is a signature, not oversight. Tacit can tell the difference, because it already records what nobody else links together: who decided, how long they took, how much text they were shown, how confident the system was, and whether the thing they approved had to be reversed.</p>
+      <p class="lede" style="margin-top:14px">Then it does the part that has teeth. Tacit's ladder treats approvals as evidence that a job deserves autonomy — so <b>a decision that fails the attention test is excluded from that evidence</b>, not merely reported. Nothing gets promoted on signatures.</p>
+      <p class="lede" style="margin-top:14px">Every regulation in force asks for human oversight. None of them can tell you whether you have it. This is the page that can.</p>
+    </div>
+  </div>
+</div></section>
+
 <!-- ================= WHY DIFFERENT ================= -->
 <section><div class="wrap">
   <div class="center rv"><div class="eyebrow">Why this is different</div><h2 style="margin-top:14px">Everybody bought observability. Nobody owns whether the work was right.</h2></div>
@@ -630,8 +660,9 @@ Full review after CI passes.</div></div>
     <div class="card rv" data-d="2"><span class="ic">02</span><h3>It grades your other vendors</h3><p>The only product that will tell you a tool you already pay for is producing work your team has to redo. Free, read-only, no cooperation needed from the vendor.</p></div>
     <div class="card rv" data-d="3"><span class="ic">03</span><h3>Pricing that can't be gamed</h3><p>Per-resolution pricing bills you when the chat ends. Verified-work pricing bills only when a human approved the action or let it stand. Reversed work is credited back, permanently.</p></div>
     <div class="card rv" data-d="4"><span class="ic">04</span><h3>Autonomy per job, earned</h3><p>Shadow → propose → auto, one job at a time, with demotion when rejections or reversals pile up. You always know precisely what may act unattended, and why.</p></div>
-    <div class="card rv" data-d="5"><span class="ic">05</span><h3>Reversible by construction</h3><p>Every write records its inverse. Undo a run across Slack, GitHub and files in one click — and the undo is on the audit log too.</p></div>
-    <div class="card rv" data-d="6"><span class="ic">06</span><h3>It learns from corrections</h3><p>When a draft misses, Tacit works out why and proposes the rule in your colleague's own voice. They confirm it in one tap, and every future draft follows it.</p></div>
+    <div class="card rv" data-d="5"><span class="ic">05</span><h3>It audits the humans too</h3><p>Approval fatigue is how oversight quietly stops existing. Tacit catches the reviewer whose decisions have gone from twenty seconds to one, names them, and stops their signatures counting as evidence that a job is safe.</p></div>
+    <div class="card rv" data-d="6"><span class="ic">06</span><h3>Reversible by construction</h3><p>Every write records its inverse. Undo a run across Slack, GitHub and files in one click — and the undo is on the audit log too.</p></div>
+    <div class="card rv" data-d="7"><span class="ic">07</span><h3>It learns from corrections</h3><p>When a draft misses, Tacit works out why and proposes the rule in your colleague's own voice. They confirm it in one tap, and every future draft follows it.</p></div>
   </div>
 </div></section>
 
@@ -731,7 +762,7 @@ Full review after CI passes.</div></div>
 <footer><div class="wrap">
   <div class="fcols">
     <div><a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="currentColor" opacity=".26"/><rect x="10" y="10" width="19.5" height="19.5" rx="5.5" fill="currentColor"/><path d="M15.2 20.1l2.9 2.9 6.2-7.2" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tacit</a><p class="muted" style="margin-top:12px;max-width:26em">The verified work layer. Grade every AI in the company against what your own people do — then let the proven ones work.</p></div>
-    <div><h5>Product</h5><ul><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li><li><a href="#judge">The judge</a></li><li><a href="#oversight">Oversight</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li></ul></div>
+    <div><h5>Product</h5><ul><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li><li><a href="#judge">The judge</a></li><li><a href="#oversight">Oversight</a></li><li><a href="#quality">Oversight quality</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li><li><a href="https://tacit-demo-km3d.onrender.com" target="_blank" rel="noopener">Live demo</a></li></ul></div>
     <div><h5>Developers</h5><ul><li><a href="https://github.com/suncal/tacit">GitHub</a></li><li><a href="https://github.com/suncal/tacit">API reference</a></li><li><a href="https://github.com/suncal/tacit">Event API</a></li><li><a href="https://github.com/suncal/tacit">Self-hosting</a></li></ul></div>
     <div><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div>
   </div>

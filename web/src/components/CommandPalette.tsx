@@ -21,6 +21,7 @@ const PAGES: Row[] = [
   { kind: 'page', id: 'p6', title: 'People', subtitle: 'bus factor and cover', to: '/people' },
   { kind: 'page', id: 'p7', title: 'Oversight', subtitle: 'AI you already pay for', to: '/oversight' },
   { kind: 'ledger', id: 'p8', title: 'Verified work', subtitle: 'the ledger', to: '/ledger' },
+  { kind: 'page', id: 'p8b', title: 'Oversight quality', subtitle: 'is anyone actually reading?', to: '/oversight-quality' },
   { kind: 'evidence', id: 'p9', title: 'Evidence', subtitle: 'EU AI Act art. 12 / 14', to: '/compliance' },
   { kind: 'page', id: 'p10', title: 'Runs', to: '/runs' },
   { kind: 'page', id: 'p11', title: 'Audit log', to: '/audit' },

@@ -72,12 +72,32 @@ An action is billable only once **a human approved it**, or it ran on a job that
 **nobody reversed it inside the dispute window**. Reversed or refused work is credited permanently. Work a
 person drove themselves is never billed. Every line names the action, the job, and the reason.
 
-### 4. Evidence — EU AI Act art. 12 and 14, generated from the log
+### 4. Oversight quality — whether the human approving it was actually looking
+
+Everyone measures the model. Nobody measures the person approving its actions — so an approval granted in
+two seconds on a four-hundred-word change counts exactly the same as one somebody read. Tacit knows what
+nobody else links together: who decided, how long they took, how much text they were shown, how confident
+the system was, and whether the thing they approved had to be reversed.
+
+> **jonas@northwind.dev** — started the quarter spending 20s on a decision, now spends 1.3s.
+> **64% of their approvals were granted faster than the preview could be read.**
+
+The consequence is the part that matters. Tacit's trust ladder treats approvals as evidence that a job
+deserves autonomy, so rubber-stamped approvals would counterfeit that evidence — **a decision that fails
+the attention test is excluded from promotion evidence**, not merely reported. Jobs stop being promoted on
+signatures.
+
+The index is one number from six parts you can argue with (attention, catching, calibration, independence,
+spread, stamina), each shown with its weight, and it will not read *effective* while a high-severity
+finding about the oversight itself is unresolved. The findings name the person and say what to do.
+
+### 5. Evidence — EU AI Act art. 12 and 14, generated from the log
 
 Enforceable since 2 August 2026. Tacit's audit log is append-only and **sealed into a hash chain**, so an
 altered or removed record is detectable by anyone holding an earlier root. One call produces the bundle:
 every system in scope, its autonomy level, the oversight that applies, approvals, refusals, escalations,
-reversals — including for the third-party agents you supervise.
+reversals — including for the third-party agents you supervise, and the oversight-quality index that says
+whether that oversight was real.
 
 ## Run it
 
@@ -85,7 +105,7 @@ reversals — including for the third-party agents you supervise.
 make setup          # uv venv + npm install
 make demo           # seeded demo org: 629 events, 5 mined jobs, 2 supervised vendors
 make dev            # api :4800 with reload, vite :5173 proxying /api
-make test           # 27 backend tests + typecheck
+make test           # 39 backend tests + typecheck
 make migrate        # alembic upgrade head
 ```
 
@@ -130,6 +150,7 @@ api/tacit/core/mining.py       events → candidate jobs (trigger signature, cad
 api/tacit/core/shadow.py       draft on trigger · score against the human's real action · confidence + escalation
 api/tacit/core/trust.py        Wilson lower bound · graduation and demotion recommendations
 api/tacit/core/oversight.py    grade third-party agents · rework detection · retroactive regrading
+api/tacit/core/oversight_quality.py  grade the reviewer · rubber-stamp detection · approval fatigue · the index
 api/tacit/core/ledger.py       verified-work accounting
 api/tacit/core/compliance.py   hash-chained audit · art. 12/14 evidence bundle
 api/tacit/core/opportunity.py  the Day-One report
