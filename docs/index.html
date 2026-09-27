@@ -274,6 +274,32 @@ td.y::before{content:"● ";color:var(--ok)}td.n{color:var(--muted)}td.n::before
 .faq details[open] summary::after{content:"–"}
 .faq p{color:var(--ink2);margin-top:10px;max-width:66em}
 
+/* ---- instance dialog ---- */
+.ov{position:fixed;inset:0;z-index:70;background:rgba(10,10,10,.5);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:24px}
+.ov.on{display:flex}
+.dlg{background:var(--bg);border:1px solid var(--line);border-radius:18px;max-width:460px;width:100%;margin-top:12vh;padding:28px;
+ box-shadow:0 40px 90px -40px rgba(10,10,10,.5);animation:pop .3s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.dlg h3{font-size:20px;letter-spacing:-.02em}
+.dlg p{color:var(--ink2);font-size:14px;margin-top:9px;line-height:1.55}
+.dlg label{display:block;font:500 11.5px var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin:20px 0 7px}
+.dlg input{width:100%;height:44px;border-radius:11px;border:1px solid var(--line2);background:var(--bg);color:var(--ink);
+ padding:0 14px;font:14px var(--mono);transition:border-color .2s,box-shadow .2s}
+.dlg input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.dlg .acts{display:flex;gap:10px;margin-top:18px}
+.dlg .acts .btn{flex:1;justify-content:center}
+.dlg .foot{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.dlg .foot a{color:var(--accent);text-decoration:none;font-weight:500}
+.dlg .err{color:var(--bad);font-size:13px;margin-top:10px;display:none}
+.dlg .err.on{display:block}
+.copyline{display:flex;align-items:center;gap:10px;background:var(--frame);color:var(--ftext);border-radius:12px;
+ padding:13px 15px;font:13px var(--mono);margin-top:22px;max-width:620px}
+.copyline code{flex:1;overflow-x:auto;white-space:nowrap}
+.copyline button{background:rgba(255,255,255,.09);color:var(--ftext);border:0;border-radius:7px;padding:6px 11px;
+ font:500 12px var(--sans);cursor:pointer;transition:background .2s;white-space:nowrap}
+.copyline button:hover{background:rgba(255,255,255,.16)}
+.copyline button.done{background:var(--accent);color:#fff}
+
 /* ---- band + footer ---- */
 .band{background:var(--frame);color:var(--ftext);border-radius:26px;padding:68px 48px;text-align:center;position:relative;overflow:hidden}
 .band::before{content:"";position:absolute;inset:auto -20% -62% -20%;height:130%;background:radial-gradient(50% 50% at 50% 100%,rgba(11,92,80,.6),transparent 70%)}
@@ -299,7 +325,7 @@ footer a{text-decoration:none;color:var(--ink2);transition:color .2s}footer a:ho
 <div class="nav" id="nav"><div class="wrap">
   <a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="currentColor" opacity=".26"/><rect x="10" y="10" width="19.5" height="19.5" rx="5.5" fill="currentColor"/><path d="M15.2 20.1l2.9 2.9 6.2-7.2" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Tacit</a>
   <ul><li><a href="#oversight">Oversight</a></li><li><a href="#judge">The judge</a></li><li><a href="#work">Work</a></li><li><a href="#evidence">Evidence</a></li><li><a href="#pricing">Pricing</a></li></ul>
-  <div class="right"><a class="link" href="#install">Sign in</a><a class="btn sm" href="#install"><span class="sheen"></span>Start free</a></div>
+  <div class="right"><button class="link" id="openDlg" style="background:none;border:0;cursor:pointer;font-family:var(--sans)">Open your instance</button><a class="btn sm" href="#install"><span class="sheen"></span>Get started</a></div>
 </div></div>
 
 <!-- ================= HERO ================= -->
@@ -307,8 +333,8 @@ footer a{text-decoration:none;color:var(--ink2);transition:color .2s}footer a:ho
   <a class="pillnote" href="#judge"><b>NEW</b> A model now grades the work, not the wording <i>→</i></a>
   <h1><span class="ln"><span>You pay three AI vendors.</span></span><span class="ln"><span>Not one of them can</span></span><span class="ln"><span>prove the work was right.</span></span></h1>
   <p class="lede">Tacit grades every AI in your company — the ones you bought and the ones you run — against the one standard that matters: what your own people actually do. Oversight is free. When Tacit does the work itself, you pay only for the actions a human approved or never took back.</p>
-  <div class="cta"><a class="btn accent" href="#install"><span class="sheen"></span>Start free — read-only</a><a class="btn ghost" href="#judge">See how it scores</a></div>
-  <div class="trust">Self-hosted · 30 minutes to a report · No write access required to begin</div>
+  <div class="cta"><a class="btn accent" href="#install"><span class="sheen"></span>Install it — read-only</a><a class="btn ghost" href="#judge">See how it scores</a></div>
+  <div class="trust">Self-hosted, so there is no account to create. It runs on your machine and your data never leaves it.</div>
 
   <div class="stage">
     <div class="frame" id="heroFrame" style="--appH:520px">
@@ -644,9 +670,10 @@ Full review after CI passes.</div></div>
 <!-- ================= INSTALL ================= -->
 <section class="alt" id="install"><div class="wrap">
   <div class="g2">
-    <div class="rv"><div class="eyebrow">Start</div><h2 style="margin-top:14px">Thirty minutes. No write access. A report at the end.</h2>
-      <p class="lede" style="margin-top:16px">The pilot is read-only by construction: Tacit reads history, mines the repeating jobs, backtests itself against them, and hands you a costed report. Nothing acts unless you later decide it should.</p>
-      <div style="margin-top:24px;display:flex;gap:11px;flex-wrap:wrap"><a class="btn accent" href="https://github.com/suncal/tacit"><span class="sheen"></span>Get the code</a><a class="btn ghost" href="#pricing">Or let us host it</a></div></div>
+    <div class="rv"><div class="eyebrow">Start</div><h2 style="margin-top:14px">There is no sign-up. You run it.</h2>
+      <p class="lede" style="margin-top:16px">Tacit is self-hosted — one process and one database on your own machine, which is the whole point when the thing being stored is how your team works. Two commands and the console is on <span class="mono">localhost:4800</span>. The pilot is read-only by construction: it reads history, mines the repeating jobs, backtests itself, and hands you a costed report. Nothing acts unless you later decide it should.</p>
+      <div class="copyline"><code id="cmd">git clone https://github.com/suncal/tacit &amp;&amp; cd tacit &amp;&amp; make setup &amp;&amp; make demo</code><button id="copyBtn">Copy</button></div>
+      <div style="margin-top:22px;display:flex;gap:11px;flex-wrap:wrap"><a class="btn accent" href="https://github.com/suncal/tacit"><span class="sheen"></span>Get the code</a><button class="btn ghost" id="openDlg2">Already running? Open it</button></div></div>
     <div class="frame rv" data-d="2" style="margin:0"><div class="bar"><i></i><i></i><i></i><span class="url">terminal</span></div><pre class="mono" style="margin:0;padding:19px 21px;font-size:12.5px;line-height:1.75;color:#C9CEC9;overflow-x:auto"><span style="color:#6FD8C2">$</span> git clone https://github.com/suncal/tacit && cd tacit
 <span style="color:#6FD8C2">$</span> make setup && make demo
 <span style="color:var(--fmuted)">Tacit is up → http://127.0.0.1:4800   docs → /api/docs</span>
@@ -664,11 +691,11 @@ Full review after CI passes.</div></div>
   <div class="center rv"><div class="eyebrow">Pricing</div><h2 style="margin-top:14px">Watching is free. You pay for work that passed.</h2><p class="lede">No seats. No minimums. No bill for anything a human took back.</p></div>
   <div class="price" style="margin-top:40px">
     <div class="plan rv" data-d="1"><div class="eyebrow">Oversight</div><div class="amt">$0<small>unlimited agents, forever</small></div><ul><li>Supervise any AI you already pay for</li><li>Rework rate and true cost per landed action</li><li>Shadow mode on your own jobs</li><li>Day-One report and backtests</li><li>Self-hosted, MIT licensed</li></ul><a class="btn ghost" href="https://github.com/suncal/tacit">Get the code</a></div>
-    <div class="plan lead rv" data-d="2"><div class="eyebrow">Verified work</div><div class="amt">$0.30<small>per verified action — nothing else</small></div><ul><li>Billed only when a human approved it, or nobody reversed it in 24h</li><li>Reversed or refused work credited back</li><li>Full ledger, line by line, auditable</li><li>Budgets cap spend before execution</li><li>Typical job: a few dollars a month</li></ul><a class="btn accent" href="#install"><span class="sheen"></span>Start free</a></div>
-    <div class="plan rv" data-d="3"><div class="eyebrow">Compliance</div><div class="amt">$500<small>per org / month</small></div><ul><li>Signed Article 12 / 14 evidence exports</li><li>Auditor access with read-only roles</li><li>Retention policy and log forwarding</li><li>SSO and SCIM</li><li>Annual attestation pack</li></ul><a class="btn ghost" href="#install">Talk to us</a></div>
-    <div class="plan rv" data-d="4"><div class="eyebrow">Enterprise</div><div class="amt">Custom<small>VPC or air-gapped</small></div><ul><li>Deployment inside your network</li><li>Custom event sources and tools</li><li>Trust-ladder policy tuned to your risk appetite</li><li>Named engineer, priority fixes</li></ul><a class="btn ghost" href="#install">Talk to us</a></div>
+    <div class="plan lead rv" data-d="2"><div class="eyebrow">Verified work</div><div class="amt">$0.30<small>per verified action — nothing else</small></div><ul><li>Billed only when a human approved it, or nobody reversed it in 24h</li><li>Reversed or refused work credited back</li><li>Full ledger, line by line, auditable</li><li>Budgets cap spend before execution</li><li>Typical job: a few dollars a month</li></ul><a class="btn accent" href="#install"><span class="sheen"></span>Install it</a></div>
+    <div class="plan rv" data-d="3"><div class="eyebrow">Compliance</div><div class="amt">$500<small>per org / month</small></div><ul><li>Signed Article 12 / 14 evidence exports</li><li>Auditor access with read-only roles</li><li>Retention policy and log forwarding</li><li>SSO and SCIM</li><li>Annual attestation pack</li></ul><a class="btn ghost" href="https://github.com/suncal/tacit/issues/new">Talk to us</a></div>
+    <div class="plan rv" data-d="4"><div class="eyebrow">Enterprise</div><div class="amt">Custom<small>VPC or air-gapped</small></div><ul><li>Deployment inside your network</li><li>Custom event sources and tools</li><li>Trust-ladder policy tuned to your risk appetite</li><li>Named engineer, priority fixes</li></ul><a class="btn ghost" href="https://github.com/suncal/tacit/issues/new">Talk to us</a></div>
   </div>
-  <p class="muted rv" style="margin-top:24px;font-size:13.5px;text-align:center">Why free oversight? Because the fastest way to prove Tacit is worth trusting with work is to let it show you the truth about the AI you already bought.</p>
+  <p class="muted rv" style="margin-top:24px;font-size:13.5px;text-align:center">The hosted tiers are not open for signup yet — the self-hosted product is complete and MIT licensed today. Why free oversight? Because the fastest way to prove Tacit is worth trusting with work is to let it show you the truth about the AI you already bought.</p>
 </div></section>
 
 <!-- ================= FAQ ================= -->
@@ -685,9 +712,21 @@ Full review after CI passes.</div></div>
 
 <section class="tight" style="padding:0 0 104px"><div class="wrap"><div class="band rv">
   <h2>Find out what your AI is actually doing.</h2>
-  <p>Start with the agents you already pay for. It's free, it's read-only, and it takes half an hour.</p>
-  <a class="btn" style="background:#fff;color:#0A0A0A" href="#install"><span class="sheen"></span>Start free</a>
+  <p>Start with the agents you already pay for. It's free, it's read-only, it runs on your own machine, and it takes half an hour.</p>
+  <a class="btn" style="background:#fff;color:#0A0A0A" href="https://github.com/suncal/tacit"><span class="sheen"></span>Install Tacit</a>
 </div></div></section>
+
+<div class="ov" id="ov">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgT">
+    <h3 id="dlgT">Open your Tacit</h3>
+    <p>Tacit is self-hosted, so there is no account here to sign into. Point this at the instance you are running and it will open the console.</p>
+    <label for="inst">Instance address</label>
+    <input id="inst" type="url" spellcheck="false" placeholder="http://localhost:4800" value="http://localhost:4800">
+    <div class="err" id="instErr">That doesn't look like a URL. It should start with http:// or https://</div>
+    <div class="acts"><button class="btn ghost" id="dlgCancel">Cancel</button><button class="btn accent" id="dlgGo"><span class="sheen"></span>Open console</button></div>
+    <div class="foot">Not running one yet? <a href="#install" id="dlgInstall">Install it in two commands →</a></div>
+  </div>
+</div>
 
 <footer><div class="wrap">
   <div class="fcols">
@@ -775,6 +814,40 @@ if (steps.length) {
   }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
   steps.forEach(s => sio.observe(s));
 }
+
+/* ---- open-your-instance: there is no hosted account, so send people to their own ---- */
+const ov = document.getElementById('ov'), inst = document.getElementById('inst'), instErr = document.getElementById('instErr');
+const KEY = 'tacit.instance';
+try { const saved = localStorage.getItem(KEY); if (saved) inst.value = saved } catch {}
+const showDlg = e => { e?.preventDefault(); ov.classList.add('on'); setTimeout(() => { inst.focus(); inst.select() }, 40) };
+const hideDlg = () => { ov.classList.remove('on'); instErr.classList.remove('on') };
+document.getElementById('openDlg')?.addEventListener('click', showDlg);
+document.getElementById('openDlg2')?.addEventListener('click', showDlg);
+document.getElementById('dlgCancel').addEventListener('click', hideDlg);
+document.getElementById('dlgInstall').addEventListener('click', hideDlg);
+ov.addEventListener('click', e => { if (e.target === ov) hideDlg() });
+addEventListener('keydown', e => { if (e.key === 'Escape') hideDlg() });
+function go(){
+  let v = inst.value.trim();
+  if (!v) return;
+  if (!/^https?:\/\//i.test(v)) v = 'http://' + v;
+  try { new URL(v) } catch { instErr.classList.add('on'); return }
+  try { localStorage.setItem(KEY, v) } catch {}
+  open(v.replace(/\/$/, ''), '_blank', 'noopener');
+  hideDlg();
+}
+document.getElementById('dlgGo').addEventListener('click', go);
+inst.addEventListener('keydown', e => { if (e.key === 'Enter') go(); instErr.classList.remove('on') });
+
+/* ---- copy the install command ---- */
+const copyBtn = document.getElementById('copyBtn');
+copyBtn?.addEventListener('click', async () => {
+  const text = document.getElementById('cmd').textContent;
+  try { await navigator.clipboard.writeText(text) }
+  catch { const r = document.createRange(); r.selectNode(document.getElementById('cmd')); getSelection().removeAllRanges(); getSelection().addRange(r); document.execCommand('copy') }
+  copyBtn.textContent = 'Copied'; copyBtn.classList.add('done');
+  setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('done') }, 1800);
+});
 
 /* ---- the spark line draws itself once ---- */
 const dash = document.querySelector('.spark .dash');
