@@ -4,6 +4,8 @@
 
 # Tacit
 
+[![Live demo](https://img.shields.io/badge/live-demo-0E6B52)](https://suncal.github.io/tacit/) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Stars](https://img.shields.io/github/stars/suncal/tacit?style=social)](https://github.com/suncal/tacit/stargazers)
+
 **The verified work layer.**
 Grade every AI in your company — including the ones you bought — against what your own team actually does.
 Then let the proven ones work, and pay only for the actions that stood.
@@ -169,3 +171,9 @@ A **compliance** tier adds signed evidence exports, auditor roles and SSO.
 Site source in [`docs/`](docs) · published at https://suncal.github.io/tacit
 
 MIT licensed. Not affiliated with Intercom, Sierra, GitHub, Slack, Linear or Anthropic.
+
+---
+
+**If this is useful to you, a ⭐ on the repo helps other people find it.** Issues and pull requests are welcome.
+
+Built by [Priyankar "Sunny" Chakraborty](https://github.com/suncal) · [everbuiltstudio.com](https://everbuiltstudio.com)
