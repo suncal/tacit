@@ -83,7 +83,7 @@ class TacitApp:
         s = self.settings
         return [
             {"key": "github", "name": "GitHub", "connected": self.github.ok(), "detail": ", ".join(self.github.repos) or "set TACIT_GITHUB_REPOS", "how": "TACIT_GITHUB_TOKEN or `gh auth login`", "mode": "poll + webhook"},
-            {"key": "slack", "name": "Slack", "connected": self.slack.ok(), "detail": ", ".join(self.slack.channels) or "set TACIT_SLACK_CHANNELS", "how": "TACIT_SLACK_BOT_TOKEN (xoxb-…)", "mode": "poll + events API"},
+            {"key": "slack", "name": "Slack", "connected": self.slack.ok(), "detail": (", ".join(self.slack.channels) or "all channels the bot is in") + f" · {self.slack.mode} mode", "how": "TACIT_SLACK_BOT_TOKEN (xoxb-…) + TACIT_SLACK_APP_TOKEN (xapp-…)", "mode": "socket mode | poll | export import"},
             {"key": "linear", "name": "Linear", "connected": self.linear.ok(), "detail": "polls comments", "how": "TACIT_LINEAR_API_KEY", "mode": "poll"},
             {"key": "mcp", "name": "MCP servers", "connected": bool(self.mcp), "detail": ", ".join(x.name for x in self.mcp) or "set TACIT_MCP_SERVERS", "how": "any stdio MCP server", "mode": "stdio"},
             {"key": "webhooks", "name": "Webhooks", "connected": True, "detail": "POST /api/v1/webhooks/<name>", "how": "built in", "mode": "push"},

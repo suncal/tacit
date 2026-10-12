@@ -1,0 +1,35 @@
+# Slack app manifest for Tacit.
+# Create the app at https://api.slack.com/apps → "Create New App" → "From a manifest" → paste this file.
+# Socket Mode means Slack pushes events to Tacit over a websocket: no public URL, no ngrok, works on a laptop.
+display_information:
+  name: Tacit
+  description: An AI teammate that learns jobs by shadowing, earns autonomy, and keeps the audit trail.
+  background_color: "#0B5C50"
+features:
+  bot_user:
+    display_name: Tacit
+    always_online: true
+  app_home:
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read      # summon it with @Tacit
+      - channels:history       # learn from public channels it is in
+      - channels:read          # resolve channel names
+      - groups:history         # learn from private channels it is invited to
+      - groups:read
+      - chat:write             # post replies (the one write; every post carries an undo)
+      - users:read             # show "Priya" instead of U0123 in the console
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.channels
+      - message.groups
+  interactivity:
+    is_enabled: false
+  org_deploy_enabled: false
+  socket_mode_enabled: true
+  token_rotation_enabled: false

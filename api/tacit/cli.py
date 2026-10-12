@@ -2,6 +2,8 @@
     tacit demo          seed a demo org, then serve
     tacit doctor        what's connected, which brain
     tacit seed          seed only
+    tacit import-slack-export PATH [--channels a,b]
+                        load a Slack workspace export (zip or folder) as history, then mine + backtest
     tacit backfill-github OWNER/REPO --since 2026-07-01 [--window-h 72] [--judge N]
                         ingest a repo's real issue/PR history, mine playbooks, backtest with the judge, write a JSON report
 """
@@ -14,8 +16,9 @@ import sys
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="tacit")
-    ap.add_argument("cmd", nargs="?", default="serve", choices=["serve", "demo", "doctor", "seed", "backfill-github"])
-    ap.add_argument("repo", nargs="?", help="owner/name for backfill-github")
+    ap.add_argument("cmd", nargs="?", default="serve", choices=["serve", "demo", "doctor", "seed", "backfill-github", "import-slack-export"])
+    ap.add_argument("repo", nargs="?", help="owner/name for backfill-github; export path for import-slack-export")
+    ap.add_argument("--channels", help="import-slack-export: only these channel names (comma-separated)")
     ap.add_argument("--since", default="2026-07-01", help="ISO date, backfill-github")
     ap.add_argument("--window-h", type=float, help="mining trigger window in hours (default from settings; 72 suits issue trackers)")
     ap.add_argument("--judge", type=int, default=40, help="backtest drafts per playbook")
@@ -55,6 +58,8 @@ def main(argv=None) -> int:
     t = TacitApp(s)
     if a.cmd == "backfill-github":
         return _backfill_github(t, a)
+    if a.cmd == "import-slack-export":
+        return _import_slack(t, a)
     if a.cmd in ("demo", "seed"):
         from .seed import seed
         r = seed(t)
@@ -68,6 +73,34 @@ def main(argv=None) -> int:
     if a.cmd == "demo":
         print("demo login → demo@northwind.dev / tacit-demo")
     uvicorn.run(app, host=s.host, port=s.port, log_level="warning")
+    return 0
+
+
+def _import_slack(t, a) -> int:
+    import json
+    import time
+    if not a.repo or not os.path.exists(a.repo):
+        print("usage: tacit import-slack-export <export.zip | folder> [--channels general,support]", file=sys.stderr)
+        return 2
+    t0 = time.time()
+    chans = [c.strip() for c in a.channels.split(",")] if a.channels else None
+    r = t.slack.import_export(a.repo, chans, progress=lambda m: print("  " + m, flush=True))
+    print("imported:", r, flush=True)
+    from .core.playbooks import remine
+    window = (a.window_h or t.settings.mining_trigger_window_h) * 3600
+    mined = remine(by="import", brain=t.brain, trigger_window_s=window)
+    print("mined:", mined, flush=True)
+    from .core.backtest import backtest
+    bt = backtest(t, None, a.judge)
+    print(f"backtest: {bt['total']}  ({bt['seconds']}s)", flush=True)
+    for pb in bt["playbooks"]:
+        print(f"  {pb['hit_rate']:.0%} ({pb['hits']}/{pb['n']})  {pb['name']}")
+    if a.out:
+        out = os.path.abspath(a.out)
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, "w") as f:
+            json.dump({"import": r, "mine": mined, "backtest": bt, "seconds": round(time.time() - t0, 1)}, f, indent=1, default=str)
+        print("report →", out)
     return 0
 
 

@@ -29,8 +29,9 @@ class Settings(BaseSettings):
     github_token: str = ""
     github_repos: str = ""                     # comma-separated owner/name
     github_webhook_secret: str = ""
-    slack_bot_token: str = ""
-    slack_channels: str = ""
+    slack_bot_token: str = ""                  # xoxb-… (chat:write, channels:history, channels:read, users:read, app_mentions:read)
+    slack_app_token: str = ""                  # xapp-… with connections:write → Socket Mode (no public URL, no polling)
+    slack_channels: str = ""                   # comma-separated channel ids to learn from; empty = every channel the bot is in
     slack_signing_secret: str = ""
     linear_api_key: str = ""
     mcp_servers: str = ""                      # JSON list [{"name":..,"command":[..]}]
