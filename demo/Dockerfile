@@ -7,30 +7,30 @@
 # Anyone on the internet can drive this instance, so it must not be a shell, an
 # SSRF proxy, or a way to spend somebody's tokens.
 # ---------------------------------------------------------------------------
-FROM node:22-alpine AS web
+FROM node:22-alpine3.22@sha256:cd7807368cf24826297cbad5dca1a44972ccfd770647db52a8c7589eb4599ac8 AS web
 WORKDIR /w
 COPY web/package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 COPY web/ ./
 RUN npm run build
 
-FROM python:3.12-slim
-ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 \
+FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 \
     TACIT_HOST=0.0.0.0 \
     TACIT_DEMO_MODE=1 \
     TACIT_BRAIN_PROVIDER=local \
     TACIT_ORG_NAME="Northwind Labs" \
     TACIT_WEB_DIST=../web/dist \
     TACIT_DATABASE_URL=sqlite:////tmp/tacit.db
+RUN groupadd --gid 10001 tacit && useradd --uid 10001 --gid tacit --home-dir /app --shell /usr/sbin/nologin tacit && mkdir -p /app && chown tacit:tacit /app
 WORKDIR /app
-RUN pip install --no-cache-dir \
-      "fastapi>=0.115" "uvicorn[standard]>=0.30" "sqlalchemy>=2.0" "alembic>=1.13" \
-      "pydantic[email]>=2.7" "pydantic-settings>=2.3" "httpx>=0.27" "itsdangerous>=2.2" \
-      "python-multipart>=0.0.9"
-COPY api/ /app/api/
-COPY --from=web /w/dist /app/web/dist
-COPY demo/seed.db /app/seed.db
-COPY demo/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh && rm -f /app/api/.env
+COPY api/requirements.lock /app/requirements.lock
+RUN pip install --require-hashes --no-deps -r /app/requirements.lock
+COPY --chown=tacit:tacit api/ /app/api/
+COPY --from=web --chown=tacit:tacit /w/dist /app/web/dist
+COPY --chown=tacit:tacit demo/seed.db /app/seed.db
+COPY --chown=tacit:tacit demo/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh && rm -f /app/api/.env /app/api/*.db /app/api/*.db-* && find /app/api -name __pycache__ -type d -exec rm -rf {} +
+USER tacit
 EXPOSE 10000
 CMD ["/app/entrypoint.sh"]
