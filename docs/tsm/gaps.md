@@ -14,8 +14,10 @@ Everything proven so far runs on the seeded "Northwind Labs" org. That is the ga
    export importer, app manifest, 5 tests. VERIFIED LIVE 12 Oct on the "Tacit Demo" workspace: Socket Mode connect,
    message ingest with real names, @mention → threaded reply, console-gated slack_post approved from the Inbox,
    undo removed the post, oversight-quality logged the approval as "considered" (11.6 s read vs 4.3 s needed).
-   Remaining for filming: an LLM brain (`claude login` for the claude-cli brain, or API credits) and a second human
-   account in the workspace so shadow drafts have someone else's trigger to pair with.
+   SHADOW FLOW VERIFIED LIVE (12 Oct, #invoices, brain = Claude via CLI subscription): 3 ask/reply pairs from two
+   humans → mined "Resend client invoice copy" (3 examples) → promoted to shadow → 4th ask drafted in 12 s, nothing
+   posted → human replied → judge 1.00 ("same action, same payment terms, same file location"), overlap only 0.61.
+   Miner fix from this run: stemmed-word similarity for paraphrase families. Ready to film.
 3. **Postgres run verified.** Compose already declares it but it has never been exercised; no Postgres on this Mac
    and no Docker. Easiest: Render free Postgres attached to the hosted demo, run Alembic migrations, re-seed.
    Needs your Render dashboard once. ~2 hours.
