@@ -57,14 +57,14 @@ jobs:
         run: |
           test "$(docker run --rm --entrypoint id ${IMAGE}:ci -u)" = "10001"
       - name: SBOM (SPDX)
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@v0.24.3
         with:
           image: ${{ env.IMAGE }}:ci
           format: spdx-json
           output-file: sbom.spdx.json
           upload-artifact: true
       - name: Vulnerability scan (fails on HIGH/CRITICAL with a fix available)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:ci
           format: sarif
