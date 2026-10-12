@@ -10,9 +10,9 @@ Everything proven so far runs on the seeded "Northwind Labs" org. That is the ga
    only reads forward from the last hour). Run it on a public repo with real maintainer traffic, mine, backtest with
    the judge, and replace every [DEMO] figure in script.md with those numbers. Public OSS issue data is unclassified
    and carries no markings. ~1 day. Only item I can finish without you.
-2. **One live Slack workspace end-to-end.** Create a Slack app (bot token + signing secret), point Tacit at a
-   channel, show a trigger → draft → Inbox approval → posted reply with undo, on camera. Needs you to create the
-   Slack app (I cannot create accounts). ~half a day after the token exists.
+2. **One live Slack workspace end-to-end.** DONE on Tacit's side (12 Oct): Socket Mode client, thread pairing,
+   export importer, app manifest, 4 tests. Remaining: you create the app from `docs/slack-manifest.yaml` and paste
+   the two tokens (see `docs/tsm/slack-setup.md`, 10 minutes), then we film trigger → draft → approval → post → undo.
 3. **Postgres run verified.** Compose already declares it but it has never been exercised; no Postgres on this Mac
    and no Docker. Easiest: Render free Postgres attached to the hosted demo, run Alembic migrations, re-seed.
    Needs your Render dashboard once. ~2 hours.
@@ -26,8 +26,8 @@ Everything proven so far runs on the seeded "Northwind Labs" org. That is the ga
    zero code. This is the "cross-platform governance" gap named in the acquisition research. ~2 days.
 6. **Auditor role + signed evidence export.** The compliance tier is a claim. Implement a read-only auditor role and
    sign the evidence bundle (Ed25519) so the bundle verifies offline. ~1 day.
-7. **Container hardening.** Non-root user, pinned base image, SBOM (syft) and a passing Trivy scan, published to GHCR.
-   DoW assessors read this as deployability. ~half a day.
+7. **Container hardening.** DONE (12 Oct): bases pinned by digest, deps from a hash-checked lock, non-root uid 10001,
+   no pip at runtime, SBOM + Trivy gate in CI (0 open alerts), image at ghcr.io/suncal/tacit.
 8. **Name and domain.** "Tacit" is still a working name; check trademark conflict and buy a domain before the
    video's title card locks it. Your call.
 
