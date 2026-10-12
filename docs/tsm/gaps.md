@@ -11,8 +11,11 @@ Everything proven so far runs on the seeded "Northwind Labs" org. That is the ga
    the judge, and replace every [DEMO] figure in script.md with those numbers. Public OSS issue data is unclassified
    and carries no markings. ~1 day. Only item I can finish without you.
 2. **One live Slack workspace end-to-end.** DONE on Tacit's side (12 Oct): Socket Mode client, thread pairing,
-   export importer, app manifest, 4 tests. Remaining: you create the app from `docs/slack-manifest.yaml` and paste
-   the two tokens (see `docs/tsm/slack-setup.md`, 10 minutes), then we film trigger → draft → approval → post → undo.
+   export importer, app manifest, 5 tests. VERIFIED LIVE 12 Oct on the "Tacit Demo" workspace: Socket Mode connect,
+   message ingest with real names, @mention → threaded reply, console-gated slack_post approved from the Inbox,
+   undo removed the post, oversight-quality logged the approval as "considered" (11.6 s read vs 4.3 s needed).
+   Remaining for filming: an LLM brain (`claude login` for the claude-cli brain, or API credits) and a second human
+   account in the workspace so shadow drafts have someone else's trigger to pair with.
 3. **Postgres run verified.** Compose already declares it but it has never been exercised; no Postgres on this Mac
    and no Docker. Easiest: Render free Postgres attached to the hosted demo, run Alembic migrations, re-seed.
    Needs your Render dashboard once. ~2 hours.
