@@ -60,7 +60,9 @@ def keywords(texts: list[str], min_df: float = 0.6, limit: int = 6) -> list[str]
         for w in set(tokens(t)):
             df[w] += 1
     n = len(texts)
-    out = [w for w, c in df.most_common() if c / n >= min_df and w not in ("<url>", "<ref>", "<num>")]
+    # ties broken alphabetically: set iteration order varies per process (hash randomisation), and the keyword list is
+    # the playbook's identity — a different order on the next run would mint a duplicate job
+    out = [w for w, c in sorted(df.items(), key=lambda kv: (-kv[1], kv[0])) if c / n >= min_df and w not in ("<url>", "<ref>", "<num>")]
     return out[:limit]
 
 
