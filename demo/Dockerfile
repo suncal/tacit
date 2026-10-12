@@ -25,7 +25,10 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_
 RUN groupadd --gid 10001 tacit && useradd --uid 10001 --gid tacit --home-dir /app --shell /usr/sbin/nologin tacit && mkdir -p /app && chown tacit:tacit /app
 WORKDIR /app
 COPY api/requirements.lock /app/requirements.lock
-RUN pip install --require-hashes --no-deps -r /app/requirements.lock
+# pip is only needed to install; the bundled copy carries its own CVEs, so upgrade it for the install and then remove it.
+RUN python -m pip install --upgrade "pip>=26.2" \
+ && pip install --require-hashes --no-deps -r /app/requirements.lock \
+ && pip uninstall -y pip setuptools wheel 2>/dev/null; rm -rf /root/.cache /usr/local/lib/python3.12/site-packages/pip* /usr/local/lib/python3.12/site-packages/setuptools* /usr/local/bin/pip*
 COPY --chown=tacit:tacit api/ /app/api/
 COPY --from=web --chown=tacit:tacit /w/dist /app/web/dist
 COPY --chown=tacit:tacit demo/seed.db /app/seed.db

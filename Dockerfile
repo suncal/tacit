@@ -24,7 +24,10 @@ RUN groupadd --gid 10001 tacit && useradd --uid 10001 --gid tacit --home-dir /ap
  && mkdir -p /app /data && chown tacit:tacit /app /data
 WORKDIR /app
 COPY api/requirements.lock api/
-RUN pip install --require-hashes --no-deps -r api/requirements.lock
+# pip is only needed to install; the bundled copy carries its own CVEs, so upgrade it for the install and then remove it.
+RUN python -m pip install --upgrade "pip>=26.2" \
+ && pip install --require-hashes --no-deps -r api/requirements.lock \
+ && pip uninstall -y pip setuptools wheel 2>/dev/null; rm -rf /root/.cache /usr/local/lib/python3.12/site-packages/pip* /usr/local/lib/python3.12/site-packages/setuptools* /usr/local/bin/pip*
 COPY --chown=tacit:tacit api/ api/
 COPY --from=web --chown=tacit:tacit /web/dist web/dist
 RUN rm -f api/.env api/*.db api/*.db-* && find api -name __pycache__ -type d -exec rm -rf {} +
