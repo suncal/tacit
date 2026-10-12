@@ -263,3 +263,23 @@ def test_a_model_proposes_the_rule_behind_a_miss(tacit):
         assert tacit.shadow.lessons_for(db, pb)[0]["rule"] == l.suggestion
     ingest(tacit, system="slack", kind="message", actor="leila", text="invoice for Globex please", target="#billing", thread_key="slack:C_BILLING:llm2", ts=now + 200, meta={"channel": "#billing"})
     assert "payment hold" in " ".join(stub.drafts[-1]["rules"])           # the rule reaches the next draft
+
+
+def test_three_paraphrased_replies_are_one_job():
+    """Real Slack: three replies to the same kind of ask, worded three ways. Word pairs barely overlap (0.25);
+    the words themselves do (0.36). That is one job, not three singletons."""
+    now = time.time()
+    evs = []
+    asks = ["Can someone send Northwind their invoice for September? They asked for a copy.",
+            "Globex needs a copy of last month's invoice, who can send it?",
+            "Initech is asking for their August invoice copy, can you resend it?"]
+    replies = ["Sent — Northwind's September invoice is on its way, net 30 as usual. PDF is in Finance/Invoices.",
+               "Done — Globex invoice sent, net 30. Copy saved in Finance/Invoices.",
+               "Sent Initech their August invoice just now, net 30 terms. It's in Finance/Invoices."]
+    for i, (a, r) in enumerate(zip(asks, replies)):
+        t0 = now - (3 - i) * 3600
+        evs.append({"id": f"a{i}", "system": "slack", "kind": "message", "actor": "Priya", "actor_type": "human", "target": "C1", "thread_key": f"slack:C1:{t0}", "text": a, "ts": t0})
+        evs.append({"id": f"r{i}", "system": "slack", "kind": "message", "actor": "Sunny", "actor_type": "human", "target": "C1", "thread_key": f"slack:C1:{t0}", "text": r, "ts": t0 + 120})
+    found = mine(evs)
+    assert len(found) == 1 and found[0]["actor"] == "Sunny" and found[0]["evidence_count"] == 3
+    assert "invoice" in found[0]["trigger"]["keywords"]

@@ -63,7 +63,8 @@ def _find_trigger(resp: dict, thread: list[dict], window_s: float = TRIGGER_WIND
 def _pair_sim(a: Pair, b: Pair, sh_r: dict, sh_t: dict) -> float:
     """Two occurrences belong to the same pattern if the responses look alike — or if both the
     triggers and the responses look somewhat alike (a paraphrased reply to the same kind of ask)."""
-    r = max(T.jaccard(sh_r[id(a)], sh_r[id(b)]), T.jaccard(sh_r[("lead", id(a))], sh_r[("lead", id(b))]))
+    r = max(T.jaccard(sh_r[id(a)], sh_r[id(b)]), T.jaccard(sh_r[("lead", id(a))], sh_r[("lead", id(b))]),
+            T.jaccard(sh_r[("stems", id(a))], sh_r[("stems", id(b))]))     # paraphrases share words, not word pairs
     if a.trigger and b.trigger:
         t = T.jaccard(sh_t[id(a)], sh_t[id(b)])
         return max(r, 0.5 * r + 0.5 * t)
@@ -75,6 +76,7 @@ def _cluster(pairs: list[Pair]) -> list[list[Pair]]:
     (the same reply written three ways) end up as one pattern. n is small; O(n²) is fine."""
     sh_r = {id(p): T.shingles(p.response["text"]) for p in pairs}
     sh_r.update({("lead", id(p)): _lead_shingles(p.response["text"]) for p in pairs})
+    sh_r.update({("stems", id(p)): T.stems(p.response["text"]) for p in pairs})
     sh_t = {id(p): T.shingles(p.trigger["text"]) if p.trigger else set() for p in pairs}
     clusters: list[list[Pair]] = []
     for p in pairs:
@@ -178,7 +180,7 @@ def mine(events: Iterable[dict], trigger_window_s: float = TRIGGER_WINDOW_S) -> 
             resp_texts = [p.response["text"] for p in cluster]
             if statistics.median(len(T.tokens(t)) for t in resp_texts) < MIN_TOKENS:
                 continue                                    # "lunch?" is not a job
-            consistency = max(_mean_pairwise(resp_texts), _mean_pairwise([_lead(t) for t in resp_texts]))
+            consistency = max(_mean_pairwise(resp_texts), _mean_pairwise([_lead(t) for t in resp_texts]), _mean_pairwise_stems(resp_texts))
             if consistency < 0.25:
                 continue
             targets = [p.response.get("target", "") for p in cluster]
@@ -251,6 +253,17 @@ def _dedupe(cands: list[dict]) -> list[dict]:
         if not merged:
             keep.append(c)
     return keep
+
+
+def _mean_pairwise_stems(texts: list[str]) -> float:
+    if len(texts) < 2:
+        return 0.0
+    st = [T.stems(t) for t in texts]
+    s, n = 0.0, 0
+    for i in range(len(st)):
+        for j in range(i + 1, len(st)):
+            s += T.jaccard(st[i], st[j]); n += 1
+    return s / n if n else 0.0
 
 
 def _mean_pairwise(texts: list[str]) -> float:
