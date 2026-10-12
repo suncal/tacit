@@ -2,6 +2,8 @@
     tacit demo          seed a demo org, then serve
     tacit doctor        what's connected, which brain
     tacit seed          seed only
+    tacit backfill-github OWNER/REPO --since 2026-07-01 [--window-h 72] [--judge N]
+                        ingest a repo's real issue/PR history, mine playbooks, backtest with the judge, write a JSON report
 """
 from __future__ import annotations
 
@@ -12,7 +14,14 @@ import sys
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="tacit")
-    ap.add_argument("cmd", nargs="?", default="serve", choices=["serve", "demo", "doctor", "seed"])
+    ap.add_argument("cmd", nargs="?", default="serve", choices=["serve", "demo", "doctor", "seed", "backfill-github"])
+    ap.add_argument("repo", nargs="?", help="owner/name for backfill-github")
+    ap.add_argument("--since", default="2026-07-01", help="ISO date, backfill-github")
+    ap.add_argument("--window-h", type=float, help="mining trigger window in hours (default from settings; 72 suits issue trackers)")
+    ap.add_argument("--judge", type=int, default=40, help="backtest drafts per playbook")
+    ap.add_argument("--out", help="write the backfill report JSON here")
+    ap.add_argument("--min-evidence", type=int, default=1, help="backfill-github: only backtest playbooks with at least this much evidence")
+    ap.add_argument("--no-ingest", action="store_true", help="backfill-github: skip the API pull, re-mine and backtest what is already in the DB")
     ap.add_argument("--port", type=int)
     ap.add_argument("--host")
     ap.add_argument("--db")
@@ -44,6 +53,8 @@ def main(argv=None) -> int:
         print(f"tools:  {len(t.registry.all())}")
         return 0
     t = TacitApp(s)
+    if a.cmd == "backfill-github":
+        return _backfill_github(t, a)
     if a.cmd in ("demo", "seed"):
         from .seed import seed
         r = seed(t)
@@ -57,6 +68,48 @@ def main(argv=None) -> int:
     if a.cmd == "demo":
         print("demo login → demo@northwind.dev / tacit-demo")
     uvicorn.run(app, host=s.host, port=s.port, log_level="warning")
+    return 0
+
+
+def _backfill_github(t, a) -> int:
+    import json
+    import time
+    if not a.repo or "/" not in a.repo:
+        print("usage: tacit backfill-github OWNER/REPO --since YYYY-MM-DD", file=sys.stderr)
+        return 2
+    if not t.github.ok() and not a.no_ingest:
+        print("no GitHub token (TACIT_GITHUB_TOKEN or `gh auth login`)", file=sys.stderr)
+        return 1
+    since = a.since if "T" in a.since else a.since + "T00:00:00Z"
+    t0 = time.time()
+    print(f"backfilling {a.repo} since {since} …", flush=True)
+    bf = {"skipped": True} if a.no_ingest else t.github.backfill(a.repo, since, progress=lambda m: print("  " + m, flush=True))
+    print("ingested:", bf, flush=True)
+    from .core.playbooks import remine
+    window = (a.window_h or t.settings.mining_trigger_window_h) * 3600
+    mined = remine(by="backfill", brain=t.brain, trigger_window_s=window)
+    print("mined:", mined, flush=True)
+    from .core.backtest import backtest
+    ids = None
+    if a.min_evidence > 1:
+        from sqlalchemy import select
+        from . import models as M
+        from .db import session
+        with session() as db:
+            ids = list(db.scalars(select(M.Playbook.id).where(M.Playbook.evidence_count >= a.min_evidence, M.Playbook.stage != "retired")))
+        print(f"backtesting {len(ids)} playbooks with evidence ≥ {a.min_evidence}", flush=True)
+    bt = backtest(t, ids, a.judge)
+    print(f"backtest: {bt['total']}  ({bt['seconds']}s)", flush=True)
+    for pb in bt["playbooks"]:
+        print(f"  {pb['hit_rate']:.0%} ({pb['hits']}/{pb['n']})  {pb['name']}")
+    report = {"repo": a.repo, "since": since, "window_h": window / 3600, "brain": t.brain_info(), "ingest": bf, "mine": mined,
+              "backtest": bt, "seconds": round(time.time() - t0, 1), "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    if a.out:
+        pathlib_out = os.path.abspath(a.out)
+        os.makedirs(os.path.dirname(pathlib_out), exist_ok=True)
+        with open(pathlib_out, "w") as f:
+            json.dump(report, f, indent=1, default=str)
+        print("report →", pathlib_out)
     return 0
 
 

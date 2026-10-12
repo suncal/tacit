@@ -167,11 +167,59 @@ class GitHub:
                 log.warning("poll error: %s", e)
             time.sleep(60)
 
+    def backfill(self, repo: str, since: str, max_pages: int = 200, progress=None) -> dict:
+        """Ingest a repo's issue/PR history (openings + comments) since an ISO date, without live shadowing.
+        Bot accounts are skipped. Idempotent on external_id. Returns counts."""
+        from ..core.events import ingest
+        n_issues = n_comments = skipped = 0
+        for page in range(1, max_pages + 1):
+            st, issues = self.get(f"/repos/{repo}/issues", since=since, state="all", per_page=100, page=page, sort="created", direction="asc")
+            if st != 200 or not issues:
+                break
+            for i in issues:
+                if _is_bot(i["user"]["login"]):
+                    skipped += 1
+                    continue
+                # issues *updated* since the date are returned; keep older openers too — they are the triggers of the replies we pull
+                kind = "pr.opened" if "pull_request" in i else "issue.opened"
+                if ingest(self.app, "github", kind, i["user"]["login"], f"{i['title']}\n\n{(i.get('body') or '')[:2000]}", repo,
+                          f"github:{repo}#{i['number']}", ts=_ts(i["created_at"]), meta={"repo": repo, "number": i["number"], "url": i["html_url"]},
+                          external_id=f"gh:i:{i['id']}", shadow=False):
+                    n_issues += 1
+            if progress:
+                progress(f"issues page {page}: {n_issues} ingested")
+            if len(issues) < 100:
+                break
+        for page in range(1, max_pages + 1):
+            st, comments = self.get(f"/repos/{repo}/issues/comments", since=since, per_page=100, page=page, sort="created", direction="asc")
+            if st != 200 or not comments:
+                break
+            for c in comments:
+                author = c["user"]["login"]
+                if _is_bot(author):
+                    skipped += 1
+                    continue
+                number = int(c["issue_url"].rsplit("/", 1)[1])
+                if ingest(self.app, "github", "comment", author, c.get("body") or "", repo, f"github:{repo}#{number}",
+                          ts=_ts(c["created_at"]), meta={"repo": repo, "number": number, "url": c.get("html_url", "")},
+                          external_id=f"gh:c:{c['id']}", shadow=False):
+                    n_comments += 1
+            if progress:
+                progress(f"comments page {page}: {n_comments} ingested")
+            if len(comments) < 100:
+                break
+        return {"repo": repo, "since": since, "issues": n_issues, "comments": n_comments, "skipped_bots": skipped}
+
     def _mention(self, repo, number, author, body):
         ask = re.sub(re.escape(self.handle), "", body, flags=re.I).strip()
         st, issue = self.get(f"/repos/{repo}/issues/{number}")
         ctx = f"GitHub {repo}#{number} — {issue.get('title', '')}\n\n{(issue.get('body') or '')[:4000]}" if st == 200 else ""
         self.app.agent.run(f"github:{repo}#{number}", f"github:{author}", ask + f"\n\n(Reply by calling github_comment on repo={repo} number={number}.)", context=ctx)
+
+
+def _is_bot(login: str) -> bool:
+    l = login.lower()
+    return l.endswith("[bot]") or l.endswith("-bot") or l.endswith("bot") and len(l) > 4 and l not in ("abbot",)
 
 
 def _ts(iso: str) -> float:

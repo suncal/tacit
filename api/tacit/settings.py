@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     brain_base_url: str = ""
     anthropic_api_key: str = ""
 
+    mining_trigger_window_h: float = 6.0        # reply counts as a response to a trigger this many hours after it (chat 6h; issue trackers ~72h)
     github_token: str = ""
     github_repos: str = ""                     # comma-separated owner/name
     github_webhook_secret: str = ""

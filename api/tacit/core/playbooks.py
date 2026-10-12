@@ -43,10 +43,13 @@ def name_jobs(db, brain, playbooks: list, force: bool = False) -> int:
     return n
 
 
-def remine(by: str = "console", brain=None) -> dict:
+def remine(by: str = "console", brain=None, trigger_window_s: float | None = None) -> dict:
+    if trigger_window_s is None:
+        from ..settings import get_settings
+        trigger_window_s = get_settings().mining_trigger_window_h * 3600
     with session() as db:
         events = [as_dict(e) for e in db.scalars(select(M.Event).order_by(M.Event.ts))]
-        found = mine(events)
+        found = mine(events, trigger_window_s)
         existing = {signature({"actor": p.actor, "system": p.system, "trigger": p.trigger}): p for p in db.scalars(select(M.Playbook))}
         created, updated = 0, 0
         for f in found:

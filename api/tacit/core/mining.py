@@ -6,6 +6,7 @@ same system are clustered by content similarity; clusters with enough evidence b
 """
 from __future__ import annotations
 
+import re
 import statistics
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -19,6 +20,8 @@ MIN_EVIDENCE = 3
 SIM_THRESHOLD = 0.35
 MERGE_THRESHOLD = 0.30
 MIN_TOKENS = 5
+LEAD_WORDS = 6            # the opening words of a reply carry its *kind* ("Thanks for the report. I could not…"); the tail is case detail.
+                          # Raw words, stopwords kept: on real issue trackers the job lives in the function words ("could not reproduce").
 
 
 @dataclass
@@ -40,23 +43,27 @@ class Candidate:
         return len(self.members)
 
 
-def _find_trigger(resp: dict, thread: list[dict]) -> Optional[dict]:
+def _find_trigger(resp: dict, thread: list[dict], window_s: float = TRIGGER_WINDOW_S) -> Optional[dict]:
     """Most recent earlier event in the thread by a different actor, within the window."""
     best = None
     for e in thread:
         if e["ts"] >= resp["ts"] or e["actor"] == resp["actor"]:
             continue
-        if resp["ts"] - e["ts"] > TRIGGER_WINDOW_S:
+        if resp["ts"] - e["ts"] > window_s:
             continue
         if best is None or e["ts"] > best["ts"]:
             best = e
+    if best is None and thread and thread[0]["ts"] < resp["ts"] and thread[0]["actor"] != resp["actor"]:
+        # Issue trackers: the first reply answers the opener however late it comes (median on real repos: weeks).
+        if not any(e["actor"] == resp["actor"] and e["ts"] < resp["ts"] for e in thread):
+            return thread[0]                      # their first word in the thread, whoever else chimed in meanwhile
     return best
 
 
 def _pair_sim(a: Pair, b: Pair, sh_r: dict, sh_t: dict) -> float:
     """Two occurrences belong to the same pattern if the responses look alike — or if both the
     triggers and the responses look somewhat alike (a paraphrased reply to the same kind of ask)."""
-    r = T.jaccard(sh_r[id(a)], sh_r[id(b)])
+    r = max(T.jaccard(sh_r[id(a)], sh_r[id(b)]), T.jaccard(sh_r[("lead", id(a))], sh_r[("lead", id(b))]))
     if a.trigger and b.trigger:
         t = T.jaccard(sh_t[id(a)], sh_t[id(b)])
         return max(r, 0.5 * r + 0.5 * t)
@@ -67,6 +74,7 @@ def _cluster(pairs: list[Pair]) -> list[list[Pair]]:
     """Greedy agglomeration on a combined similarity, then a merge pass so paraphrase families
     (the same reply written three ways) end up as one pattern. n is small; O(n²) is fine."""
     sh_r = {id(p): T.shingles(p.response["text"]) for p in pairs}
+    sh_r.update({("lead", id(p)): _lead_shingles(p.response["text"]) for p in pairs})
     sh_t = {id(p): T.shingles(p.trigger["text"]) if p.trigger else set() for p in pairs}
     clusters: list[list[Pair]] = []
     for p in pairs:
@@ -95,6 +103,15 @@ def _cluster(pairs: list[Pair]) -> list[list[Pair]]:
             if merged:
                 break
     return clusters
+
+
+def _lead(text: str, n: int = LEAD_WORDS) -> str:
+    return " ".join(re.findall(r"[a-z0-9']+", text.lower())[:n])
+
+
+def _lead_shingles(text: str, n: int = LEAD_WORDS) -> set[tuple]:
+    w = _lead(text, n).split()
+    return set(zip(w, w[1:]))
 
 
 def _cadence(ts_list: list[float]) -> Optional[dict]:
@@ -132,9 +149,10 @@ def _cadence(ts_list: list[float]) -> Optional[dict]:
     return None
 
 
-def mine(events: Iterable[dict]) -> list[dict]:
+def mine(events: Iterable[dict], trigger_window_s: float = TRIGGER_WINDOW_S) -> list[dict]:
     """events: dicts with id, system, kind, actor, actor_type, target, thread_key, text, ts.
-    Returns playbook dicts ready to persist (or diff against existing)."""
+    Returns playbook dicts ready to persist (or diff against existing).
+    trigger_window_s: how long after a trigger a reply still counts as a response to it (chat: hours; issue trackers: days)."""
     evs = sorted((e for e in events if e.get("actor_type", "human") == "human"), key=lambda e: e["ts"])
     threads: dict[str, list[dict]] = defaultdict(list)
     for e in evs:
@@ -145,7 +163,7 @@ def mine(events: Iterable[dict]) -> list[dict]:
     for e in evs:
         if e["kind"] not in RESPONSE_KINDS or not e.get("text"):
             continue
-        trig = _find_trigger(e, threads[e["thread_key"]])
+        trig = _find_trigger(e, threads[e["thread_key"]], trigger_window_s)
         latency = (e["ts"] - trig["ts"]) if trig else 0.0
         by_actor[(e["actor"], e["system"], e["kind"])].append(Pair(trig, e, latency))
 
@@ -160,7 +178,7 @@ def mine(events: Iterable[dict]) -> list[dict]:
             resp_texts = [p.response["text"] for p in cluster]
             if statistics.median(len(T.tokens(t)) for t in resp_texts) < MIN_TOKENS:
                 continue                                    # "lunch?" is not a job
-            consistency = _mean_pairwise(resp_texts)
+            consistency = max(_mean_pairwise(resp_texts), _mean_pairwise([_lead(t) for t in resp_texts]))
             if consistency < 0.25:
                 continue
             targets = [p.response.get("target", "") for p in cluster]
@@ -176,7 +194,7 @@ def mine(events: Iterable[dict]) -> list[dict]:
                 trigger = {"mode": "reply", "kind": max(set(trig_kinds), key=trig_kinds.count), "keywords": kws,
                            "target": target, "match": "any" if len(kws) > 2 else "all"}
                 lat = statistics.median([p.latency for p in triggered])
-                name = _name_reply(system, target, kws, kind, trigger["kind"])
+                name = _name_reply(system, target, kws, kind, trigger["kind"], lead=_lead(T.template(resp_texts), 8))
             else:
                 cad = _cadence([p.response["ts"] for p in scheduled or cluster])
                 if not cad:
@@ -249,11 +267,11 @@ def _mean_pairwise(texts: list[str]) -> float:
 KIND_NOUN = {"pr.opened": "new pull requests", "issue.opened": "new issues", "message": "threads", "comment": "comments", "email": "emails"}
 
 
-def _name_reply(system: str, target: str, kws: list[str], kind: str, trig_kind: str = "") -> str:
+def _name_reply(system: str, target: str, kws: list[str], kind: str, trig_kind: str = "", lead: str = "") -> str:
     noun = KIND_NOUN.get(trig_kind, trig_kind or "threads")
     where = f" in {target}" if target else ""
     if trig_kind in ("pr.opened", "issue.opened"):
-        return f"First reply on {noun}{where}"
+        return f"First reply on {noun}{where}" + (f": “{lead}…”" if lead else "")
     what = " / ".join(kws[:2]) if kws else kind
     verb = {"github": "Reply to", "slack": "Answer", "linear": "Respond to", "email": "Reply to"}.get(system, "Respond to")
     return f"{verb} “{what}” {noun}{where}"
