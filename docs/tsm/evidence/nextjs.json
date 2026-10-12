@@ -1,0 +1,922 @@
+{
+ "repo": "vercel/next.js",
+ "since": "2026-07-01T00:00:00Z",
+ "window_h": 72.0,
+ "brain": {
+  "provider": "anthropic",
+  "model": "claude-opus-5",
+  "llm": true
+ },
+ "ingest": {
+  "skipped": true
+ },
+ "mine": {
+  "events": 9569,
+  "found": 28,
+  "created": 28,
+  "updated": 0,
+  "agent_actions_regraded": 0,
+  "named": 20
+ },
+ "backtest": {
+  "playbooks": [
+   {
+    "id": "pb_01m4qfe2j425h59yq6axfyvbe7",
+    "name": "Lock stale closed issues",
+    "stage": "candidate",
+    "n": 13,
+    "hits": 13,
+    "hit_rate": 1.0,
+    "mean_score": 1.0,
+    "summary": {
+     "trust": {
+      "scored": 13,
+      "hits": 13,
+      "hit_rate": 1.0,
+      "mean_score": 1.0,
+      "trust": 0.772,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "14 past occurrences, consistency 100%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qfeyn248nzxwztzaeywegj",
+      "trigger": "getPageMeta not respected in not-found\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide environment information\n\n```bash\nOperating S",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qff1rncxrthc6npg7h5bgq",
+      "trigger": "Data requests with `X-Nextjs-Data: 1` header when middleware is present return 200 on 404\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/huumn/repro-nextjs-data-404-resp-200\n\n###",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qff5hwd03ajvh7xb1vpwyp",
+      "trigger": "Error on browsers like chrome 83\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/ViniciusLeviVL/next-catalogo-digital-debug2\n\n### To Reproduce\n\nSteps to reproduce:\r\nJust init a ne",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qff9s90zrwrzqrmz849wj8",
+      "trigger": "generateStaticParams with next export: Build fails when generateStaticParams returns an empty array of params\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/NasserBvB/generate-st",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qffd0k0qaemrqx9gz9hsr2",
+      "trigger": "OPTIONS request stuck when using edge runtime\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/yuluyi/edge-runtime-stuck-on-options\n\n### To Reproduce\n\n```\r\npnpm run dev\r\ncurl 'http",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qffh1ncmxcy5r0kaph9pm2",
+      "trigger": "Bug/inconsistency with `dynamicIO` and client-side hooks in dynamic segment\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/amannn/nextjs-bug-repro-dynamicio-client-hooks/commit/6",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qffmpjzerqkk5ewe8w2r5w",
+      "trigger": "Middleware called redirect but the browser is not redirected\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/kuanjiahong/nextjs-middleware-redirect-issue-demo\n\n### To Reproduce\n\n1",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qffqznjqg4kr0enhcw2jft",
+      "trigger": "Related to #58661 redirect(<path>) does not work at all inside intercepting routes\n\n### Link to the code that reproduces this issue\r\n\r\nhttps://github.com/sannajammeh/next-intercepting-noredirect\r\n\r\n##",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfftdwr0vgp51cwpd6rw2g",
+      "trigger": "Order differences in outputted files between two consecutive builds\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/mrstork/next-build-determinism-example\n\n### To Reproduce\n\n1. `n",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qffxrey4snbjbqp742rrry",
+      "trigger": "View Transition Error in Cache Component Mode\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/HM-Suiji/nextjs-bug-report-viewtransition-with-cachecomponents\n\n### To Reproduce\n\nWhe",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfg35y977a8nz4s1dvxzey",
+      "trigger": "React Version Update Required for create-next-app Template\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/shiqocred/16.0.7-next\n\n### To Reproduce\n\nbun x create-next-app@latest\n\u2714 ",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfg8vg3b5p09174ny1pkzd",
+      "trigger": "Turbopack dev keeps deleted App Router manifests, causing optional catch-all routes to 404 until restart\n\n### Link to the code that reproduces this issue\n\nhttps://github.com/OmniNetOpensource/next-tur",
+      "draft": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "actual": "This closed issue has been automatically locked because it had no new activity for 2 weeks. If you are running into a similar issue, please create a new issue with the steps to reproduce. Thank you.",
+      "score": 1.0,
+      "hit": true
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j453bcnprfbkkjfwmq",
+    "name": "Review Turbopack PRs with line-level fixes",
+    "stage": "candidate",
+    "n": 2,
+    "hits": 0,
+    "hit_rate": 0.0,
+    "mean_score": 0.05,
+    "summary": {
+     "trust": {
+      "scored": 2,
+      "hits": 0,
+      "hit_rate": 0.0,
+      "mean_score": 0.05,
+      "trust": 0.0,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "13 past occurrences, consistency 95%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qfghb095d9smvmghyn2ngs",
+      "trigger": "Turbopack: Check the invalidator map before adding a path to a batch\n\nWe don't need to add a file path to a batch and extend the batch deadline if the path isn't contained in the invalidator map.\r\n\r\nP",
+      "draft": "https://github.com/vercel/next.js/blob/ef97e5ace5ab7451748ae474b9e68be5f63ada32/turbopack/crates/turbo-tasks-fs/src/invalidator_map.rs#L62-L70\n\nAdd a `contains_path` method here that only takes the read lock instead of exposing the whole map. Calling this per event in the watcher loop should avoid t",
+      "actual": "https://github.com/vercel/next.js/blob/ef97e5ace5ab7451748ae474b9e68be5f63ada32/turbopack/crates/turbo-tasks-fs/src/watcher/mod.rs#L675-L681\n\nThis isn't needed and should be removed. The batch will flush when the schedule ends in line 703.",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfgpxv5mk2sq0t0dfdhvd5",
+      "trigger": "[turbo-tasks] Experiment: capture snapshot pending bits under exclusion\n\n## Summary\n\nThis experiment builds on the copy-on-write snapshot design from #99649, which is now on canary. It holds the opera",
+      "draft": "https://github.com/vercel/next.js/blob/8f98fd149a76ea575ac37c8b6766ad543f5df425/turbopack/crates/turbo-tasks-backend/src/backend/storage.rs#L982\n\nDon't scan all shards under the exclusion. Take the exclusion per shard, move the modified bits into the pending bits for that shard only and release it a",
+      "actual": "https://github.com/vercel/next.js/blob/8f98fd149a76ea575ac37c8b6766ad543f5df425/turbopack/crates/turbo-tasks-backend/src/backend/storage.rs#L982\n\nCan we avoid reading snapshot_mode here?",
+      "score": 0.05,
+      "hit": false
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j463m80t3j3jf3sf7c",
+    "name": "Claim open bug issues for a PR",
+    "stage": "candidate",
+    "n": 8,
+    "hits": 8,
+    "hit_rate": 1.0,
+    "mean_score": 0.988,
+    "summary": {
+     "trust": {
+      "scored": 8,
+      "hits": 8,
+      "hit_rate": 1.0,
+      "mean_score": 0.988,
+      "trust": 0.676,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "17 past occurrences, consistency 100%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qfgtp1x4tyc6qv9dr9tv05",
+      "trigger": "getInitialProps is not running when Router.replace's \"href\" and \"as\" contains hash and query params inside \"href\" change.\n\n# Bug report\r\n\r\n**getInitialProps** is not running when \"href\" and \"as\" conta",
+      "draft": "I'd like to take this one (`getInitialProps is not running when Router.replace's \"href\" `). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one (`getInitialProps is not running when Router.replace's \"href\" `). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfgyjsxj33t8nmdkrd5gtp",
+      "trigger": "Scrolling happens when user returns to a page with hash using browser back button\n\n# Bug report\r\n\r\n## Describe the bug\r\n\r\nWhen user returns to a page which have url with hash (e.g. `http://localhost:3",
+      "draft": "I'd like to take this one (`Scrolling happens when user returns to a page with hash usin`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one (`Scrolling happens when user returns to a page with hash usin`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfh1jvczerejcyqf6vrv0h",
+      "trigger": "Dynamic Routes in Symlinks is not working\n\n# Bug report\r\n\r\n## Describe the bug\r\n\r\nDynamic Routes in symlinks is not working\r\n\r\n## To Reproduce\r\n\r\nI don't think github repos support symlink commits so ",
+      "draft": "I'd like to take this one (`Dynamic Routes in Symlinks is not working`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one (`Dynamic Routes in Symlinks is not working`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfh4qtq7ssvj8phbfrbqkc",
+      "trigger": "Misleading \"next-head-count is missing\" error for invalid head tags\n\n**What version of Next.js are you using?**\r\n\r\n10.0.5\r\n\r\n**What version of Node.js are you using?**\r\n\r\n12.20.1\r\n\r\n**What browser are",
+      "draft": "I'd like to take this one (`Misleading \"next-head-count is missing\" error for invalid he`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one \u2014 I'll follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 0.95,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfhc29c7jcx4z63ry3yfex",
+      "trigger": "POST request succeeds for pages with next dev\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide environment information\n\n\r\n    Operat",
+      "draft": "I'd like to take this one (`POST request succeeds for pages with next dev`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one \u2014 I'll follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfhfkb2rgaeayz4bj4wfhg",
+      "trigger": "Inconsistent Error Messaging / Handling in getStaticPaths\n\n### Verify canary release\r\n\r\n- [X] I verified that the issue exists in the latest Next.js canary release\r\n\r\n### Provide environment informati",
+      "draft": "I'd like to take this one (`Inconsistent Error Messaging / Handling in getStaticPaths`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one \u2014 I'll follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfhjyzy23mpfhka02wqypt",
+      "trigger": "Parameter on `AppType` is used incorrectly\n\n### Verify canary release\r\n\r\n- [X] I verified that the issue exists in the latest Next.js canary release\r\n\r\n### Provide environment information\r\n\r\n<details>",
+      "draft": "I'd like to take this one (`Parameter on `AppType` is used incorrectly`). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one \u2014 I'll follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfhq7zt28nsyw4ge8a29e9",
+      "trigger": "`@next/next/no-html-link-for-pages` rule does not work with `pageExtensions`\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide enviro",
+      "draft": "I'd like to take this one (`` `@next/next/no-html-link-for-pages` rule does not work with ``). I'll look into the root cause and follow up with a PR. (claiming via @LeonxLJX)",
+      "actual": "I'd like to take this one \u2014 I'll follow up with a PR. (claiming via @LeonxLJX)",
+      "score": 0.95,
+      "hit": true
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j481hrxcjebhbmwab7",
+    "name": "Verify repro and close with findings",
+    "stage": "candidate",
+    "n": 25,
+    "hits": 5,
+    "hit_rate": 0.2,
+    "mean_score": 0.348,
+    "summary": {
+     "trust": {
+      "scored": 25,
+      "hits": 5,
+      "hit_rate": 0.2,
+      "mean_score": 0.348,
+      "trust": 0.089,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "1174 past occurrences, consistency 61%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qfhybz7gn09ndq4nde06hr",
+      "trigger": "routeChangeComplete event called on page load for routes with params\n\n## Describe the bug\r\n\r\nWhen ASO is enabled and you navigate to pages with params the `routeChangeComplete` is called. On page load",
+      "draft": "Thanks for the report. I retested the reproduction on current Next.js and this is expected behavior for automatically statically optimized pages. Those pages are prerendered without the query, so the router performs a shallow hydration update once the real query is known, which emits `routeChangeSta",
+      "actual": "Thanks for reporting this. This was fixed in Next.js 12.2.0 by #37815, which prevents hydration-only query updates from emitting route change events. I verified the original reproduction on current stable and canary: direct loads of `/?id=1` and `/posts/1` no longer emit `routeChangeComplete`, while",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfj940nqxn7hap9qzaxjbq",
+      "trigger": "Adding elements to the next/head causes meta-tags to be replicated/duplicated\n\n# Bug report\r\n\r\n## Describe the bug\r\n\r\nWe have a Layout component that we use the next/head to build out our meta-tags as",
+      "draft": "Thanks for the report. I retested the repro and the duplication comes from third-party scripts mutating `<head>` outside of React. `next/head` tracks its managed tags by index, so when a Tag Manager (or any script) inserts nodes into `<head>`, the reconciliation can mis-match the existing tags and r",
+      "actual": "Closing as fixed in current releases. I reran the original reproduction in both `next dev` and `next build && next start`. It reproduces with the old `next-head-count` reconciler, but not on Next 16.3.3 or 16.4.0-canary.6. The newer head tracking from #47938, #65408, #65418, and #81882 keeps one cop",
+      "score": 0.35,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfjhrvd9gnddvbjswzrakq",
+      "trigger": "`url()` references in css files do not use `assetPrefix` in transformed urls\n\n### What version of Next.js are you using?\r\n\r\n10.2.0\r\n\r\n### What version of Node.js are you using?\r\n\r\n14.16.0\r\n\r\n### What ",
+      "draft": "Thanks for the report. I retested this against the repro and the behavior comes from *where* the prefix is set, not from the CSS url transform. `app.setAssetPrefix()` is applied at runtime on the server instance, while `url()` references in CSS are rewritten at compile time by `mini-css-extract-plug",
+      "actual": "Thanks for the detailed report and reproduction. I confirmed the original behavior on Next.js 10.2.0.\n\nThe issue only occurs when the prefix is set at runtime with `app.setAssetPrefix()`. Configuring `assetPrefix` in `next.config.js` produces the correct CSS asset URLs on both the reported version a",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfjs155v6mjb1xff780ph0",
+      "trigger": "Emitted 'error' event on WriteStream instance\n\n### What version of Next.js are you using?\r\n\r\n12.0.2\r\n\r\n### What version of Node.js are you using?\r\n\r\nv14.11.0\r\n\r\n### What browser are you using?\r\n\r\nchro",
+      "draft": "Thanks for the report. I retested this on Windows with the `with-typescript` example: the `EPERM: operation not permitted, open '.next\\trace'` only happens when `next build` runs while `next dev` still holds a handle on the same `.next` directory. Stopping the dev server first, or pointing the build",
+      "actual": "Closing as resolved in Next.js 16. Development output now lives in `.next/dev`, so `next dev` and `next build` no longer contend for `.next/trace`, and lockfiles prevent conflicting same-mode processes. Please open a new issue with a current reproduction if this still occurs on the latest release.",
+      "score": 0.35,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfk0wxwvfbhsfg3jk0z409",
+      "trigger": "500 Error - \"static responses cannot be piped. This is a bug in Next.js\"\n\n### Run `next info` (available from version 12.0.8 and up)\r\n\r\n_No response_\r\n\r\n### What version of Next.js are you using?\r\n\r\n1",
+      "draft": "Thanks for the report. I wasn't able to reproduce this on current releases. The `pipe` invariant this error came from no longer exists: the render result path was reworked in Next.js 13 (`RenderResult` now handles both static and streaming payloads, and `sendRenderResult` no longer pipes static resu",
+      "actual": "Thanks for the report. Empty static render results were being treated as streams in `sendRenderResult`. #48939 fixed the check, and the change shipped in Next.js 13.4.0. The invariant is no longer present in current releases, so I\u2019m closing this as fixed. If you see this exact error on a current ver",
+      "score": 0.25,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfkaxaxvegppr2dq0vgq9m",
+      "trigger": "next/image does not work with CDN\n\n### Run `next info` (available from version 12.0.8 and up)\n\n    Operating System:\r\n      Platform: win32\r\n      Arch: x64\r\n      Version: Windows 10 Pro\r\n    Binarie",
+      "draft": "Thanks for the report. I retested this and it's expected behavior for the default loader: `assetPrefix` intentionally doesn't apply to `/_next/image`. The `src` is the image the optimizer fetches, and the `src` you get back is the optimizer endpoint on your own origin, so pointing `src` at the CDN o",
+      "actual": "Thanks for the report. This is expected behavior. `assetPrefix` prefixes static build assets, but it does not control the server-backed Image Optimization API.\n\nTo serve the optimizer through a CDN, configure [`images.path`](https://nextjs.org/docs/app/api-reference/components/image#path), for examp",
+      "score": 0.55,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfkk9rqyk8akj9gb5zh3z0",
+      "trigger": "Upgrading from next@11 to next@12 breaks css-loader support\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\nOperating",
+      "draft": "Thanks for the reproduction. I was able to reproduce the `next-11` vs `next-12` difference with the inline `css-loader!` import of the monaco CSS. The failure comes from the inline loader bypassing Next.js's own CSS pipeline: the request still hits Next's asset module rules, which in webpack 5 rejec",
+      "actual": "Thanks for the report. Closing as a duplicate of [Discussion #36981](https://github.com/vercel/next.js/discussions/36981), which tracks the same `asset/inline` generator conflict, root cause, workaround, and related fix attempt in #44361.",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfktjw6rt0b72p5010ddft",
+      "trigger": "ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING when running a custom server with esm\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment infor",
+      "draft": "Thanks for the report. I reproduced this with the linked repro, and the failure comes from the `esm` loader, not Next.js. Next.js loads `next.config.js` through a dynamic `import()`, and `esm` runs code in a VM context without installing a dynamic import callback, so Node throws `ERR_VM_DYNAMIC_IMPO",
+      "actual": "Thanks for the report. I reproduced this with Next.js 12.1.1-canary.1, Node.js 16.13.0, and `esm@3.2.25`.\n\nThe failure comes from the `esm` require hook running Next.js config loading in a VM context without a dynamic import callback. The `esm` package has not had a release since 2019 and its reposi",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfm3msmxr4cxfab7sb6fqw",
+      "trigger": "router.asPath shows homepage as \"/index\" and excludes query string\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\nSt",
+      "draft": "Thanks for the report. I reproduced this and it\u2019s expected behavior from Automatic Static Optimization. A page without `getServerSideProps`/`getInitialProps` is prerendered at build time, when the real URL and query string don\u2019t exist yet, so the HTML you see in \"View Page Source\" contains the build",
+      "actual": "Thanks for the report. I reproduced the `/index` value with the original Next.js 12.1.0 setup and through 15.5. The relevant path handling was fixed in #82907, and fresh Vercel deployments on 16.0.11, 16.3.4, and 16.4.0-canary.14 consistently render `/`, including after ISR regeneration.\n\nThe missin",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfma6561p8gaf2n06q5cjy",
+      "trigger": "Ordering of request query being changed in production\n\n### Verify canary release\r\n\r\n- [X] I verified that the issue exists in Next.js canary release\r\n\r\n### Provide environment information\r\n\r\nOperating",
+      "draft": "Thanks for the report. I tested this on 12.1.4, current stable, and current canary with an API route at `/api/test?hmac=123&host=123&sell=123&t=123`, both locally and deployed to Vercel, and `req.url` preserved the original query string and parameter order in every case. `req.query` is an object, so",
+      "actual": "Thanks for the report. I could not reproduce this on the current canary, and the original Next.js 12.1.4 example now preserves query parameter order on Vercel as well. The matching Vercel routing issue was tracked in vercel/proxy#3310, with ordered-query routing implemented in vercel/proxy#7931. Clo",
+      "score": 0.35,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfmk0ve6pwg2394majq1zb",
+      "trigger": "Hot reload dont work when you use docker\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\n```\r\n/app # yarn run info\r\ny",
+      "draft": "Thanks for the report. I reproduced this with a bind mount from a Windows host, and it isn't a Next.js bug: inotify events don't propagate across the Docker Desktop filesystem share, so Webpack/Turbopack never sees the file change. Enabling polling fixes it:\n\n```yaml\nenvironment:\n  - WATCHPACK_POLLI",
+      "actual": "Thanks everyone. This remains reproducible with Docker Desktop when host-side bind-mount edits do not produce filesystem events inside the container. Webpack honors `WATCHPACK_POLLING=true`, but Turbopack currently does not. `watchOptions.pollIntervalMs` is the available workaround, although its doc",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfmv7yge5n1g4a8tf38ewr",
+      "trigger": "import ESM module fails with custom typescript server\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\n\r\n    Operating",
+      "draft": "Thanks for the reproduction. I retested it on current stable and canary and this is outside of what Next.js compiles. A custom server file is not part of the Next.js build graph, so it is loaded by Node/your TS runner directly and the ESM resolution error comes from that layer, not from Next.js.\n\nIn",
+      "actual": "Thanks for the report. I reproduced the original error with Node 16.13.1 and ts-node 10.7.0. `tsconfig.server.json` sets `module` to `commonjs`, so TypeScript emits `require()` for an ESM-only dependency. The failure occurs before Next.js is imported, and custom server files are not compiled by Next",
+      "score": 0.65,
+      "hit": true
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j49333eyrm42jx6dq7",
+    "name": "Close unsigned fix PRs for signed replacements",
+    "stage": "candidate",
+    "n": 19,
+    "hits": 8,
+    "hit_rate": 0.421,
+    "mean_score": 0.492,
+    "summary": {
+     "trust": {
+      "scored": 19,
+      "hits": 8,
+      "hit_rate": 0.421,
+      "mean_score": 0.492,
+      "trust": 0.231,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "7 past occurrences, consistency 100%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qfr0shpg9stdsny7vesdq8",
+      "trigger": "fix: Server locale to be displayed correctly with middleware\n\n### What?\r\nFixes https://github.com/vercel/next.js/issues/62568\r\n\r\nSince creation of `server/lib/router-utils/resolve-routes.ts` below aro",
+      "draft": "Closing in favor of #97142, which carries the same change in a signed commit while preserving the original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for working on this! This issue was addressed by #68947, which also added regression coverage, so we\u2019re closing this PR as superseded.",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfr4j2deqmpbdy5rw02vb6",
+      "trigger": "Fix fetch request caching with ArrayBuffer bodies\n\nFixes #76326.",
+      "draft": "Closing in favor of #97712, which carries the same change in a signed commit while preserving the original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for the fix. This has since been addressed more comprehensively by #96008, including byte-exact handling and regression tests for binary bodies. Closing as superseded.",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfr7m7g964asdab32zdgad",
+      "trigger": "Fix message not showing\n\n### What?\r\nThe message uses an undefined color\r\n<img width=\"190\" alt=\"Screenshot 2025-03-21 at 21 23 17\" src=\"https://github.com/user-attachments/assets/1dbaa291-3b6a-45b5-b95",
+      "draft": "Closing in favor of #97712, which carries the same change in a signed commit while preserving the original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for catching this! The Supabase auth UI has since been replaced in #78913, which removed this component, so the change no longer applies. Closing as superseded.",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfratz4q1jvt5h4seh6742",
+      "trigger": "fix(scripts): correct typo in rm.mjs error message\n\nThis pull request makes a minor correction to the error message in `scripts/rm.mjs` to fix a typo.\r\n\r\n* The error message now correctly reads \"requi",
+      "draft": "Closing in favor of #97145, which carries the same change in a signed commit while preserving @nikolailehbrink\u2019s original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for contributing!",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfrdwe2ze2bstvwp7mfp78",
+      "trigger": "docs(mdx): fix package name in .md handling section\n\n<!-- Thanks for opening a PR! Your contribution is much appreciated.\r\nTo make sure your PR is handled as smoothly as possible we request that you f",
+      "draft": "Closing in favor of #97711, which carries the same change in a signed commit while preserving the original authorship and attribution. Thank you for the contribution!",
+      "actual": "Closing in favor of #97131, which carries the same change in a signed commit while preserving @pavan-sh\u2019s original authorship and attribution. Thank you for the contribution!",
+      "score": 0.25,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfrgvykaracnq060xznf5d",
+      "trigger": "Fixing a bug - typo issue fixed\n\nFix typo issue for comment\r\n// writes the manifest again for builds.",
+      "draft": "Closing in favor of #97141, which carries the same change in a signed commit while preserving @keithjackson1031's original authorship and attribution. Thank you for the contribution!",
+      "actual": "Closing in favor of #97141, which carries the same change in a signed commit while preserving @keithjackson1031\u2019s original authorship and attribution. Thank you for the contribution!",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfrkfxf4tq8zxga9nptzxw",
+      "trigger": "Fix spelling in two comments\n\n### What?\nFix two spelling mistakes in comments.\n\n### Why?\nReadability.\n\n### How?\nUpdated comment text only.",
+      "draft": "Closing in favor of #97136, which carries the same changes in a signed commit while preserving the original authorship and attribution. Thank you for the contribution!",
+      "actual": "Closing in favor of #97136, which carries the same changes in a signed commit while preserving @adityagiri3600\u2019s original authorship and attribution. Thank you for the contribution!",
+      "score": 0.95,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfrpnfccn4y6wf9mrsmznc",
+      "trigger": "fix: typos in code comments\n\n## Summary\n- Fix \"occurence\" \u2192 \"occurrence\" in `test/lib/router-act.ts`\n- Fix \"wether\" \u2192 \"whether\" in `packages/next/src/server/stream-utils/encoded-tags.ts`\n\n## Test plan",
+      "draft": "Closing in favor of #97137, which carries the same changes in a signed commit while preserving @evandroreichert\u2019s original authorship and attribution. Thank you for the contribution!",
+      "actual": "Closing in favor of #97137, which carries the same changes in a signed commit while preserving @evandroreichert\u2019s original authorship and attribution. Thank you for the contribution!",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfrtcfvx6m25few4t5g30q",
+      "trigger": "fix(docs): nodejs debugging guide url\n\nThe Node.js debugging guide URL in docs is outdated. This PR fixed it.\r\n\r\n<!-- Thanks for opening a PR! Your contribution is much appreciated.\r\nTo make sure your",
+      "draft": "Closing in favor of #97712, which carries the same change in a signed commit while preserving the original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for your contribution! This was already fixed",
+      "score": 0.35,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfrxfnps2d55mzajk47pqw",
+      "trigger": "examples: fix Webiny API env variable name\n\n## Summary\n\nFix the `cms-webiny` example so non-preview requests read `NEXT_PUBLIC_WEBINY_API_URL`, matching the README, deploy button, and `.env.local.exam",
+      "draft": "Closing in favor of #97134, which carries the same change in a signed commit while preserving @tianma-if\u2019s original authorship and attribution. Thank you for the contribution!",
+      "actual": "Closing in favor of #97134, which carries the same change in a signed commit while preserving @tianma-if\u2019s original authorship and attribution. Thank you for the contribution!",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfs0s66qwj86h6x8j48758",
+      "trigger": "[docs] fix: grammar typos in linking and navigating guide\n\n### What?\r\n\r\nFix grammar issues in the \"Linking and Navigating\" guide.\r\n\r\n### Why?\r\n\r\nThis sentence had a few grammar issues:\r\n- \"makes\" shou",
+      "draft": "Closing in favor of #97139, which carries the same change in a signed commit while preserving @rhzs\u2019s original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for your contribution!",
+      "score": 0.65,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfs42wgs8gnb2vmbqeb3bk",
+      "trigger": "fix: add accessible label to icon-only link\n\n## Summary\r\n\r\nThis PR improves the accessibility of the Ant Design example by adding an accessible label to the icon-only `Link`.\r\n\r\n### Changes\r\n\r\n- Added",
+      "draft": "Closing in favor of #97712, which carries the same change in a signed commit while preserving @muhammadhadibaig\u2019s original authorship and attribution. Thank you for the contribution!",
+      "actual": "Thanks for your contribution!",
+      "score": 0.65,
+      "hit": true
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j4nf14p1fkggwgsth3",
+    "name": "Answer docs requests with existing docs",
+    "stage": "candidate",
+    "n": 25,
+    "hits": 8,
+    "hit_rate": 0.32,
+    "mean_score": 0.47,
+    "summary": {
+     "trust": {
+      "scored": 25,
+      "hits": 8,
+      "hit_rate": 0.32,
+      "mean_score": 0.47,
+      "trust": 0.172,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "23 past occurrences, consistency 27%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qft3bn8xckcev5f3g0c0nh",
+      "trigger": "[Internationalization] Redirect with `{ locale: false }` and dynamic isn't working properly.\n\n# Bug report\r\n\r\n## Describe the bug\r\n\r\nRedirect with `{ locale: false }` isn't working properly.\r\n\r\n### Co",
+      "draft": "Thanks for raising this. With `locale: false` Next.js stops handling the locale prefix for that entry, so the `source` has to match the unprefixed path exactly and the `destination` must include the locale you want:\n\n```js\n{\n  source: '/blog/e-o-coronavirus-hein',\n  destination: '/pt/blog/e-o-corona",
+      "actual": "Closing this as resolved. With `locale: false`, both `source` and `destination` must include a locale, so the source here should be `/en/blog/e-o-coronavirus-hein`; the same rule applies to rewrites. This was clarified in #19703 and #19765. The `/en/pt/...` behavior without `locale: false` was fixed",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qft9jwxzqpz01pe54t4x78",
+      "trigger": "Inline Next/Script only runs on first page load\n\n### Verify canary release\r\n\r\n- [X] I verified that the issue exists in the latest Next.js canary release\r\n\r\n### Provide environment information\r\n\r\n    ",
+      "draft": "Thanks for raising this. This is the documented behavior: `next/script` dedupes by `id`, so a script with the same `id` is only executed once per session even across client-side navigations. Omitting the `id` opts out of that dedupe, which is why those scripts re-run. The [`next/script` API referenc",
+      "actual": "Thanks for the report. This is expected behavior. `next/script` uses an inline script's `id` to deduplicate it, so the script body runs once across client-side navigations. Page-specific initialization that must run after loading and on each remount should use `onReady`, which was added in 12.2.4 fo",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qftgty2j30ygghyz4ef09z",
+      "trigger": "False negative for \"Global CSS cannot be imported from within node_modules\" warning\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide",
+      "draft": "Thanks for raising this. Next.js determines scoping by filename convention, so only `*.module.css` is treated as a CSS Module \u2014 a file named `styles.scoped.css` is still global CSS as far as the compiler is concerned, which is why the error fires even though the published styles are already scoped. ",
+      "actual": "Thanks for the report. The Pages Router determines CSS behavior from the `.module.css` filename convention and cannot infer that `.scoped.css` has already been scoped. The supported path for a dependency that imports its own CSS is `transpilePackages`, available since Next.js 13 and replacing `next-",
+      "score": 0.95,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qftnwshbf4ev8d4490g3h4",
+      "trigger": "Docs: How to mitigate CSRF \n\n### What is the improvement or update you wish to see?\n\nHello, \r\n\r\nI can't find on the next js documentation how to protect against CSRF attacks (https://nextjs.org/docs/a",
+      "draft": "Thanks for raising this. The current [Data Security guide](https://nextjs.org/docs/app/guides/data-security#allowed-origins-advanced) and [Server Actions guide](https://nextjs.org/docs/app/guides/server-actions#security) now document the built-in CSRF protections, including the `Origin`/`Host` check",
+      "actual": "Thanks for raising this. The current [Data Security guide](https://nextjs.org/docs/app/guides/data-security#allowed-origins-advanced) and [Server Actions guide](https://nextjs.org/docs/app/guides/server-actions#security) now document the built-in CSRF protections, including the `Origin`/`Host` check",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfttedqbqyypn6009y2y2r",
+      "trigger": "Docs: next/link-passhref isn't included in the linting plugin anymore (?)\n\n### What is the improvement or update you wish to see?\n\nI was reviewing the latest changes of `next/link` and noticed that th",
+      "draft": "Thanks for raising this. There's no `next/link-passhref` rule in the ESLint plugin \u2014 the full list of available rules is in the [ESLint docs](https://nextjs.org/docs/app/api-reference/config/eslint#rules). Since Next.js 13, `next/link` renders an `<a>` by default, so `passHref` is only needed when w",
+      "actual": "Thanks for reporting this. The `link-passhref` rule was intentionally removed in [#36511](https://github.com/vercel/next.js/pull/36511) because the new `Link` behavior made it unnecessary. The stale rule reference is no longer present in the current `Link` docs, so I\u2019m closing this as resolved.",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfv1x45bswf6fhnyxy25gr",
+      "trigger": "Fast Refresh breaks with ESI tags\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide environment information\n\n    Operating System:\r\n ",
+      "draft": "Thanks for raising this. Hydration requires the HTML the browser receives to match what the server rendered, so a proxy that rewrites markup in flight will always produce a mismatch \u2014 this isn't specific to Fast Refresh. The [hydration mismatch error docs](https://nextjs.org/docs/messages/react-hydr",
+      "actual": "Thanks for the report. I reproduced this on the original Next 13 version and current canary. The proxy does not forward Next's HMR WebSocket, which is why Fast Refresh fails. After forwarding WebSocket upgrades, Fast Refresh works on both versions.\n\nThe ESI replacement separately changes React-owned",
+      "score": 0.25,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfv7zbe3dpnrkrfs791jyq",
+      "trigger": "Docs: Improve Dynamic Import page by including information about DynamicOptions\n\n### What is the improvement or update you wish to see?\r\n\r\nIn [Advanced Features > Dynamic Imports](https://nextjs.org/d",
+      "draft": "Thanks for raising this. The current [lazy-loading docs](https://nextjs.org/docs/pages/guides/lazy-loading) document the `loading` option alongside `ssr: false`, and the [maintained example](https://github.com/vercel/next.js/blob/canary/examples/with-dynamic-import/app/page.tsx#L11-L19) shows them u",
+      "actual": "Thanks for raising this. The current [lazy-loading docs](https://nextjs.org/docs/pages/guides/lazy-loading) cover both the `loading` option and `ssr: false`, and the [maintained example](https://github.com/vercel/next.js/blob/canary/examples/with-dynamic-import/app/page.tsx#L11-L19) shows them used ",
+      "score": 1.0,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfvdh784301p0mwcjefe2t",
+      "trigger": "Docs: Middleware files needs same suffix as pages if pageExtensions config is used\n\n### What is the improvement or update you wish to see?\r\n\r\nThe middleware docs should mention that the middleware.ts ",
+      "draft": "Thanks for raising this. This is intended behavior, and it's now documented: the [`pageExtensions` API reference](https://nextjs.org/docs/app/api-reference/config/next-config-js/pageExtensions) notes that the configured extensions also apply to special files like `middleware` and `instrumentation`, ",
+      "actual": "Thanks for reporting this. #84045 added the requested `pageExtensions` guidance to the Middleware docs, and the current [Proxy docs](https://nextjs.org/docs/app/api-reference/file-conventions/proxy) preserve it with `proxy.page.ts` and `proxy.page.js` examples. Separate compound-extension runtime bu",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfvkwc8tfze7sgtf471x43",
+      "trigger": "[v13] css modules not carried with dynamic imports\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide environment information\n\n\r\n    O",
+      "draft": "Thanks for raising this. Using a raw `await import()` inside a component bypasses the bundler's CSS handling, which is why the module styles never get injected. Dynamic components should be loaded with `next/dynamic`, which handles loading the associated CSS along with the chunk \u2014 see the [lazy-load",
+      "actual": "Thanks for the report. I reproduced this on 13.1.2, but the original `await import()` cases were fixed in #51018 and #52795, and the related App Router `next/dynamic` CSS case was fixed in #64294 and #64021. I also verified the minimal reproduction on the latest canary in development and production ",
+      "score": 0.25,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfvvrfw7j4cet6p84qy4h7",
+      "trigger": "[appDir]: Dynamic pages with dynamic parameters rendered as static by default\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide envir",
+      "draft": "Thanks for raising this. The current docs cover this behavior: a route using a Dynamic API like `cookies()` opts into dynamic rendering, but when `generateStaticParams` is present the listed params are still prerendered at build time, and the build output labels can be confusing on their own. See [P",
+      "actual": "Thanks for the report. This was the same underlying issue as #45850 and was fixed by #46265, which shipped in 13.1.7-canary.28 and 13.2.0. I verified the reproduction on current canary: `/[slug]` is dynamic and returns the request's cookie value. Closing as fixed.",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfw4jys525rp6rgz09289b",
+      "trigger": "Docs: Github Actions hashFiles example seems incorrect \n\n### What is the improvement or update you wish to see?\n\nIt seems like the described [hashFiles example for GitHub actions](https://github.com/v",
+      "draft": "Thanks for raising this. The example has been updated in the current [CI build caching guide](https://nextjs.org/docs/app/guides/ci-build-caching#github-actions) \u2014 the source glob now matches nested files (`**/*.[jt]s`, `**/*.[jt]sx`) instead of only root-level ones, and the `restore-keys` entry fal",
+      "actual": "Thanks for reporting this. This was fixed in #51789 and later updated to the explicit recursive globs in #54509. The current docs now hash nested JS/TS files correctly, so I\u2019m closing this as resolved.",
+      "score": 0.95,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qfwbw0eqzxjs5ex4k5fpmb",
+      "trigger": "App folder: styles applied after delay on prefetched pages\n\n### Verify canary release\r\n\r\n- [X] I verified that the issue exists in the latest Next.js canary release\r\n\r\n### Provide environment informat",
+      "draft": "Thanks for raising this. This flash of unstyled content on client navigations to prefetched routes was a known App Router issue with CSS Modules and has since been fixed \u2014 stylesheets for the target route are now loaded and applied before the new segment is committed. The [CSS docs](https://nextjs.o",
+      "actual": "Thanks for the report. This was fixed by the Suspensey CSS work covered by #47675 and #47708, and the same reproduction was tracked in #46868. I also re-tested it on current stable and canary releases with delayed route CSS, with and without prefetching, and the page now waits for its styles before ",
+      "score": 0.45,
+      "hit": false
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j4yvwf3m5q3aqwaqn5",
+    "name": "Triage and close long-running issue threads",
+    "stage": "candidate",
+    "n": 25,
+    "hits": 5,
+    "hit_rate": 0.2,
+    "mean_score": 0.352,
+    "summary": {
+     "trust": {
+      "scored": 25,
+      "hits": 5,
+      "hit_rate": 0.2,
+      "mean_score": 0.352,
+      "trust": 0.089,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "14 past occurrences, consistency 70%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qfznfssvx5nwnddh8cjvbr",
+      "trigger": "Adding elements to the next/head causes meta-tags to be replicated/duplicated\n\n# Bug report\r\n\r\n## Describe the bug\r\n\r\nWe have a Layout component that we use the next/head to build out our meta-tags as",
+      "draft": "Thanks for all the reports. This was a `next/head` side-effect reconciliation issue in Pages Router, where third-party scripts mutating `document.head` shifted the indices `next/head` relies on and caused tags to be re-inserted. The Pages Router head implementation has changed substantially since, a",
+      "actual": "Closing as fixed in current releases. I reran the original reproduction in both `next dev` and `next build && next start`. It reproduces with the old `next-head-count` reconciler, but not on Next 16.3.3 or 16.4.0-canary.6. The newer head tracking from #47938, #65408, #65418, and #81882 keeps one cop",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qfzvpnz5sb6hhqvrx4vncy",
+      "trigger": "Using `vc dev` .env has higher priority than .env.local\n\n# Bug report\r\n\r\n## Describe the bug\r\n\r\nDoc states the following:\r\n\r\n> In general only one .env.local file is needed. However, sometimes you mig",
+      "draft": "Thanks for the report. This was a Vercel CLI issue rather than Next.js: `vc dev` loaded the env files in its own order, so `.env` could win over `.env.local`. With `next dev` the documented precedence holds, and current Vercel CLI versions no longer reproduce this \u2014 `.env.local` correctly overrides ",
+      "actual": "Thanks for the report. I confirmed that `next dev` gives `.env.local` the documented priority, including on the latest canary. The conflicting value is injected by `vercel dev` before Next.js starts, so this is a Vercel CLI issue rather than a Next.js issue. Closing this here so it can be tracked in",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg05rfh5s669jeq3p3sqgx",
+      "trigger": "Emitted 'error' event on WriteStream instance\n\n### What version of Next.js are you using?\r\n\r\n12.0.2\r\n\r\n### What version of Node.js are you using?\r\n\r\nv14.11.0\r\n\r\n### What browser are you using?\r\n\r\nchro",
+      "draft": "Thanks for all the reports. This is the Windows `EPERM` failure that happens when `next build` opens `.next/trace` while a `next dev` server still holds the same file. Next.js 12 is no longer supported, and on current canary the trace writer no longer crashes the build in this scenario.\n\nI\u2019m closing",
+      "actual": "Closing as resolved in Next.js 16. Development output now lives in `.next/dev`, so `next dev` and `next build` no longer contend for `.next/trace`, and lockfiles prevent conflicting same-mode processes. Please open a new issue with a current reproduction if this still occurs on the latest release.",
+      "score": 0.65,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qg0ejzy743c0w5prtqhdss",
+      "trigger": "Sudden error - Refused to execute script from worker.ts because it's MIME type (video/mp2t) is not executable\n\n### What version of Next.js are you using?\n\n12.0.1\n\n### What version of Node.js are you u",
+      "draft": "Thanks for the report. This is the known `.ts` extension collision: the file was served as a raw TypeScript file, and `video/mp2t` is the standard MIME type registered for `.ts` (MPEG transport stream), so the browser refuses to execute it. The fix is to let the worker go through the bundler rather ",
+      "actual": "Closing this as a documented Webpack limitation rather than a Next.js MIME handling bug. I reproduced it on Next.js 12.0.1 and 16.3.2 with Webpack: when the `URL` is stored in a variable, Webpack emits the `.ts` source as a regular asset, so it is served as `video/mp2t` and the browser rejects it.\n\n",
+      "score": 0.35,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg0q1ejxjqz5zt5vgtxrt9",
+      "trigger": "next/image does not work with CDN\n\n### Run `next info` (available from version 12.0.8 and up)\n\n    Operating System:\r\n      Platform: win32\r\n      Arch: x64\r\n      Version: Windows 10 Pro\r\n    Binarie",
+      "draft": "Thanks for all the reports. This is working as designed: the built-in image optimizer always serves from `/_next/image`, and `assetPrefix` is intentionally not applied to that endpoint. Since this issue was opened, the supported paths for serving optimized images from a CDN are `images.loader`/`load",
+      "actual": "Thanks for the report. This is expected behavior. `assetPrefix` prefixes static build assets, but it does not control the server-backed Image Optimization API.\n\nTo serve the optimizer through a CDN, configure [`images.path`](https://nextjs.org/docs/app/api-reference/components/image#path), for examp",
+      "score": 0.65,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qg0xpdgxbvzexj3036xr2c",
+      "trigger": "Upgrading from next@11 to next@12 breaks css-loader support\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\nOperating",
+      "draft": "Thanks for the reports. This was caused by manually adding `css-loader` to the webpack config, which conflicts with the built-in asset modules configuration Next.js 12 introduced. Next.js 11 and 12 are both unsupported now, and the recommended approach is to rely on the built-in CSS handling or `tra",
+      "actual": "Thanks for the report. Closing as a duplicate of [Discussion #36981](https://github.com/vercel/next.js/discussions/36981), which tracks the same `asset/inline` generator conflict, root cause, workaround, and related fix attempt in #44361.",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg15fn4j2dethbxb0snxdh",
+      "trigger": "ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING when running a custom server with esm\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment infor",
+      "draft": "Thanks for the report. This comes from the `esm` loader (`-r esm`), which hooks `require`/module resolution in a way that leaves Node without a dynamic import callback, so `loadConfig`'s `import()` of `next.config.mjs`/ESM config fails. That package has been unmaintained for years, and Node has supp",
+      "actual": "Thanks for the report. I reproduced this with Next.js 12.1.1-canary.1, Node.js 16.13.0, and `esm@3.2.25`.\n\nThe failure comes from the `esm` require hook running Next.js config loading in a VM context without a dynamic import callback. The `esm` package has not had a release since 2019 and its reposi",
+      "score": 0.8,
+      "hit": true
+     },
+     {
+      "draft_id": "drf_01m4qg1wjatrpxyxsk28k15ryn",
+      "trigger": "router.asPath shows homepage as \"/index\" and excludes query string\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\nSt",
+      "draft": "Thanks for the report. This is expected behavior for automatically statically optimized Pages Router routes. The HTML you see in \"View Page Source\" is generated at build time, where there is no request URL, so `router.asPath` falls back to the page path and `router.query` is empty. The correct value",
+      "actual": "Thanks for the report. I reproduced the `/index` value with the original Next.js 12.1.0 setup and through 15.5. The relevant path handling was fixed in #82907, and fresh Vercel deployments on 16.0.11, 16.3.4, and 16.4.0-canary.14 consistently render `/`, including after ISR regeneration.\n\nThe missin",
+      "score": 0.25,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg28xry11km2zbrv13tvcr",
+      "trigger": "Ordering of request query being changed in production\n\n### Verify canary release\r\n\r\n- [X] I verified that the issue exists in Next.js canary release\r\n\r\n### Provide environment information\r\n\r\nOperating",
+      "draft": "Thanks for all the reports. This was a query string normalization behavior in the older Vercel/Next.js routing layer, where parameter order in `req.url` was not preserved for deployed API routes. Next.js 12 is no longer supported, and on current canary the original and received query strings match l",
+      "actual": "Thanks for the report. I could not reproduce this on the current canary, and the original Next.js 12.1.4 example now preserves query parameter order on Vercel as well. The matching Vercel routing issue was tracked in vercel/proxy#3310, with ordered-query routing implemented in vercel/proxy#7931. Clo",
+      "score": 0.45,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg2gmjx1kygqh002ye4v9n",
+      "trigger": "Hot reload dont work when you use docker\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\n```\r\n/app # yarn run info\r\ny",
+      "draft": "Thanks for all the reports. This is a filesystem watching limitation when the project is bind-mounted from a Windows or macOS host into a Linux container, not a Next.js bug. Inotify events are not forwarded across those mounts, so the compiler never sees the change. Setting `WATCHPACK_POLLING=true` ",
+      "actual": "Thanks everyone. This remains reproducible with Docker Desktop when host-side bind-mount edits do not produce filesystem events inside the container. Webpack honors `WATCHPACK_POLLING=true`, but Turbopack currently does not. `watchOptions.pollIntervalMs` is the available workaround, although its doc",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg2rfz7ky0vqmksvvkw8tc",
+      "trigger": "import ESM module fails with custom typescript server\n\n### Verify canary release\n\n- [X] I verified that the issue exists in Next.js canary release\n\n### Provide environment information\n\n\r\n    Operating",
+      "draft": "Thanks for the report. This is about loading an ESM package from a custom TypeScript server file, which is executed by Node and your TS loader setup, not compiled by Next.js, so the `ERR_REQUIRE_ESM`/resolution failure comes from the CommonJS transpile of the server entry rather than from Next. Node",
+      "actual": "Thanks for the report. I reproduced the original error with Node 16.13.1 and ts-node 10.7.0. `tsconfig.server.json` sets `module` to `commonjs`, so TypeScript emits `require()` for an ESM-only dependency. The failure occurs before Next.js is imported, and custom server files are not compiled by Next",
+      "score": 0.25,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg2zcq2pkq0bem0sa4be7q",
+      "trigger": "duplicate meta tags in head\n\n### Verify canary release\n\n- [X] I verified that the issue exists in the latest Next.js canary release\n\n### Provide environment information\n\n Operating System:\r\n      Plat",
+      "draft": "Thanks for all the reports. This was a Pages Router `next/head` deduplication issue in Next.js 12, where tags rendered from both `_document` and page-level `Head` could end up duplicated after hydration. Next.js 12 is no longer supported, and the duplicate `viewport` tag no longer reproduces on next",
+      "actual": "Closing as fixed. The original GTM and third-party script case depended on `next-head-count`, which was replaced by per-element `data-next-head` tracking in #65408 and made unconditional in #81882. I also verified this scenario on 16.1.6, 16.3.2, and 16.4.0-canary.2 with no duplicate tags across cli",
+      "score": 0.15,
+      "hit": false
+     }
+    ]
+   },
+   {
+    "id": "pb_01m4qfe2j59gy7tcf6ps4cnemk",
+    "name": "Benchmark and report memory regressions",
+    "stage": "candidate",
+    "n": 25,
+    "hits": 0,
+    "hit_rate": 0.0,
+    "mean_score": 0.222,
+    "summary": {
+     "trust": {
+      "scored": 25,
+      "hits": 0,
+      "hit_rate": 0.0,
+      "mean_score": 0.222,
+      "trust": 0.0,
+      "approvals": 0,
+      "rejections": 0,
+      "approval_rate": null,
+      "executions": 0,
+      "undos": 0
+     },
+     "recommendation": {
+      "to": "shadow",
+      "why": "7 past occurrences, consistency 29%. Shadowing costs nothing \u2014 it only drafts."
+     }
+    },
+    "rows": [
+     {
+      "draft_id": "drf_01m4qg7h88sr44yjymgyy15ddf",
+      "trigger": "Corroborated with CPU and MEM profiling data, details in #95094. We're running this exact fix via `patch-package`:\n\n<img width=\"1695\" height=\"296\" alt=\"Image\" src=\"https://github.com/user-attachments/",
+      "draft": "Independent A/B of that patch, since \"we run it in prod and it helps\" and \"it removes the retention\" are different claims and only the second one is checkable.\n\nStandalone server from the repro, unmodified app, forced GC before each sample, 6 cycles of 2000 requests across the route set. Node 24.18,",
+      "actual": "Independent confirmation, measured against the reproduction repo (next 16.3.0-canary.50, Node 24.15, darwin arm64).\n\n8 cycles x 3000 requests against `/api/heap?timeouts=500`, forced GC (3 passes) before every post-GC sample, 20 connections:\n\n- **As reported:** heap 28.7 -> 40.2 -> 59.0 -> 75.8 -> 7",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg86kzsp5ej24xagasj4fj",
+      "trigger": "@eps1lon and @sleitor we have been running our app with this patch using `patch-package` and noticed it fixed our memory-leak scenario because we have a lot of dynamic URLs for a admin receiving order",
+      "draft": "Independent reproduction of the field report above, with the patch A/B'd on the repro in this issue.\n\nRan `dmchoi77/nextjs-getitemslru-key-length-repro` unchanged except for the patch, 120,000 requests against distinct `/order/{n}` paths, retained heap read after a forced GC every 20,000 requests. N",
+      "actual": "Independent confirmation. Measured the reproduction on next 16.3.0-canary.90 (Node 24, arm64), with per-request unique URLs and roughly a tenth of the load in the original report: post-GC heap grows linearly 26.7 -> 71.9 MB across 3 load cycles, string self-size delta +30.4 MB, and the retainer chai",
+      "score": 0.15,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg90p38trd3y0g6j85k792",
+      "trigger": "We hit this leak hard in production and did a fairly deep forensic pass. Sharing because the evidence suggests the dominant mechanism is different from (and additional to) what #94238 fixes  and it re",
+      "draft": "Reproduced the `cacheComponents: false` arm on 16.2.6, and the pin hypothesis survives a direct A/B here.\n\nI had been treating this family as a `use cache` composite-signal problem ([#97464](https://github.com/vercel/next.js/issues/97464), [#97363](https://github.com/vercel/next.js/issues/97363)), s",
+      "actual": "I reproduced this on the linked repro and ran a few controls around it. Numbers\nbelow in case they are useful.\n\nSetup: the repro as published (next 16.2.2, `next build --webpack`, standalone\noutput, cacheComponents on, compress off), Node 25.7.0, macOS 15 arm64. I start\nthe standalone `server.js` di",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qg9mstw96awwzsfbyhdvb2",
+      "trigger": "Another data point, same root cause, different scale \u2014 Next 16.2.11 + Turbopack, Render build box (2 vCPU / 8GB), Node 22, ~199 routes (21 of them static).\n\nConfirming the report: `NODE_OPTIONS=--max-",
+      "draft": "Confirming the `--require` finding, and adding the one channel that does reach the worker today.\n\nSame bootstrap trick on 16.3.3, printing `v8.getHeapStatistics().heap_size_limit` from parent and from each static worker, Node 24.18, arm64:\n\n| env | parent heap_limit | worker heap_limit |\n|---|---:|-",
+      "actual": "Still reproduces on the current stable and on today's canary, not just on the preview this was filed against. Ran your reproduction unchanged, same container shape as your README (`node:22`, `-m 4g --cpus 4`), on linux **arm64** rather than x64:\n\n| next | runs | result |\n|---|---|---|\n| `16.3.0-prev",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgace6f4kmxpya5qp7rxx5",
+      "trigger": "Following up on the January comment about \"many timers accumulating and holding references to large objects\". We hit what looks like the same leak in production, reproduced it outside production, and ",
+      "draft": "Reproduced the shape of this on 16.2.12 and 16.3.3, and the `kResourceStore` finding holds up on a different OS and a different load generator \u2014 macOS arm64, Node 24.18, no Alpine, no standalone output, concurrency 32, bytes-weighted as you describe.\n\nPost-GC heap, read from a `gc` PerformanceObserv",
+      "actual": "Independent reproduction on 16.3.1 and 16.2.12, with an A/B that puts a number\non how much of this is stack frames.\n\nRan `santhoshsathish94/react-flight-oom-repro` (`force-dynamic` server component\nawaiting a 400 ms upstream, clients disconnecting at 60 ms) unchanged except for\nthe Next version. Rea",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgb2h8n7jkr8wcxx47e8zq",
+      "trigger": "**Additional production confirmation (Next 16.3.0, latest stable, standalone)**\n\nWe hit this on a production content site: `next@16.3.0` (latest stable), `output: \"standalone\"`, Node 24, in a containe",
+      "draft": "The `partialPrefetching` claim is testable, so I ran it as an A/B rather than taking it at face value. It holds, but it is an amplifier only in the sense you describe \u2014 the leak is there with it off, just slower.\n\nSame repro as earlier in this thread, bumped to 16.3.0 and then 16.3.3, standalone `se",
+      "actual": "Still reproduces on `16.3.1`.\n\nMeasured the reproduction on next 16.3.1 (Node 24.18, arm64, standalone,\n`cacheComponents: true`), 6 cycles \u00d7 2000 requests at 64 connections against\n`/[slug]?kb=2048` with a distinct slug per request, forced GC before every\nsample:\n\n- post-GC heap barely moves: 33.1 \u2192",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgbn9nq2mdsgtdfscb8b0b",
+      "trigger": "next 16.3.0, standalone, Turbopack build, cacheComponents: true. Heap snapshot diffs on production pods, two findings:\n\n**Turbopack standalone gotcha: patching `dist/server/lib/{clone-response,dedupe-",
+      "draft": "Confirming the Turbopack finding, because it invalidates an A/B I had half-written and it will invalidate other people's too.\n\nI patched `dist/server/lib/clone-response.js` and `dist/server/lib/dedupe-fetch.js` in `node_modules` on 16.3.0, standalone, Turbopack build, cacheComponents on, and added a",
+      "actual": "Still reproduces on `16.3.1`.\n\nMeasured the reproduction on next 16.3.1 (Node 24.18, arm64, standalone,\n`cacheComponents: true`), 6 cycles \u00d7 2000 requests at 64 connections against\n`/[slug]?kb=2048` with a distinct slug per request, forced GC before every\nsample:\n\n- post-GC heap barely moves: 33.1 \u2192",
+      "score": 0.05,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgbwefy897f2djnehz2551",
+      "trigger": "Follow-up: root-caused and fixed a second retention mechanism (the cacheComponents \"render retention\" family, distinct from the fetch-clone one above).\n\nRetainer analysis on 16.3.0 standalone+Turbopac",
+      "draft": "Reproduced on 16.3.3, and 16.2.6 is clean on the same build.\n\nMeasured per-route in a fresh process, forced GC before every sample, 400 distinct slugs per cycle at concurrency 8:\n\n| next | verdict | post-GC heap across cycles |\n|---|---|---|\n| 16.3.3 | leak, +705 KB per request | 173.8 \u2192 459.7 \u2192 744",
+      "actual": "Still reproduces on `16.3.1`.\n\nMeasured the reproduction on next 16.3.1 (Node 24.18, arm64, standalone,\n`cacheComponents: true`), 6 cycles \u00d7 2000 requests at 64 connections against\n`/[slug]?kb=2048` with a distinct slug per request, forced GC before every\nsample:\n\n- post-GC heap barely moves: 33.1 \u2192",
+      "score": 0.2584,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgbxfqdq8eekedw2h1m4ya",
+      "trigger": "Possible root cause for this, with a deterministic isolated reproduction and heap-snapshot retainer paths from a production instance: #97316\n\nShort version: prerender/render abort reasons (both explic",
+      "draft": "Reproduced on 16.3.3, and 16.2.6 is clean on the same build.\n\nMeasured per-route in a fresh process, forced GC before every sample, 400 distinct slugs per cycle at concurrency 8:\n\n| next | verdict | post-GC heap across cycles |\n|---|---|---|\n| 16.3.3 | leak, +705 KB per request | 173.8 \u2192 459.7 \u2192 744",
+      "actual": "Independent reproduction on 16.3.1 and 16.2.12, with an A/B that puts a number\non how much of this is stack frames.\n\nRan `santhoshsathish94/react-flight-oom-repro` (`force-dynamic` server component\nawaiting a 400 ms upstream, clients disconnecting at 60 ms) unchanged except for\nthe Next version. Rea",
+      "score": 0.3112,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgby8f05m2deh9kcjy9aj4",
+      "trigger": "Cross-linking a likely root cause and an upstream React fix for the react-server side of this.\n\nThe mechanism @devopsaptlife diagnosed in #97316 (an `Error` stored as `AbortSignal.reason` whose `.stac",
+      "draft": "Reproduced on 16.3.3, and 16.2.6 is clean on the same build.\n\nMeasured per-route in a fresh process, forced GC before every sample, 400 distinct slugs per cycle at concurrency 8:\n\n| next | verdict | post-GC heap across cycles |\n|---|---|---|\n| 16.3.3 | leak, +705 KB per request | 173.8 \u2192 459.7 \u2192 744",
+      "actual": "Independent reproduction on 16.3.1 and 16.2.12, with an A/B that puts a number\non how much of this is stack frames.\n\nRan `santhoshsathish94/react-flight-oom-repro` (`force-dynamic` server component\nawaiting a 400 ms upstream, clients disconnecting at 60 ms) unchanged except for\nthe Next version. Rea",
+      "score": 0.3112,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgbz2awtz9bf1kqq2hzs6v",
+      "trigger": "Follow-up on the workaround in the issue body: it is **incomplete, and measurably so** \u2014 worth\nfolding into the real fix rather than repeating.\n\nI wrote that the snippet \"does not cover the path where",
+      "draft": "Reproduced on 16.3.3, and 16.2.6 is clean on the same build.\n\nMeasured per-route in a fresh process, forced GC before every sample, 400 distinct slugs per cycle at concurrency 8:\n\n| next | verdict | post-GC heap across cycles |\n|---|---|---|\n| 16.3.3 | leak, +705 KB per request | 173.8 \u2192 459.7 \u2192 744",
+      "actual": "A priority datapoint from downstream: this also causes the build-side OOM in\n#97464, and fixing it fixes that too.\n\nThat repro meets all three conditions listed here \u2014 `cacheComponents: true`, a\n`\"use cache\"` boundary, and `generateStaticParams` over 2504 slugs \u2014 so its\nstatic-generation worker take",
+      "score": 0.2533,
+      "hit": false
+     },
+     {
+      "draft_id": "drf_01m4qgbzxkq4eqk0cp59kq2w8g",
+      "trigger": "### Proposed Plan to Fix AbortSignal.any Composite Retention in `use cache` Wrapper\n\n#### Problem Analysis\nIn `dist/server/use-cache/use-cache-wrapper.js`, each cached component render creates a compo",
+      "draft": "Reproduced on 16.3.3, and 16.2.6 is clean on the same build.\n\nMeasured per-route in a fresh process, forced GC before every sample, 400 distinct slugs per cycle at concurrency 8:\n\n| next | verdict | post-GC heap across cycles |\n|---|---|---|\n| 16.3.3 | leak, +705 KB per request | 173.8 \u2192 459.7 \u2192 744",
+      "actual": "A priority datapoint from downstream: this also causes the build-side OOM in\n#97464, and fixing it fixes that too.\n\nThat repro meets all three conditions listed here \u2014 `cacheComponents: true`, a\n`\"use cache\"` boundary, and `generateStaticParams` over 2504 slugs \u2014 so its\nstatic-generation worker take",
+      "score": 0.2533,
+      "hit": false
+     }
+    ]
+   }
+  ],
+  "started_at": 1791789330.916289,
+  "seconds": 965.68,
+  "total": {
+   "n": 142,
+   "hits": 47,
+   "hit_rate": 0.331
+  }
+ },
+ "seconds": 1004.1,
+ "generated_at": "2026-10-12T07:31:36Z"
+}
