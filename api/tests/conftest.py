@@ -8,6 +8,9 @@ os.environ["TACIT_WORKSPACE"] = _tmp
 os.environ["TACIT_SECRET_KEY"] = "test-secret"
 os.environ["TACIT_GITHUB_TOKEN"] = ""
 os.environ["TACIT_GITHUB_REPOS"] = ""
+os.environ["TACIT_SLACK_BOT_TOKEN"] = ""          # a real .env may hold Slack tokens; tests never touch Slack
+os.environ["TACIT_SLACK_APP_TOKEN"] = ""
+os.environ["TACIT_SLACK_CHANNELS"] = ""
 os.environ.pop("GITHUB_TOKEN", None)
 os.environ.pop("GH_TOKEN", None)
 

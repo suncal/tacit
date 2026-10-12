@@ -41,7 +41,8 @@ class Slack:
         self.app_token = s.slack_app_token
         self.channels = s.list(s.slack_channels)
         self.bot_id: Optional[str] = None
-        self.names: dict[str, str] = {}          # user id → display name, filled lazily
+        self.names: dict[str, str] = {}          # user id → display name, from users.list
+        self._dir_loaded = 0.0
         self._stop = threading.Event()
 
     def ok(self) -> bool:
@@ -61,15 +62,27 @@ class Slack:
         return d
 
     def name(self, user_id: str) -> str:
-        """Human-readable actor for the console; falls back to the id. Cached for the process."""
-        if not user_id or user_id in self.names:
-            return self.names.get(user_id, user_id)
+        """Human-readable actor for the console; falls back to the id. The directory (users.list) is loaded once and
+        refreshed on a miss at most every 10 minutes — users.info answers user_not_found on some workspaces."""
+        if not user_id:
+            return user_id
+        if user_id not in self.names and time.time() - self._dir_loaded > 600:
+            self._load_directory()
+        return self.names.get(user_id, user_id)
+
+    def _load_directory(self) -> None:
+        self._dir_loaded = time.time()
+        cursor = None
         try:
-            u = self.call("users.info", user=user_id)["user"]
-            self.names[user_id] = u.get("profile", {}).get("display_name") or u.get("real_name") or u.get("name") or user_id
-        except Exception:
-            self.names[user_id] = user_id
-        return self.names[user_id]
+            while True:
+                d = self.call("users.list", limit=200, cursor=cursor)
+                for u in d.get("members", []):
+                    self.names[u["id"]] = (u.get("profile") or {}).get("display_name") or u.get("real_name") or u.get("name") or u["id"]
+                cursor = (d.get("response_metadata") or {}).get("next_cursor") or None
+                if not cursor:
+                    break
+        except Exception as e:
+            log.warning("users.list: %s", e)
 
     # ------------------------------------------------------------------ tools
     def register(self, reg):
@@ -196,10 +209,17 @@ class Slack:
 
     def handle_mention(self, channel, user, text, thread_ts):
         ask = re.sub(r"<@[A-Z0-9]+>", "", text).strip()
-        r = self.app.agent.run(f"slack:{channel}", f"slack:{user}", ask)
-        reply = r["output"] or "Working on it — this needs an approval in the Tacit console."
+        r = self.app.agent.run(f"slack:{channel}", f"slack:{self.name(user)}", ask)
+        if r.get("status") == "error":
+            # never put an internal error in front of the team; it is in the run log for the operator
+            log.error("mention run %s failed: %s", r.get("id"), (r.get("output") or "")[:300])
+            reply = "I couldn't answer that right now — the failure is logged in the Tacit console for the operator."
+        else:
+            reply = r["output"] or "Working on it — this needs an approval in the Tacit console."
         try:
-            self.call("chat.postMessage", channel=channel, text=reply, thread_ts=thread_ts)
+            d = self.call("chat.postMessage", channel=channel, text=reply, thread_ts=thread_ts)
+            ingest(self.app, "slack", "message", self.app.settings.handle, reply, channel, f"slack:{channel}:{thread_ts}",
+                   meta={"channel": channel, "ts": d.get("ts"), "thread_ts": thread_ts, "run_id": r.get("id")}, external_id=f"slack:{channel}:{d.get('ts')}", actor_type="tacit")
         except Exception as e:
             log.warning("reply failed: %s", e)
 

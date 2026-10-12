@@ -15,8 +15,18 @@ def _slack(tacit, monkeypatch):
     s = Slack(tacit)
     s.token, s.app_token, s.bot_id = "xoxb-test", "xapp-test", "UBOT"
     s.names["U1"], s.names["U2"] = "Priya", "Sam"
+    s._dir_loaded = time.time()                                             # directory "already loaded": no users.list call
     monkeypatch.setattr(s, "call", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no network in tests")))
     return s
+
+
+def test_mention_never_leaks_an_internal_error(tacit, monkeypatch):
+    s = _slack(tacit, monkeypatch)
+    posted = {}
+    monkeypatch.setattr(s, "call", lambda method, **k: posted.update(k) or {"ok": True, "ts": "9.0", "channel": k.get("channel")})
+    monkeypatch.setattr(tacit.agent, "run", lambda *a, **k: {"id": "run_x", "status": "error", "output": "BrainError: anthropic 400: credit balance too low"})
+    s.handle_mention("C1", "U1", "<@UBOT> hi", "1.0")
+    assert "BrainError" not in posted["text"] and "credit" not in posted["text"] and posted["thread_ts"] == "1.0"
 
 
 def test_events_api_messages_are_threaded_and_bots_marked(tacit, monkeypatch):
