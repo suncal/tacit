@@ -6,7 +6,7 @@ import time
 from sqlalchemy import select
 
 from tacit import models as M
-from tacit.connectors.slack import Slack
+from tacit.connectors.slack import Slack, to_mrkdwn
 from tacit.core.playbooks import remine
 from tacit.db import session
 
@@ -94,3 +94,37 @@ def test_export_import_reads_a_zip(tacit, monkeypatch, tmp_path):
     with session() as db:
         e = db.scalar(select(M.Event).where(M.Event.system == "slack"))
     assert e.actor == "Priya K" and e.target == "general" and e.thread_key == "slack:general:1700000000.000100"
+
+
+def test_markdown_becomes_slack_mrkdwn():
+    md = ("# Before we send\n\nWe have **zero records** and __none__ for Acme; it's *not* paid, _really_ ~~done~~.\n"
+          "- **Confirm who Acme is** — see [the guide](https://example.com/g?x=1)\n* second bullet\n1. keep numbers\n"
+          "`**not touched**` and\n```\n**nor this**\n```\nMath 2 * 3 * 4 stays.")
+    out = to_mrkdwn(md)
+    assert out.startswith("*Before we send*\n")
+    assert "*zero records*" in out and "*none*" in out and "**" not in out.split("`")[0]
+    assert "_not_" in out and "_really_" in out and "~done~" in out
+    assert "• *Confirm who Acme is* — see <https://example.com/g?x=1|the guide>" in out and "• second bullet" in out
+    assert "1. keep numbers" in out
+    assert "`**not touched**`" in out and "```\n**nor this**\n```" in out
+    assert "2 * 3 * 4" in out
+
+
+def test_mention_reply_is_converted_but_stored_as_written(tacit, monkeypatch):
+    s = _slack(tacit, monkeypatch)
+    posted = {}
+    monkeypatch.setattr(s, "call", lambda method, **k: posted.update(k) or {"ok": True, "ts": "9.1", "channel": k.get("channel")})
+    monkeypatch.setattr(tacit.agent, "run", lambda *a, **k: {"id": "run_y", "status": "done", "output": "We need **two** things:\n- the invoice\n- the amount"})
+    s.handle_mention("C1", "U1", "<@UBOT> what do we need?", "1.0")
+    assert posted["text"] == "We need *two* things:\n• the invoice\n• the amount"
+    with session() as db:
+        e = db.scalar(select(M.Event).where(M.Event.actor_type == "tacit"))
+    assert e.text.startswith("We need **two**")                        # the record keeps the model's own words
+
+
+def test_mrkdwn_conversion_is_idempotent():
+    already = "*Formatting check* — this is _italic_, a <https://example.com|link>, and a list:\n• first item\n• second item"
+    assert to_mrkdwn(already) == already                                   # a model that wrote mrkdwn is left alone
+    md = "**Bold** and *it* with [l](https://x.io)"
+    once = to_mrkdwn(md)
+    assert once == "*Bold* and _it_ with <https://x.io|l>" and to_mrkdwn(once) == once

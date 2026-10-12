@@ -33,6 +33,35 @@ SKIP_SUBTYPES = {"channel_join", "channel_leave", "channel_topic", "channel_purp
                  "message_deleted", "tombstone", "joiner_notification", "channel_name", "pinned_item"}
 
 
+def to_mrkdwn(text: str) -> str:
+    """Markdown (what models write) → Slack mrkdwn (what Slack renders). Code blocks and inline code are left alone.
+    Idempotent: text already in mrkdwn passes through unchanged.
+    **bold**/__bold__ → *bold* · *italic* → _italic_ (only when **bold** is also present) · _italic_ stays · ~~strike~~ → ~strike~ · # headings → bold line ·
+    - / * bullets → • · 1. lists kept · [text](url) → <url|text> · tables are left as-is (Slack has none)."""
+    if not text:
+        return text
+    out, parts = [], re.split(r"(```.*?```|`[^`\n]*`)", text, flags=re.S)
+    for i, part in enumerate(parts):
+        if i % 2 == 1:                                   # code: untouched
+            out.append(part)
+            continue
+        t = part
+        t = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)", r"<\2|\1>", t)
+        bold = lambda m: "\x00" + m.group(1) + "\x00"                                   # placeholder so the italic pass skips it
+        t = re.sub(r"(?<!\*)\*\*(?=\S)(.+?)(?<=\S)\*\*(?!\*)", bold, t)
+        t = re.sub(r"(?<!\w)__(?=\S)(.+?)(?<=\S)__(?!\w)", bold, t)
+        if "\x00" in t:
+            # *x* is italic only in text that also uses **bold**; on its own it is already Slack bold (models often
+            # write mrkdwn directly), so leaving it alone makes the conversion idempotent
+            t = re.sub(r"(?<![\w*])\*(?=\S)([^*\n]+?)(?<=\S)\*(?![\w*])", r"_\1_", t)
+        t = t.replace("\x00", "*")
+        t = re.sub(r"~~(?=\S)(.+?)(?<=\S)~~", r"~\1~", t)
+        t = re.sub(r"^(#{1,6})\s+(.+?)\s*#*\s*$", lambda m: f"*{m.group(2).strip('*')}*", t, flags=re.M)
+        t = re.sub(r"^(\s*)[-*]\s+", r"\1• ", t, flags=re.M)
+        out.append(t)
+    return "".join(out)
+
+
 class Slack:
     def __init__(self, app):
         self.app = app
@@ -87,7 +116,7 @@ class Slack:
     # ------------------------------------------------------------------ tools
     def register(self, reg):
         def post(ctx, channel, text, thread_ts=None):
-            d = self.call("chat.postMessage", channel=channel, text=text, thread_ts=thread_ts)
+            d = self.call("chat.postMessage", channel=channel, text=to_mrkdwn(text), thread_ts=thread_ts)
             ingest(self.app, "slack", "message", self.app.settings.handle, text, channel, f"slack:{channel}:{thread_ts or d.get('ts')}",
                    meta={"channel": channel, "ts": d.get("ts"), "thread_ts": thread_ts}, external_id=f"slack:{channel}:{d.get('ts')}", actor_type="tacit")
             return ToolResult({"posted": f"{d.get('channel')}@{d.get('ts')}"}, undo={"tool": "slack_delete", "args": {"channel": d.get("channel"), "ts": d.get("ts")}})
@@ -217,7 +246,7 @@ class Slack:
         else:
             reply = r["output"] or "Working on it — this needs an approval in the Tacit console."
         try:
-            d = self.call("chat.postMessage", channel=channel, text=reply, thread_ts=thread_ts)
+            d = self.call("chat.postMessage", channel=channel, text=to_mrkdwn(reply), thread_ts=thread_ts)
             ingest(self.app, "slack", "message", self.app.settings.handle, reply, channel, f"slack:{channel}:{thread_ts}",
                    meta={"channel": channel, "ts": d.get("ts"), "thread_ts": thread_ts, "run_id": r.get("id")}, external_id=f"slack:{channel}:{d.get('ts')}", actor_type="tacit")
         except Exception as e:
