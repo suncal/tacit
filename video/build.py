@@ -67,6 +67,17 @@ def shot_video(s, length):
         sh("ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-i", src, "-vf", vf, "-t", f"{length:.3f}", *VIDEO, out)
     else:
         src = os.path.join(CAPT, name + "-scene.mp4")
+        if s.get("trims"):                                    # several windows of one take → one source clip
+            parts = []
+            for i, (x, y) in enumerate(s["trims"]):
+                part = os.path.join(BUILD, "segs", f"{s['id']}-part{i}.mp4")
+                sh("ffmpeg", "-y", "-loglevel", "error", "-ss", f"{x:.3f}", "-t", f"{y - x:.3f}", "-i", src, "-an", *VIDEO, part)
+                parts.append(part)
+            lst = os.path.join(BUILD, "segs", f"{s['id']}-parts.txt")
+            with open(lst, "w") as f:
+                f.write("".join(f"file '{q}'\n" for q in parts))
+            src = os.path.join(BUILD, "segs", f"{s['id']}-joined.mp4")
+            sh("ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", src)
         a, b = s.get("trim", [0, dur(src)])
         avail = b - a
         if s.get("fit") == "speed" and avail > length:        # a long live take: compress the whole window into the narration

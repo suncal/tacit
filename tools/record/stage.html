@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Tacit live stage</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#0A0B0B;font-family:"Geist",system-ui,sans-serif;color:#EDEDEA}
+.stage{display:grid;grid-template-columns:640px 1240px;gap:20px;padding:20px;height:1080px}
+.pane{border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;background:#101212;display:flex;flex-direction:column}
+.bar{height:52px;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.08);font-family:"Geist Mono",monospace;font-size:17px;color:#86867F}
+.bar .dot{width:10px;height:10px;border-radius:50%;background:#3FBFA4;box-shadow:0 0 0 4px rgba(63,191,164,.18)}
+.bar b{color:#EDEDEA;font-weight:600}
+.chat{flex:1;padding:22px 20px;display:flex;flex-direction:column;gap:18px;overflow:hidden;justify-content:flex-end}
+.msg{display:flex;gap:14px;opacity:0;transform:translateY(16px);animation:in .6s cubic-bezier(.22,1,.36,1) forwards}
+.msg.reply{margin-left:44px}
+.av{width:40px;height:40px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#062A24;background:#3FBFA4}
+.av.p{background:#5B8DEF;color:#fff}.av.t{background:#2b2f2e;color:#3FBFA4;border:1px solid rgba(63,191,164,.4)}
+.who{font-weight:600;font-size:18px}.who small{font-family:"Geist Mono",monospace;color:#86867F;font-weight:400;margin-left:10px;font-size:14px}
+.txt{font-size:21px;line-height:1.4;color:#EDEDEA;margin-top:4px;max-width:520px}
+.badge{display:inline-block;font-family:"Geist Mono",monospace;font-size:13px;color:#3FBFA4;border:1px solid rgba(63,191,164,.4);border-radius:999px;padding:3px 10px;margin-top:8px}
+@keyframes in{to{opacity:1;transform:none}}
+iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
+.right .bar{background:#FAFAF9;color:#757571;border-bottom:1px solid #E8E8E4}.right .bar b{color:#0A0A0A}.right .bar .dot{background:#0B5C50;box-shadow:0 0 0 4px rgba(11,92,80,.15)}
+.empty{color:#86867F;font-family:"Geist Mono",monospace;font-size:17px;text-align:center;padding-bottom:40px}
+</style></head><body>
+<div class="stage">
+ <div class="pane">
+  <div class="bar"><span class="dot"></span><b>#invoices</b> · Slack · live via Socket Mode</div>
+  <div class="chat" id="chat"><div class="empty" id="empty">waiting for the next message…</div></div>
+ </div>
+ <div class="pane right">
+  <div class="bar"><span class="dot"></span><b>Tacit console</b> · Shadow · 127.0.0.1:4800</div>
+  <iframe src="/shadow"></iframe>
+ </div>
+</div>
+<script>
+// Same-origin poll of the real event log: every Slack message in the channel becomes a bubble, newest at the bottom.
+const since = Date.now() / 1000 - (parseFloat(new URLSearchParams(location.search).get("back") || "0"));
+const seen = new Set(); const chat = document.getElementById("chat");
+const name = a => a === "tacit" ? "Tacit" : a;
+const cls = a => a === "tacit" ? "t" : (a.toLowerCase().startsWith("priya") ? "p" : "");
+async function tick() {
+  try {
+    const r = await fetch("/api/v1/events?limit=30"); const d = await r.json();
+    const evs = (d.events || d).filter(e => e.system === "slack" && e.ts >= since && !seen.has(e.id)).sort((a, b) => a.ts - b.ts);
+    for (const e of evs) {
+      seen.add(e.id); document.getElementById("empty")?.remove();
+      const m = document.createElement("div"); m.className = "msg" + (e.meta && e.meta.thread_ts ? " reply" : "");
+      const t = new Date(e.ts * 1000).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      m.innerHTML = `<div class="av ${cls(e.actor)}">${name(e.actor)[0]}</div><div><div class="who">${name(e.actor)}<small>${t}</small></div><div class="txt"></div>${e.actor_type === "tacit" ? '<span class="badge">posted by Tacit · reversible</span>' : ""}</div>`;
+      m.querySelector(".txt").textContent = e.text; chat.appendChild(m);
+      while (chat.children.length > 6) chat.removeChild(chat.firstChild);
+    }
+  } catch (err) {}
+  setTimeout(tick, 700);
+}
+tick();
+</script>
+</body></html>

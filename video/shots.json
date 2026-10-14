@@ -30,8 +30,19 @@
   },
   {
    "id": "s05",
-   "visual": "scene:shadow",
-   "text": "First, it learns a job by shadowing. It clusters what a person repeatedly does into a playbook, drafts what it would have done on every new trigger, and grades the draft against what the human actually did. Here, on a live Slack workspace, a colleague asks for an invoice copy. Tacit drafts silently. The owner replies for real. A separate judge model scores the draft: one hundred. Same action, same terms, same file."
+   "visual": "scene:live",
+   "text": "First, it learns a job by shadowing. It clusters what a person repeatedly does into a playbook, drafts what it would have done on every new trigger, and grades the draft against what the human actually did. Here, on a live Slack workspace, a colleague asks for an invoice copy. Tacit drafts silently. The owner replies for real. A separate judge model scores the draft: one hundred. Same action, same terms, same file.",
+   "trims": [
+    [
+     14,
+     34
+    ],
+    [
+     84,
+     102
+    ]
+   ],
+   "fit": "speed"
   },
   {
    "id": "s06",
