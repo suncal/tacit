@@ -55,6 +55,10 @@ def shot_video(s, length):
     os.makedirs(os.path.join(BUILD, "segs"), exist_ok=True)
     out = os.path.join(BUILD, "segs", s["id"] + ".mp4")
     kind, name = s["visual"].split(":", 1)
+    motion = os.path.join(BUILD, "motion", name + ".webm")
+    if kind == "card" and os.path.exists(motion):                 # animated card: already the right length, re-encode and cut
+        sh("ffmpeg", "-y", "-loglevel", "error", "-i", motion, "-an", "-t", f"{length:.3f}", "-vf", f"tpad=stop_mode=clone:stop_duration=2", "-t", f"{length:.3f}", *VIDEO, out)
+        return out
     if kind == "card":
         src = os.path.join(BUILD, "cards", name + ".png")
         frames = int(length * FPS)
@@ -65,7 +69,10 @@ def shot_video(s, length):
         src = os.path.join(CAPT, name + "-scene.mp4")
         a, b = s.get("trim", [0, dur(src)])
         avail = b - a
-        if avail >= length:                                   # plenty: play at speed, cut at length
+        if s.get("fit") == "speed" and avail > length:        # a long live take: compress the whole window into the narration
+            sh("ffmpeg", "-y", "-loglevel", "error", "-ss", f"{a:.3f}", "-t", f"{avail:.3f}", "-i", src, "-an",
+               "-vf", f"setpts={length / avail:.4f}*PTS", "-t", f"{length:.3f}", *VIDEO, out)
+        elif avail >= length:                                 # plenty: play at speed, cut at length
             sh("ffmpeg", "-y", "-loglevel", "error", "-ss", f"{a:.3f}", "-t", f"{length:.3f}", "-i", src, "-an", *VIDEO, out)
         elif avail >= length * 0.75:                          # a little short: slow it down to fit
             sh("ffmpeg", "-y", "-loglevel", "error", "-ss", f"{a:.3f}", "-t", f"{avail:.3f}", "-i", src, "-an",

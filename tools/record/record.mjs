@@ -13,7 +13,16 @@ const OUT = resolve(process.cwd(), "../../docs/tsm/captures");
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// A visible pointer: a soft disc that follows the real mouse events, so the viewer's eye has something to track.
+const CURSOR = `(() => { const c = document.createElement('div'); c.id = '__cur';
+  c.style.cssText = 'position:fixed;z-index:2147483647;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:rgba(11,92,80,.28);border:2.5px solid #0B5C50;box-shadow:0 2px 10px rgba(0,0,0,.25);pointer-events:none;left:-100px;top:-100px;transition:transform .12s';
+  const add = () => document.body && document.body.appendChild(c); document.body ? add() : document.addEventListener('DOMContentLoaded', add);
+  window.addEventListener('mousemove', e => { c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px'; }, true);
+  window.addEventListener('mousedown', () => { c.style.transform = 'scale(.7)'; }, true);
+  window.addEventListener('mouseup', () => { c.style.transform = 'scale(1)'; }, true); })();`;
+
 async function login(page, inst) {
+  await page.addInitScript(CURSOR);
   await page.goto(inst.base + "/");
   await page.fill('input[type="email"]', inst.email);
   await page.fill('input[type="password"]', inst.password);
@@ -96,6 +105,17 @@ const scenes = {
   },
 };
 const seeded = new Set(["oversight", "oversightQuality"]);
+// live split-screen: records the stage page until the stop file appears (or 170 s). Drive Slack meanwhile.
+import { existsSync, unlinkSync } from "node:fs";
+const STOP = process.env.TACIT_STOP_FILE || "/tmp/tacit-live-stop";
+scenes.live = async (page) => {
+  if (existsSync(STOP)) unlinkSync(STOP);
+  await page.goto(LIVE.base + "/stage.html?back=" + (process.env.TACIT_LIVE_BACK || "8"));
+  await sleep(1500);
+  const t0 = Date.now();
+  while (!existsSync(STOP) && Date.now() - t0 < 170000) await sleep(1000);
+  await sleep(2500);
+};
 
 const want = (process.argv[2] || "all") === "all" ? Object.keys(scenes) : process.argv[2].split(",");
 const browser = await chromium.launch();

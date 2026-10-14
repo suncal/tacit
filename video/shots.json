@@ -25,16 +25,12 @@
   },
   {
    "id": "s04",
-   "visual": "scene:overview",
+   "visual": "card:flow",
    "text": "Tacit is a governance runtime for AI teammates. It sits read-only on the tools a team already uses: GitHub, Slack, Linear, or anything through an event API or MCP. And it does three things."
   },
   {
    "id": "s05",
    "visual": "scene:shadow",
-   "trim": [
-    0,
-    13.5
-   ],
    "text": "First, it learns a job by shadowing. It clusters what a person repeatedly does into a playbook, drafts what it would have done on every new trigger, and grades the draft against what the human actually did. Here, on a live Slack workspace, a colleague asks for an invoice copy. Tacit drafts silently. The owner replies for real. A separate judge model scores the draft: one hundred. Same action, same terms, same file."
   },
   {
@@ -54,7 +50,7 @@
   },
   {
    "id": "s09",
-   "visual": "scene:shadow",
+   "visual": "card:ladder",
    "trim": [
     13.5,
     29.4
