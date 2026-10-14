@@ -23,6 +23,7 @@ const CURSOR = `(() => { const c = document.createElement('div'); c.id = '__cur'
 
 async function login(page, inst) {
   await page.addInitScript(CURSOR);
+  if (K !== 1) await page.addInitScript(ZOOM);
   await page.goto(inst.base + "/");
   await page.fill('input[type="email"]', inst.email);
   await page.fill('input[type="password"]', inst.password);
@@ -30,7 +31,9 @@ async function login(page, inst) {
   await page.waitForSelector("text=Overview", { timeout: 10000 }).catch(() => {});
   await sleep(800);
 }
-const glide = (page, x, y, steps = 40) => page.mouse.move(x, y, { steps });
+const K = process.env.TACIT_4K ? 2 : 1;
+const glide = (page, x, y, steps = 40) => page.mouse.move(x * K, y * K, { steps });
+const ZOOM = `(() => { const z = () => { if (document.documentElement) document.documentElement.style.zoom = '${K}'; }; z(); document.addEventListener('DOMContentLoaded', z); })()`;
 
 const scenes = {
   // ---- live instance -------------------------------------------------------------------------------
@@ -47,15 +50,15 @@ const scenes = {
     await sleep(2200);
     await glide(page, 730, 250); await sleep(1600);
     await glide(page, 390, 420); await sleep(1400);
-    await page.mouse.wheel(0, 420); await sleep(2200);
-    await page.mouse.wheel(0, 500); await sleep(2600);
+    await page.mouse.wheel(0, 420 * K); await sleep(2200);
+    await page.mouse.wheel(0, 500 * K); await sleep(2600);
   },
   async overview(page) {
     await page.goto(LIVE.base + "/"); await page.waitForSelector("text=Overview"); await sleep(2500);
     await glide(page, 600, 300); await sleep(1500);
     await glide(page, 1100, 300); await sleep(1500);
-    await page.mouse.wheel(0, 400); await sleep(2500);
-    await page.mouse.wheel(0, 500); await sleep(2500);
+    await page.mouse.wheel(0, 400 * K); await sleep(2500);
+    await page.mouse.wheel(0, 500 * K); await sleep(2500);
   },
   async inbox(page) {
     // a real write, gated: the console asks Tacit to post, policy routes the write to the Inbox
@@ -79,29 +82,29 @@ const scenes = {
   async evidence(page) {
     await page.goto(LIVE.base + "/compliance"); await sleep(2500);
     await glide(page, 700, 300); await sleep(1800);
-    await page.mouse.wheel(0, 450); await sleep(2500);
-    await page.mouse.wheel(0, 500); await sleep(2500);
+    await page.mouse.wheel(0, 450 * K); await sleep(2500);
+    await page.mouse.wheel(0, 500 * K); await sleep(2500);
     await page.goto(LIVE.base + "/audit"); await sleep(2500);
     await glide(page, 700, 320); await sleep(1500);
-    await page.mouse.wheel(0, 400); await sleep(2500);
+    await page.mouse.wheel(0, 400 * K); await sleep(2500);
   },
   // ---- seeded instance (3 months of reviewer history) ------------------------------------------------
   async oversight(page) {
     await page.goto(SEED.base + "/oversight"); await sleep(2500);
     await glide(page, 700, 300); await sleep(1800);
     await glide(page, 1100, 300); await sleep(1500);
-    await page.mouse.wheel(0, 450); await sleep(2500);
-    await page.mouse.wheel(0, 500); await sleep(2500);
+    await page.mouse.wheel(0, 450 * K); await sleep(2500);
+    await page.mouse.wheel(0, 500 * K); await sleep(2500);
   },
   async oversightQuality(page) {
     await page.goto(SEED.base + "/oversight-quality"); await sleep(2500);
     await glide(page, 500, 300); await sleep(1800);                                  // index + band
-    await page.mouse.wheel(0, 400); await sleep(2000);                               // components with weights
-    await page.mouse.wheel(0, 450); await sleep(2500);                               // reviewers: jonas 1.3 s, 64% unread
+    await page.mouse.wheel(0, 400 * K); await sleep(2000);                               // components with weights
+    await page.mouse.wheel(0, 450 * K); await sleep(2500);                               // reviewers: jonas 1.3 s, 64% unread
     const jonas = page.locator("text=jonas").first();
     const jb = await jonas.boundingBox().catch(() => null);
     if (jb) { await glide(page, jb.x + 60, jb.y + jb.height / 2); await sleep(2500); }
-    await page.mouse.wheel(0, 500); await sleep(2500);                               // findings
+    await page.mouse.wheel(0, 500 * K); await sleep(2500);                               // findings
   },
 };
 const seeded = new Set(["oversight", "oversightQuality"]);
@@ -121,8 +124,8 @@ const want = (process.argv[2] || "all") === "all" ? Object.keys(scenes) : proces
 const browser = await chromium.launch();
 for (const name of want) {
   const inst = seeded.has(name) ? SEED : LIVE;
-  const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1,
-    recordVideo: { dir: OUT, size: { width: 1920, height: 1080 } } });
+  const ctx = await browser.newContext({ viewport: { width: 1920 * K, height: 1080 * K }, deviceScaleFactor: 1,
+    recordVideo: { dir: OUT, size: { width: 1920 * K, height: 1080 * K } } });
   const page = await ctx.newPage();
   await login(page, inst);
   await scenes[name](page);

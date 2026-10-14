@@ -17,10 +17,11 @@ for (const s of shots) {
   const id = s.visual.split(":")[1];
   if (only && !only.has(id)) continue;
   const length = dur(`build/vo/${s.id}.mp3`) / TEMPO + GAP + XF + 0.3;
-  const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1,
-    recordVideo: { dir: out, size: { width: 1920, height: 1080 } } });
+  const K = process.env.TACIT_4K ? 2 : 1;          // 4K: same CSS layout, twice the pixels
+  const ctx = await browser.newContext({ viewport: { width: 1920 * K, height: 1080 * K }, deviceScaleFactor: 1,
+    recordVideo: { dir: out, size: { width: 1920 * K, height: 1080 * K } } });
   const page = await ctx.newPage();
-  await page.goto("file://" + resolve("motion.html") + `?card=${id}&dur=${(length - 0.8).toFixed(2)}`);
+  await page.goto("file://" + resolve("motion.html") + `?card=${id}&dur=${(length - 0.8).toFixed(2)}&k=${K}`);
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(400);
   await page.evaluate(() => window.play());
