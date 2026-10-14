@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Tacit TSM cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Schibsted+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{--bg:#0A0B0B;--bg2:#121414;--ink:#EDEDEA;--ink2:#BFBFBA;--muted:#86867F;--line:rgba(255,255,255,.09);--accent:#3FBFA4;--accent2:#52CDB3;--gold:#D9A441;--bad:#E0776C;--ok:#4FBE86;
+ --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--display:"Schibsted Grotesk","Geist",sans-serif;--mono:"Geist Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;font-family:var(--sans);color:var(--ink);font-feature-settings:"tnum"}
+.card{width:1920px;height:1080px;position:relative;overflow:hidden;background:radial-gradient(1200px 700px at 20% 10%,#131716 0%,var(--bg) 60%);padding:120px 140px;display:flex;flex-direction:column;justify-content:center}
+.card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--accent),transparent 70%)}
+.brand{position:absolute;top:56px;left:140px;display:flex;align-items:center;gap:14px;font-weight:600;font-size:26px;color:var(--ink2);letter-spacing:.02em}
+.mark{width:34px;height:34px;position:relative}.mark i{position:absolute;inset:0;border-radius:9px;background:var(--accent);opacity:.35;transform:translate(-6px,-6px)}.mark b{position:absolute;inset:0;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#062A24;font-size:22px}
+.foot{position:absolute;bottom:52px;left:140px;right:140px;display:flex;justify-content:space-between;font-size:22px;color:var(--muted);font-family:var(--mono)}
+.kicker{font-family:var(--mono);color:var(--accent);font-size:26px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:28px}
+h1{font-family:var(--display);font-weight:700;font-size:112px;line-height:1.02;letter-spacing:-.02em;max-width:1500px}
+h2{font-family:var(--display);font-weight:700;font-size:72px;line-height:1.08;letter-spacing:-.015em;max-width:1560px}
+.sub{font-size:40px;color:var(--ink2);margin-top:34px;max-width:1500px;line-height:1.35}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:56px}
+.stat{border:1px solid var(--line);border-radius:22px;padding:44px 48px;background:rgba(255,255,255,.025)}
+.stat .n{font-family:var(--display);font-size:120px;font-weight:700;letter-spacing:-.03em;color:var(--accent);line-height:1}.stat .n small{font-size:60px;color:var(--ink2)}
+.stat .l{font-size:34px;color:var(--ink);margin-top:18px;line-height:1.3}.stat .s{font-size:24px;color:var(--muted);margin-top:14px;font-family:var(--mono)}
+.list{margin-top:48px;display:grid;gap:26px}.list .row{display:flex;gap:30px;align-items:flex-start;font-size:46px;line-height:1.3}.list .row b{font-family:var(--mono);color:var(--accent);font-size:34px;min-width:70px;padding-top:10px}
+.quote{border-left:6px solid var(--accent);padding:10px 0 10px 38px;font-size:44px;line-height:1.35;color:var(--ink);margin-top:34px}.quote i{color:var(--muted);font-style:normal;font-family:var(--mono);font-size:26px;display:block;margin-top:10px}
+table{border-collapse:collapse;width:100%;margin-top:40px;font-size:31px}th{text-align:left;color:var(--muted);font-weight:500;font-family:var(--mono);font-size:24px;letter-spacing:.08em;text-transform:uppercase;padding:0 26px 18px 0}td{padding:24px 26px 24px 0;border-top:1px solid var(--line);vertical-align:top;line-height:1.3}td.k{color:var(--ink2);width:360px}td.t{color:var(--accent);font-weight:600}
+.pills{display:flex;gap:18px;flex-wrap:wrap;margin-top:40px}.pill{border:1px solid var(--line);border-radius:999px;padding:18px 34px;font-size:32px;color:var(--ink2);font-family:var(--mono)}
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:50px}.price .p{border:1px solid var(--line);border-radius:22px;padding:42px 46px}.price .p .t{font-family:var(--mono);color:var(--accent);font-size:26px;letter-spacing:.1em;text-transform:uppercase}.price .p .v{font-family:var(--display);font-size:74px;font-weight:700;margin-top:18px;letter-spacing:-.02em}.price .p .d{font-size:30px;color:var(--ink2);margin-top:16px;line-height:1.35}
+</style></head><body>
+
+<section class="card" id="title">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Tradewinds Solutions Marketplace · AI Agent Networks for Mission Superiority</div>
+ <h1>AI teammates that earn autonomy.</h1>
+ <div class="sub">Measured human oversight. Generated audit evidence. Self-hosted, open core.</div>
+ <div class="foot"><span>P CHAK Consulting LLC · github.com/suncal/tacit</span><span>TRL 6 · October 2026</span></div>
+</section>
+
+<section class="card" id="problem">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">The problem</div>
+ <h2>Agents are deployed faster than they are supervised.</h2>
+ <div class="stats">
+  <div class="stat"><div class="n">87<small>%</small></div><div class="l">of enterprises encourage agent use</div><div class="s">Okta, AI at Work 2025</div></div>
+  <div class="stat"><div class="n">47<small>%</small></div><div class="l">govern the agents they deploy</div><div class="s">Okta, AI at Work 2025</div></div>
+  <div class="stat"><div class="n">88<small>%</small></div><div class="l">had an agent incident · half keep no logs</div><div class="s">Gravitee, State of Agentic AI 2025</div></div>
+ </div>
+ <div class="foot"><span>Sources shown on screen</span><span>1 · Defining the problem</span></div>
+</section>
+
+<section class="card" id="questions">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Three questions every agent on a mission system raises</div>
+ <div class="list">
+  <div class="row"><b>01</b><span>Has it <strong>earned</strong> the right to act on its own?</span></div>
+  <div class="row"><b>02</b><span>Is the human approving it <strong>actually looking</strong>?</span></div>
+  <div class="row"><b>03</b><span>Can an auditor <strong>prove</strong> either one afterwards?</span></div>
+ </div>
+ <div class="sub" style="margin-top:70px">Today these are answered by trust. Tacit answers them with a record.</div>
+ <div class="foot"><span>Responsible AI principle: Governable</span><span>1 · Defining the problem</span></div>
+</section>
+
+<section class="card" id="nextjs">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Real data · vercel/next.js public issue tracker · Jul–Oct 2026</div>
+ <h2>Three months of a real team, mined in minutes.</h2>
+ <div class="stats">
+  <div class="stat"><div class="n">9,569</div><div class="l">human events ingested</div><div class="s">bots excluded · 5,878 threads</div></div>
+  <div class="stat"><div class="n">2,800</div><div class="l">people observed</div><div class="s">28 recurring jobs found</div></div>
+  <div class="stat"><div class="n">1,358</div><div class="l">bug reports answered by one maintainer with one job</div><div class="s">verify the repro, close with findings</div></div>
+ </div>
+ <div class="foot"><span>docs/tsm/evidence/nextjs.json in the public repo</span><span>2 · Accelerating the mission</span></div>
+</section>
+
+<section class="card" id="backtest">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Judged backtest · Claude drafts · separate judge model</div>
+ <h2>117 real triggers. 40% would have done the job.</h2>
+ <table>
+  <tr><th>Job</th><th>Handled</th><th>Verdict</th></tr>
+  <tr><td class="k">Lock stale closed issues</td><td class="t">13 / 13</td><td>eligible for promotion</td></tr>
+  <tr><td class="k">Claim open bugs for a fix</td><td class="t">8 / 8</td><td>eligible for promotion</td></tr>
+  <tr><td class="k">Close unsigned PRs for signed copies</td><td class="t">8 / 19</td><td>stays in shadow</td></tr>
+  <tr><td class="k">Verify repro and close with findings</td><td class="t">5 / 25</td><td>stays in shadow</td></tr>
+ </table>
+ <div class="foot"><span>7 jobs fully judged · 47 of 117</span><span>2 · Accelerating the mission</span></div>
+</section>
+
+<section class="card" id="judge">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">What the judge caught · verbatim from the stored reasons</div>
+ <div class="quote">“Draft cites a different PR number and rationale instead of the actual superseding PR.”<i>judge 0.05 · Close unsigned PRs</i></div>
+ <div class="quote">“Draft invents a different root cause rather than citing the actual fix PRs.”<i>judge 0.05 · Verify repro and close</i></div>
+ <div class="quote">“Draft gives a fabricated reason instead of the actual reason the component was removed.”<i>judge 0.05 · Close unsigned PRs</i></div>
+ <div class="foot"><span>Word overlap would have passed several of these</span><span>2 · Accelerating the mission</span></div>
+</section>
+
+<section class="card" id="dependencies">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Dependencies and how risk is managed</div>
+ <h2>One container. One database. Any model, or none.</h2>
+ <div class="pills"><span class="pill">Anthropic endpoint</span><span class="pill">OpenAI-compatible endpoint</span><span class="pill">Government-hosted model</span><span class="pill">Local deterministic brain</span><span class="pill">SQLite or Postgres</span><span class="pill">On-premises or your VPC</span></div>
+ <div class="list" style="margin-top:60px">
+  <div class="row"><b>→</b><span>Never acts without an earned trust record</span></div>
+  <div class="row"><b>→</b><span>Every action is a transaction with undo, under budgets</span></div>
+  <div class="row"><b>→</b><span>Unread approvals do not count as evidence</span></div>
+ </div>
+ <div class="foot"><span>Image: ghcr.io/suncal/tacit · non-root · SBOM · scanned</span><span>2 · Accelerating the mission</span></div>
+</section>
+
+<section class="card" id="compare">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Alternatives, and the one thing each cannot do</div>
+ <table>
+  <tr><th>Approach</th><th>Examples</th><th>Cannot</th><th>Tacit</th></tr>
+  <tr><td class="k">Outcome-priced agents</td><td>Sierra, Intercom Fin</td><td>tell you whether a human had to redo the work</td><td class="t">bills only verified actions</td></tr>
+  <tr><td class="k">Evaluation platforms</td><td>LangSmith, Braintrust, Arize</td><td>gate permissions on their own scores; offline datasets</td><td class="t">scores online vs. the real reply, decides autonomy</td></tr>
+  <tr><td class="k">Platform governance</td><td>Copilot Studio, Agentforce</td><td>govern agents outside their platform</td><td class="t">supervises any agent from read-only events</td></tr>
+  <tr><td class="k">Oversight quality</td><td>a 2026 paper</td><td>exist as a product</td><td class="t">ships it, and excludes unread approvals from trust</td></tr>
+ </table>
+ <div class="foot"><span>DFARS 212.7001 innovation: new application of existing methods</span><span>3 · Advancing the state of the art</span></div>
+</section>
+
+<section class="card" id="evidence">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Evidence the panel can check today</div>
+ <div class="stats">
+  <div class="stat"><div class="n">MIT</div><div class="l">open core, 50 automated tests, CI with SBOM and vulnerability gate</div><div class="s">github.com/suncal/tacit</div></div>
+  <div class="stat"><div class="n">Live</div><div class="l">hosted instance anyone on this panel can log into</div><div class="s">tacit-demo-km3d.onrender.com</div></div>
+  <div class="stat"><div class="n">60<small>%</small></div><div class="l">of backtest drafts the model got wrong, published with the judge's reason for each</div><div class="s">we publish the misses</div></div>
+ </div>
+ <div class="foot"><span>A governance tool that oversells its own model is not a governance tool</span><span>3 · Advancing the state of the art</span></div>
+</section>
+
+<section class="card" id="pricing">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Business model · public pricing · same for commercial and government</div>
+ <div class="price">
+  <div class="p"><div class="t">Oversight</div><div class="v">Free</div><div class="d">Supervise third-party agents from read-only events. Forever.</div></div>
+  <div class="p"><div class="t">Earned work</div><div class="v">Per verified action</div><div class="d">Billed only when a human approved it, or nobody reversed it inside the dispute window.</div></div>
+  <div class="p"><div class="t">Compliance tier</div><div class="v">Subscription</div><div class="d">Signed evidence exports, auditor roles, SSO. Self-hosted in your VPC or on-premises.</div></div>
+ </div>
+ <div class="foot"><span>No non-public rates shown · all terms negotiable at award</span><span>4 · Business model</span></div>
+</section>
+
+<section class="card" id="ot">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <div class="kicker">Proposed first engagement</div>
+ <h2>A 90-day prototype OT on one business-process workflow.</h2>
+ <div class="list" style="margin-top:56px">
+  <div class="row"><b>Day 1</b><span>Read-only Day-One report: the recurring work, costed, before any automation</span></div>
+  <div class="row"><b>Wk 2</b><span>Jobs in shadow, graded against your people's real actions</span></div>
+  <div class="row"><b>Wk 6</b><span>First jobs in propose, approved from the Inbox, every action reversible</span></div>
+  <div class="row"><b>Day 90</b><span>Evidence bundle, oversight-quality index, production follow-on under 10 USC 4022(f)</span></div>
+ </div>
+ <div class="foot"><span>Self-hosted inside your boundary · no mission data leaves</span><span>4 · Business model</span></div>
+</section>
+
+<section class="card" id="close">
+ <div class="brand"><span class="mark"><i></i><b>✓</b></span>TACIT</div>
+ <h1>Autonomy that is earned.<br>Oversight that is measured.<br>Evidence that is generated.</h1>
+ <div class="sub">P CHAK Consulting LLC · github.com/suncal/tacit</div>
+ <div class="foot"><span>© 2026 P CHAK Consulting LLC</span><span>Thank you</span></div>
+</section>
+</body></html>

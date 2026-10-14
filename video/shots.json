@@ -1,0 +1,110 @@
+{
+ "voice": {
+  "id": "nPczCjzI2devNBz1zQrb",
+  "model": "eleven_multilingual_v2",
+  "stability": 0.55,
+  "similarity": 0.75,
+  "style": 0,
+  "boost": true
+ },
+ "shots": [
+  {
+   "id": "s01",
+   "visual": "card:title",
+   "text": "Tacit. AI teammates that earn autonomy, with measured human oversight and generated audit evidence. From P CHAK Consulting."
+  },
+  {
+   "id": "s02",
+   "visual": "card:problem",
+   "text": "Every organization is deploying AI agents faster than it can supervise them. Okta found eighty-seven percent of enterprises encourage agent use, but only forty-seven percent govern it. Gravitee found eighty-eight percent had an agent incident, and half their agents keep no logs."
+  },
+  {
+   "id": "s03",
+   "visual": "card:questions",
+   "text": "The Department faces the same gap at a larger scale. Every agent on a mission system raises three questions. Has it earned the right to act alone? Is the human approving it actually looking? Can an auditor prove either one afterwards? Tacit answers all three with a record, not with trust."
+  },
+  {
+   "id": "s04",
+   "visual": "scene:overview",
+   "text": "Tacit is a governance runtime for AI teammates. It sits read-only on the tools a team already uses: GitHub, Slack, Linear, or anything through an event API or MCP. And it does three things."
+  },
+  {
+   "id": "s05",
+   "visual": "scene:shadow",
+   "trim": [
+    0,
+    13.5
+   ],
+   "text": "First, it learns a job by shadowing. It clusters what a person repeatedly does into a playbook, drafts what it would have done on every new trigger, and grades the draft against what the human actually did. Here, on a live Slack workspace, a colleague asks for an invoice copy. Tacit drafts silently. The owner replies for real. A separate judge model scores the draft: one hundred. Same action, same terms, same file."
+  },
+  {
+   "id": "s06",
+   "visual": "card:nextjs",
+   "text": "We also pointed it at a real public repository, the Next.js issue tracker. Three months of history: nine and a half thousand human events, twenty-eight hundred people, twenty-eight recurring jobs. One maintainer had answered thirteen hundred bug reports with a single job."
+  },
+  {
+   "id": "s07",
+   "visual": "card:backtest",
+   "text": "Backtested on one hundred seventeen real triggers, the judge said the drafts would have done the job forty percent of the time. Two jobs it handled every time. The hardest, verify a bug and close with findings, five times in twenty-five."
+  },
+  {
+   "id": "s08",
+   "visual": "card:judge",
+   "text": "Why so low? Because the judge caught the model making things up. In its words: draft cites a different PR number. Draft invents a different root cause. Draft gives a fabricated reason. Word overlap would have passed several of those. The judge did not."
+  },
+  {
+   "id": "s09",
+   "visual": "scene:shadow",
+   "trim": [
+    13.5,
+    29.4
+   ],
+   "text": "Second, autonomy is earned per job, never granted per agent. Trust is a Wilson lower bound on judged results. A job moves from shadow to propose, where a human approves each action from a preview, and only then to auto, where actions run as reversible transactions under budgets. Undos and rejections demote it."
+  },
+  {
+   "id": "s10",
+   "visual": "scene:inbox",
+   "text": "Here is propose in practice. Tacit asks to post a reminder. The write is held in the Inbox with an exact preview. A human approves, it posts to Slack, and one click reverses it. The reversal is recorded against the job."
+  },
+  {
+   "id": "s11",
+   "visual": "scene:oversightQuality",
+   "text": "Third, it measures the human, not just the machine. An approval granted faster than the preview could be read is logged as unread, and excluded from promotion evidence. In this demonstration org, one reviewer fell from twenty seconds per decision to one point three, with sixty-four percent unread. Without this, rubber-stamping would have promoted the job."
+  },
+  {
+   "id": "s13",
+   "visual": "card:dependencies",
+   "text": "Dependencies: a frontier model through any Anthropic or OpenAI-compatible endpoint, including government-hosted ones, or a deterministic local brain with no model at all. Everything else is one container and one database on your infrastructure. It never acts without an earned trust record, and every action is reversible."
+  },
+  {
+   "id": "s14",
+   "visual": "card:compare",
+   "text": "How is this different? Outcome-priced agents like Sierra and Intercom Fin sell resolutions, which only means the conversation ended. Evaluation platforms like LangSmith, Braintrust and Arize score the model offline against fixed datasets. Tacit scores online against the human's real reply, and uses that score to decide autonomy. Platform governance from Copilot Studio or Agentforce stops at its own platform. Tacit supervises any agent from read-only events. And no product measures oversight quality. Tacit ships it."
+  },
+  {
+   "id": "s15",
+   "visual": "scene:evidence",
+   "text": "The audit log is append-only and hash-chained, and it generates an evidence bundle on demand, built against EU AI Act articles twelve and fourteen, and mapped to the Department's Responsible AI principle of governable systems."
+  },
+  {
+   "id": "s16",
+   "visual": "card:evidence",
+   "text": "The code is open under MIT with fifty automated tests, a hosted instance this panel can log into today, and the Next.js backtest published in full, including the sixty percent the model got wrong. We publish the misses, because a governance tool that oversells its own model is not a governance tool."
+  },
+  {
+   "id": "s17",
+   "visual": "card:pricing",
+   "text": "Tacit is self-hosted software with public pricing. Oversight of third-party agents is free. Earned work is priced per verified action, so the customer pays only for actions a human accepted or did not reverse. A compliance tier adds signed evidence exports, auditor roles and SSO. Same model for commercial and government, inside their own boundary."
+  },
+  {
+   "id": "s18",
+   "visual": "card:ot",
+   "text": "For the Department, we propose a prototype Other Transaction: a ninety-day deployment on one business-process workflow, measured by the Day-One report Tacit produces before any automation is turned on."
+  },
+  {
+   "id": "s19",
+   "visual": "card:close",
+   "text": "Tacit. Autonomy that is earned. Oversight that is measured. Evidence that is generated. Thank you."
+  }
+ ]
+}
